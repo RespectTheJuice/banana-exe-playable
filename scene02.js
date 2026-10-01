@@ -21,9 +21,9 @@
 
   // Canonical banana data (PART1_SHIP_BRIEF.md "Current values"). Images are the approved Beat 7 bananas.
   const BANANAS = {
-    green: { name: 'GREEN', price: '£0.85', line: 'Bold choice', img: PROPS + 'banana_green_v1.png' },
-    ripe: { name: 'RIPE', price: '£0.95', line: 'The safe bet', img: PROPS + 'banana_ripe_v1.png' },
-    extra: { name: 'EXTRA RIPE', price: '£0.75', line: 'Living dangerously', img: PROPS + 'banana_extra_ripe_v1.png' },
+    green: { name: 'GREEN', price: '£4.50', line: 'Bold choice', img: PROPS + 'banana_green_v1.png' },
+    ripe: { name: 'RIPE', price: '£5.00', line: 'The safe bet', img: PROPS + 'banana_ripe_v1.png' },
+    extra: { name: 'EXTRA RIPE', price: '£3.00', line: 'Living dangerously', img: PROPS + 'banana_extra_ripe_v1.png' },
   };
   let choice = null;
   const inv = $('#inv');
@@ -131,15 +131,16 @@
 
   // ---------- BEAT 7: BANANA BOUTIQUE (required action 3) ----------
   const boutique = $('#s2-boutique'), cards = [...document.querySelectorAll('.bq-card')];
-  const say = $('#bq-say'), paid = $('#bq-paid'), wipe = $('#wipe');
+  const say = $('#bq-say'), sayText = $('#bq-say-text'), reaction = $('#bq-reaction'), paid = $('#bq-paid'), wipe = $('#wipe');
+  const ripeCard = cards.find((c) => c.dataset.pick === 'ripe');
   const PICK_CLICK = 'Click a banana to choose it', PICK_TAP = 'Tap a banana to choose it';
   let choosing = false;
 
   function resetBoutique() {
     choosing = false;
-    boutique.classList.remove('is-choosing', 'is-chosen', 'is-paid');
-    cards.forEach((c) => { c.disabled = false; c.classList.remove('is-picked'); });
-    say.classList.remove('is-on'); paid.classList.remove('is-on'); paid.textContent = '';
+    boutique.classList.remove('is-showing', 'is-choosing', 'is-chosen', 'is-paid');
+    cards.forEach((c) => { c.disabled = true; c.classList.remove('is-picked', 'is-noticed'); });
+    say.classList.remove('is-on'); reaction.classList.remove('is-on'); paid.classList.remove('is-on'); paid.textContent = '';
     wipe.getAnimations().forEach((a) => a.cancel());
   }
 
@@ -147,11 +148,28 @@
     show('s2-boutique', 'PART 1 // BANANA BOUTIQUE');
     clearGuide(); flash();
     resetBoutique();
+    sayText.textContent = 'Here are our premium bananas. Which one would you like?';
+    later(() => { sayText.textContent = 'Good choice.'; say.classList.add('is-on'); s2sfx.selected(); }, 350);
     later(() => {
+      say.classList.remove('is-on');
+      boutique.classList.add('is-showing');
+    }, 2200);
+    later(() => {
+      ripeCard.classList.add('is-noticed');
+      const r = ripeCard.getBoundingClientRect();
+      reaction.style.left = `${Math.round(r.left + r.width / 2)}px`;
+      reaction.style.top = `${Math.max(64, Math.round(r.top - 66))}px`;
+      reaction.classList.add('is-on');
+      sfx.pop();
+    }, 2750);
+    later(() => {
+      reaction.classList.remove('is-on');
+      ripeCard.classList.remove('is-noticed');
       boutique.classList.add('is-choosing');
+      cards.forEach((c) => { c.disabled = false; });
       choosing = true;
       guide(cards, PICK_CLICK, PICK_TAP);
-    }, 900);
+    }, 4700);
   }
 
   cards.forEach((card) => card.addEventListener('click', () => pick(card)));
@@ -173,7 +191,7 @@
         { transform: 'translateX(0)', offset: 0.6 }, { transform: 'translateX(105%)' },
       ], { duration: 1000, easing: 'cubic-bezier(.6,0,.4,1)' });
       later(() => {
-        boutique.classList.remove('is-choosing', 'is-chosen');
+        boutique.classList.remove('is-showing', 'is-choosing', 'is-chosen');
         boutique.classList.add('is-paid');
         say.classList.remove('is-on');
         inv.classList.add('is-on'); inv.classList.remove('is-pop'); void inv.offsetWidth; inv.classList.add('is-pop');
