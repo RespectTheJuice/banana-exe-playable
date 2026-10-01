@@ -174,8 +174,8 @@
     }
   };
 
-  const MUSIC_LEVEL = 0.21;
-  const MUSIC_DUCK_LEVEL = 0.095;
+  const MUSIC_LEVEL = 0.62;
+  const MUSIC_DUCK_LEVEL = 0.30;
   let musicDucked = false, musicDuckTimer = null;
 
   function ensureMusicGain() {
@@ -237,6 +237,8 @@
       const boutique = musicTheme === 'boutique';
 
       musicNote(score.bass[i], score.ms / 1000 * 0.78, boutique ? 0.034 : 0.045, 'triangle');
+      // Phone speakers lose the sub-110 Hz body, so reinforce the bass an octave up.
+      musicNote(score.bass[i] * 2, score.ms / 1000 * 0.62, boutique ? 0.018 : 0.024, 'triangle', 0.01);
       if (score.lead[i]) musicNote(score.lead[i], score.ms / 1000 * 0.64, boutique ? 0.024 : 0.032, boutique ? 'triangle' : 'square', 0.015);
 
       // Bright offbeat arpeggio adds forward motion without shortening the whole phrase.
@@ -328,6 +330,7 @@
     musicTheme = MUSIC[theme] ? theme : 'main';
     musicStep = 0;
     ensureMusicGain();
+    setMusicLevel(MUSIC_LEVEL, 0.08);
     if (musicTimer) clearTimeout(musicTimer);
     musicTimer = setTimeout(playMusicStep, 60);
   }
@@ -595,6 +598,9 @@
     clearGuide();
     sfx.arcade();
     pressVisual(yougotit, 260);
+    const budgetHud = $('#budget');
+    budgetHud.classList.add('is-unlocked', 'is-intro');
+    later(() => budgetHud.classList.remove('is-intro'), 1400);
     later(() => window.BX.startScene02(), 520);
   });
 
@@ -610,6 +616,7 @@
     document.querySelectorAll('.job').forEach((j) => j.classList.remove('is-nah', 'is-open', 'is-hover'));
     thought.classList.remove('is-on'); thoughtText.textContent = '';
     yougotit.classList.remove('is-ready', 'is-down'); yougotit.disabled = true;
+    $('#budget').classList.remove('is-unlocked', 'is-intro');
   }
 
   // Shared with scene02.js
