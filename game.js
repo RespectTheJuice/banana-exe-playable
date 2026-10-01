@@ -57,6 +57,7 @@
     muted = !muted;
     e.currentTarget.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
     e.currentTarget.setAttribute('aria-pressed', String(muted));
+    dispatchEvent(new CustomEvent('bx:mute', { detail: { muted } }));
   });
 
   // ---------- Scene switching ----------
@@ -298,7 +299,7 @@
 
   // Shared with scene02.js
   window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, guide, clearGuide, pressVisual, audio,
-                touchUI, resetScene01, startDesk };
+                isMuted: () => muted, touchUI, resetScene01, startDesk };
 
   // Debug/test hooks: ?scene=desk|reveal|react jumps straight to a beat; ?debug=1 shows TEMP/PROVISIONAL art tags.
   const params = new URLSearchParams(location.search);
