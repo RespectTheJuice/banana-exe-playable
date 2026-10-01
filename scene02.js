@@ -362,9 +362,38 @@
   function endPart() {
     window.BX.endSting();
     teaserScene.classList.add('is-end');
-    $('#end-summary').textContent = choice ? `BANANA #1: 1 × ${choice.name} · ${choice.price}` : '';
+    $('#end-summary').textContent = choice ? `BANANA #1: 1 × ${choice.name} · ${choice.price} · BUDGET ${money(budget)}` : '';
     sfx.notice();
   }
+
+  // ---------- PART 2 PREVIEW ----------
+  // Kept behind ?scene=part2 until the first attempt sequence is locked.
+  const p2 = $('#p2-intro'), p2Analyze = $('#p2-analyze'), p2Analysis = $('#p2-analysis');
+
+  function startPart2Preview() {
+    if (!choice) setChoice('ripe');
+    show('p2-intro', 'PART 2 // DELIVERY PROBLEM');
+    clearGuide(); flash();
+    window.BX.setMusicTheme('main');
+
+    $('#p2-payload').textContent = `1 × ${choice.name} BANANA`;
+    $('#p2-budget').textContent = money(budget);
+    $('#p2-analysis-budget').textContent = money(budget);
+    p2.classList.remove('is-analyzed');
+    p2Analyze.disabled = false;
+    guide(p2Analyze, 'Click SIZE UP THE PROBLEM', 'Tap SIZE UP THE PROBLEM');
+    later(sfx.route, 250);
+  }
+
+  p2Analyze.addEventListener('click', () => {
+    if (p2Analyze.disabled) return;
+    p2Analyze.disabled = true;
+    clearGuide();
+    sfx.arcade();
+    window.BX.duckMusic(1100);
+    p2.classList.add('is-analyzed');
+    later(() => sfx.notice(), 520);
+  });
 
   // ---------- Replay / reset ----------
   function resetPart() {
@@ -381,6 +410,7 @@
   // YOU GOT IT (game.js) hands straight over to the outbound route.
   window.BX.spendBudget = spend;
   window.BX.getBudget = () => budget;
+  window.BX.getChoice = () => choice;
   window.BX.startScene02 = () => { audio(); resetPart(); startRoute('out'); };
   $('#replay-part').addEventListener('click', () => {
     sfx.click();
@@ -404,4 +434,12 @@
   if (jump === 'return') startRoute('back');
   if (jump === 'home') startHome();
   if (jump === 'teaser') startTeaser();
+  if (jump === 'part2') {
+    if (!choice) setChoice('ripe');
+    budget = STARTING_BUDGET - parseFloat(choice.price.replace('£',''));
+    renderBudget();
+    budgetEl.classList.add('is-unlocked');
+    inv.classList.add('is-on');
+    startPart2Preview();
+  }
 })();
