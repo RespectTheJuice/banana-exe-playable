@@ -382,7 +382,13 @@
   window.BX.spendBudget = spend;
   window.BX.getBudget = () => budget;
   window.BX.startScene02 = () => { audio(); resetPart(); startRoute('out'); };
-  $('#replay-part').addEventListener('click', () => { sfx.click(); resetPart(); window.BX.resetScene01(); window.BX.startDesk(); });
+  $('#replay-part').addEventListener('click', () => {
+    sfx.click();
+    resetPart();
+    window.BX.resetScene01();
+    window.BX.startMusic('main');
+    window.BX.startDesk();
+  });
   $('#replay-all').addEventListener('click', () => {
     sfx.click(); resetPart(); window.BX.resetScene01();
     show('s-title', 'PART 1');
