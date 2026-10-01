@@ -119,52 +119,63 @@
 
   const MUSIC = {
     main: {
-      // 24 × 375 ms = 9 seconds before the phrase repeats.
-      ms: 375,
+      // 24 × 300 ms = 7.2 seconds. Keeps the punch of the original loop, but develops before repeating.
+      ms: 300,
       bass: [
-        110, 0, 110, 146.83, 164.81, 0, 146.83, 123.47,
-        110, 0, 146.83, 164.81, 196, 164.81, 146.83, 0,
-        123.47, 0, 146.83, 110, 164.81, 146.83, 123.47, 110
+        110,110,146.83,110,164.81,146.83,123.47,146.83,
+        110,146.83,164.81,196,164.81,146.83,123.47,110,
+        123.47,146.83,164.81,146.83,196,164.81,146.83,110
       ],
       lead: [
-        440, 0, 523.25, 0, 659.25, 587.33, 523.25, 0,
-        440, 493.88, 523.25, 0, 659.25, 0, 587.33, 523.25,
-        0, 440, 523.25, 587.33, 659.25, 587.33, 523.25, 0
+        440,0,523.25,0,659.25,587.33,523.25,0,
+        440,493.88,523.25,659.25,783.99,659.25,587.33,523.25,
+        440,523.25,587.33,659.25,698.46,659.25,523.25,0
+      ],
+      arp: [
+        880,659.25,783.99,1046.5,880,783.99,659.25,523.25,
+        880,987.77,1046.5,1318.5,1046.5,987.77,880,659.25,
+        783.99,880,1046.5,1174.66,1046.5,880,783.99,659.25
       ],
       chords: [
-        [220, 277.18, 329.63],
-        [246.94, 293.66, 369.99],
-        [261.63, 329.63, 392],
-        [246.94, 293.66, 369.99],
-        [220, 261.63, 329.63],
-        [220, 277.18, 329.63]
+        [220,277.18,329.63],
+        [246.94,293.66,369.99],
+        [261.63,329.63,392],
+        [293.66,369.99,440],
+        [246.94,293.66,369.99],
+        [220,277.18,329.63]
       ]
     },
     boutique: {
-      // 20 × 420 ms = 8.4 seconds; same DNA, slower and warmer.
-      ms: 420,
+      // 24 × 350 ms = 8.4 seconds. Premium groove, but still alive.
+      ms: 350,
       bass: [
-        82.41, 0, 98, 0, 110, 0, 98, 0,
-        82.41, 0, 110, 0, 123.47, 110, 98, 0,
-        82.41, 98, 110, 0
+        82.41,82.41,98,82.41,110,98,92.5,98,
+        82.41,98,110,123.47,110,98,92.5,82.41,
+        98,110,123.47,110,130.81,123.47,98,82.41
       ],
       lead: [
-        329.63, 392, 0, 440, 392, 0, 493.88, 440,
-        392, 329.63, 0, 392, 440, 493.88, 0, 440,
-        392, 329.63, 293.66, 0
+        329.63,0,392,440,392,0,493.88,440,
+        392,329.63,392,440,493.88,523.25,493.88,440,
+        392,440,493.88,523.25,587.33,523.25,440,0
+      ],
+      arp: [
+        659.25,493.88,587.33,659.25,783.99,659.25,587.33,493.88,
+        659.25,739.99,783.99,880,783.99,739.99,659.25,587.33,
+        659.25,783.99,880,987.77,880,783.99,659.25,587.33
       ],
       chords: [
-        [164.81, 196, 246.94],
-        [196, 246.94, 293.66],
-        [220, 261.63, 329.63],
-        [196, 246.94, 293.66],
-        [164.81, 196, 246.94]
+        [164.81,196,246.94],
+        [196,246.94,293.66],
+        [220,261.63,329.63],
+        [246.94,293.66,369.99],
+        [196,246.94,293.66],
+        [164.81,196,246.94]
       ]
     }
   };
 
-  const MUSIC_LEVEL = 0.15;
-  const MUSIC_DUCK_LEVEL = 0.075;
+  const MUSIC_LEVEL = 0.21;
+  const MUSIC_DUCK_LEVEL = 0.095;
   let musicDucked = false, musicDuckTimer = null;
 
   function ensureMusicGain() {
@@ -189,17 +200,56 @@
     o.connect(g).connect(out); o.start(t); o.stop(t + dur + 0.03);
   }
 
+  function musicPerc(step, boutique = false) {
+    if (muted || paused) return;
+    const a = audio(), out = ensureMusicGain(); if (!a || !out) return;
+    const t = a.currentTime;
+
+    // Kick on the downbeats.
+    if (step % 4 === 0) {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(boutique ? 92 : 108, t);
+      o.frequency.exponentialRampToValueAtTime(48, t + 0.09);
+      g.gain.setValueAtTime(boutique ? 0.05 : 0.065, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+      o.connect(g).connect(out); o.start(t); o.stop(t + 0.14);
+    }
+
+    // Short hi-hat on offbeats.
+    if (step % 2 === 1) {
+      const buf = a.createBuffer(1, Math.floor(a.sampleRate * 0.04), a.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = a.createBufferSource(), hp = a.createBiquadFilter(), g = a.createGain();
+      hp.type = 'highpass'; hp.frequency.value = boutique ? 4200 : 5200;
+      g.gain.setValueAtTime(boutique ? 0.012 : 0.018, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+      src.buffer = buf; src.connect(hp).connect(g).connect(out); src.start(t);
+    }
+  }
+
   function playMusicStep() {
     if (!musicTimer) return;
     if (!paused && !muted) {
       const score = MUSIC[musicTheme] || MUSIC.main;
       const i = musicStep % score.bass.length;
-      musicNote(score.bass[i], score.ms / 1000 * 0.82, musicTheme === 'boutique' ? 0.025 : 0.03, 'triangle');
-      if (score.lead[i]) musicNote(score.lead[i], score.ms / 1000 * 0.66, musicTheme === 'boutique' ? 0.018 : 0.022, 'square', 0.02);
+      const boutique = musicTheme === 'boutique';
+
+      musicNote(score.bass[i], score.ms / 1000 * 0.78, boutique ? 0.034 : 0.045, 'triangle');
+      if (score.lead[i]) musicNote(score.lead[i], score.ms / 1000 * 0.64, boutique ? 0.024 : 0.032, boutique ? 'triangle' : 'square', 0.015);
+
+      // Bright offbeat arpeggio adds forward motion without shortening the whole phrase.
+      if (score.arp[i] && i % 2 === 1) {
+        musicNote(score.arp[i], score.ms / 1000 * 0.34, boutique ? 0.012 : 0.017, 'square', score.ms / 1000 * 0.46);
+      }
+
       if (i % 4 === 0) {
         const chord = score.chords[Math.floor(i / 4) % score.chords.length];
-        chord.forEach((f, n) => musicNote(f, score.ms / 1000 * 2.2, 0.008, n === 0 ? 'sine' : 'triangle', 0.04));
+        chord.forEach((f, n) => musicNote(f, score.ms / 1000 * 2.1, boutique ? 0.007 : 0.009, n === 0 ? 'sine' : 'triangle', 0.03));
       }
+
+      musicPerc(i, boutique);
       musicStep++;
     }
     const score = MUSIC[musicTheme] || MUSIC.main;
