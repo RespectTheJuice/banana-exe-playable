@@ -309,7 +309,7 @@
   // ---------- BACK HOME → postal check → "Probably a bad idea anyway. It'll get bruised." ----------
   const home = $('#s2-home'), homeThought = $('#home-thought'), homeText = $('#home-thought-text');
   const LINES = {
-    home: 'How the hell am I getting this banana to TFY?',
+    home: 'How am I getting this banana to TFY?',
     post: 'Can I just post it?',
     bruise: 'Probably a bad idea anyway. It’ll get bruised.',
   };
