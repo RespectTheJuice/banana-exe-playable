@@ -204,6 +204,24 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 .caption.is-on { opacity: 1; transform: translate(-50%, 0); }
 .caption small { display: block; font-size: 10px; letter-spacing: .15em; color: #5b6b78; }
 
+/* Character dialogue belongs to the character/focal action, never a generic lower-third. */
+.caption { display: flex; align-items: center; gap: 10px; }
+.cap-face {
+  --d: 42px; flex: 0 0 var(--d); width: var(--d); height: var(--d); border-radius: 50%;
+  background: #0b1923 url("assets/skeptical_locked.png") no-repeat;
+  background-size: calc(var(--d) * 414 / 265) auto;
+  background-position: calc(var(--d) / 2 - var(--d) * 205 / 265) calc(var(--d) / 2 - var(--d) * 212 / 265);
+  box-shadow: 0 0 0 2px var(--ink), 0 0 0 4px var(--gold);
+}
+.cap-text { min-width: 0; }
+
+/* Inbeeb reactions are attached to the browser area, not the bottom edge. */
+.scene-desk .caption {
+  left: auto; right: clamp(18px, 4vw, 56px); top: 72px; bottom: auto;
+  transform: translateY(8px); max-width: min(360px, calc(100vw - 36px));
+}
+.scene-desk .caption.is-on { transform: none; }
+
 .objective {
   position: absolute; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translate(-50%, 8px);
   z-index: 25; white-space: nowrap; max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
@@ -303,14 +321,22 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
   .hud-tag em { display: none; } /* narrow screens: the header reads just BANANA.EXE */
   .hud { gap: 8px; }
   .pov { top: 48px; bottom: 110px; width: calc(100vw - 24px); padding: 6px; border-radius: 12px; }
-  .caption { bottom: 30px; font-size: 14px; }
+  .caption { font-size: 14px; }
+  .scene-desk .caption {
+    left: auto; right: 14px; top: 62px; bottom: auto;
+    max-width: min(280px, calc(100vw - 28px)); transform: translateY(8px);
+  }
+  .scene-desk .caption.is-on { transform: none; }
 
   /* Portrait: show a 940×1024 window of the plate (head + laptop), then push in on BANANA. */
   .reveal-frame { top: calc(50% - 30px); transform: translate(-50%, -50%); aspect-ratio: 940 / 1024; width: min(100vw, calc((100svh - 230px) * .918)); }
   .reveal-img { object-position: 64% 50%; transform-origin: 69.6% 61.2%; }
   .scene-reveal.is-pushing .reveal-img { transform: scale(1.8); }
-  .reveal-caption { right: auto; left: 50%; top: auto; bottom: 36px; transform: translate(-50%, 8px); }
-  .reveal-caption.is-on { transform: translate(-50%, 0); }
+  .reveal-caption {
+    left: auto; right: 14px; top: 68px; bottom: auto;
+    max-width: min(230px, calc(100vw - 28px)); transform: translateY(8px);
+  }
+  .reveal-caption.is-on { transform: none; }
 
   .react-grid {
     grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto;
