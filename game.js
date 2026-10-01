@@ -107,12 +107,38 @@
 
   // ---------- 2. Laptop / Inbeeb: auto-played discovery ----------
   const detail = $('#detail'), caption = $('#caption'), pov = $('#pov');
-  const bananaWord = $('#banana-word'), target = $('#job-target');
+  const bananaWord = $('#banana-word'), target = $('#job-target'), searchAnchor = document.querySelector('.site-head .search');
   const decoys = [...document.querySelectorAll('.job[data-nah]')];
   let captionTimer = null, found = false, deskStep = 0, deskToken = 0;
 
-  function say(text, ms = 1800, el = caption) {
+  function positionDeskCaption(anchor) {
+    if (!anchor) return;
+    const r = anchor.getBoundingClientRect();
+    caption.classList.add('is-anchored');
+    // Measure after content is in place but before the fade completes.
+    const w = Math.min(caption.offsetWidth || 320, innerWidth - 24);
+    const h = caption.offsetHeight || 70;
+    const mobile = innerWidth <= 700 || matchMedia('(orientation: portrait)').matches;
+    let left, top;
+    if (mobile) {
+      left = Math.min(innerWidth - w - 12, Math.max(12, r.left + r.width / 2 - w / 2));
+      top = Math.min(innerHeight - h - 18, r.bottom + 12);
+      caption.dataset.tail = 'top';
+    } else {
+      left = Math.min(innerWidth - w - 18, r.right + 16);
+      if (left < r.right + 8) left = Math.max(18, r.left - w - 16);
+      top = Math.min(innerHeight - h - 22, Math.max(62, r.top + r.height / 2 - h / 2));
+      caption.dataset.tail = left >= r.right ? 'left' : 'right';
+    }
+    caption.style.left = `${Math.round(left)}px`;
+    caption.style.top = `${Math.round(top)}px`;
+    caption.style.right = 'auto';
+    caption.style.bottom = 'auto';
+  }
+
+  function say(text, ms = 1800, el = caption, anchor = null) {
     el.innerHTML = `<span class="cap-face" aria-hidden="true"></span><span class="cap-text"><small>VALENTÉ</small>${text}</span>`;
+    if (el === caption) positionDeskCaption(anchor || searchAnchor);
     el.classList.add('is-on');
     clearTimeout(captionTimer);
     captionTimer = setTimeout(() => el.classList.remove('is-on'), ms);
@@ -124,7 +150,7 @@
   function nah(btn) {
     btn.classList.remove('is-hover');
     if (btn.classList.contains('is-nah')) return;
-    sfx.nah(); btn.classList.add('is-nah'); say(btn.dataset.nah, 1100);
+    sfx.nah(); btn.classList.add('is-nah'); say(btn.dataset.nah, 1100, caption, btn);
   }
   function openTarget() {
     if (target.classList.contains('is-open')) return;
@@ -133,7 +159,7 @@
     target.classList.add('is-open');
     detail.classList.add('is-open');
     detail.scrollTop = 0;
-    say('Head Geek… okay, this is actually interesting.', 1700);
+    say('Head Geek… okay, this is actually interesting.', 1700, caption, target);
   }
   function noticeBanana() {
     if (bananaWord.classList.contains('is-noticed')) return;
@@ -156,7 +182,7 @@
 
   // Each beat: [delay before it, action]. Clicking ahead jumps the timeline forward; nothing waits for input.
   const DESK = [
-    [500, () => say('Right. Let’s see what’s out there…', 1500)],
+    [500, () => say('Right. Let’s see what’s out there…', 1500, caption, searchAnchor)],
     [1500, () => hoverJob(decoys[0])],
     [450, () => nah(decoys[0])],
     [1150, () => hoverJob(decoys[1])],
