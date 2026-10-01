@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>BANANA.EXE — Part 1</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="scene02.css" />
+</head>
+<body>
+<main id="stage" aria-live="polite">
+
+  <!-- HUD -->
+  <header class="hud">
+    <div class="hud-tag"><b>BANANA<span>.</span>EXE</b> <em id="hud-scene">PART 1</em></div>
+    <div class="inv" id="inv" role="status" aria-label="Inventory"><img id="inv-img" src="assets/banana_ripe_v1.png" alt="" /><span id="inv-text"></span></div>
+    <button id="mute" class="hud-btn" aria-pressed="false" aria-label="Mute sound">SOUND: ON</button>
+  </header>
+
+  <!-- 0. TITLE -->
+  <section class="scene scene-title is-active" id="s-title">
+    <h1>BANANA<span>.</span>EXE</h1>
+    <p class="sub">Part 1</p>
+    <button class="arcade arcade-sm" id="start"><span class="cap">PRESS START</span></button>
+    <p class="fine">Sound on for the full effect.</p>
+  </section>
+
+  <!-- 1–2. LAPTOP, SCREEN VIEW: the live Inbeeb discovery plays itself (optional clicks only skip ahead). -->
+  <section class="scene scene-desk" id="s-desk" aria-hidden="true">
+    <div class="pov" id="pov">
+      <div class="screen" id="screen">
+        <div class="browser">
+          <div class="chrome">
+            <i></i><i></i><i></i>
+            <span class="url">inbeeb.example/jobs?q=<b>ai</b></span>
+          </div>
+          <div class="site-head">
+            <span class="logo"><span class="hex"></span>inbeeb</span>
+            <span class="search">AI · Remote-ish · Actually interesting</span>
+          </div>
+          <div class="site-body" id="site-body">
+            <ul class="listings" id="listings">
+              <li><button class="job" data-nah="Synergy? Hard pass.">
+                <strong>Synergy Evangelist</strong><span>Buzzword Holdings · Everywhere</span></button></li>
+              <li><button class="job" data-nah="Exposure doesn't pay rent.">
+                <strong>Prompt Whisperer (Unpaid)</strong><span>Exposure Ltd · Your sofa</span></button></li>
+              <li><button class="job job-target" id="job-target">
+                <strong>Head Geek</strong><span>Time For You · Full-time</span><em class="new">NEW</em></button></li>
+              <li><button class="job" data-nah="Vibes: unclear. Salary: also unclear.">
+                <strong>Chief Vibes Officer</strong><span>Startup TBC · Stealth mode</span></button></li>
+            </ul>
+            <article class="detail" id="detail">
+              <div class="detail-empty">Select a job to view details</div>
+              <div class="detail-full">
+                <button class="back" id="back">← Results</button>
+                <h2>Head Geek</h2>
+                <p class="co">Time For You · Full-time</p>
+                <p>We're looking for someone who spots friction and asks: <i>"why is a human still doing this?"</i></p>
+                <ul>
+                  <li>Prototype with AI. Test it. Break it. Fix it.</li>
+                  <li>Get it into actual use.</li>
+                </ul>
+                <p class="small-print">P.S. To show you read this far, start your application with the word
+                  <button class="banana-word" id="banana-word">BANANA</button>.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="caption" id="caption" role="status"></div>
+  </section>
+
+  <section class="scene scene-reveal" id="s-reveal" aria-hidden="true">
+    <div class="reveal-frame" id="reveal-frame">
+      <img class="reveal-img" id="reveal-img" src="assets/OTS_LAPTOP_APPROVED.png" width="1536" height="1024"
+           alt="Over the shoulder: Valenté at his desk at night, reading the Head Geek listing with BANANA highlighted in the small print" />
+    </div>
+    <div class="caption reveal-caption" id="reveal-caption" role="status"></div>
+  </section>
+
+  <!-- 3–4. SKEPTICAL REACTION -->
+  <section class="scene scene-react" id="s-react" aria-hidden="true">
+    <div class="burst"></div>
+    <div class="react-grid">
+      <div class="thought" id="thought">
+        <p id="thought-text"></p>
+        <span class="t1"></span><span class="t2"></span><span class="t3"></span>
+      </div>
+      <img class="sprite" id="sprite" src="assets/skeptical_locked.png" width="414" height="767"
+           alt="Valenté, skeptical, hands in hoodie pocket, glancing sideways" />
+      <div class="btn-slot">
+        <button class="arcade" id="yougotit" disabled><span class="cap">YOU GOT IT</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOME → BANANA BOUTIQUE and back: approved map plate + separate SVG layers (trail, waypoints, vehicle marker). Drives itself. -->
+  <section class="scene scene-route" id="s2-route" aria-hidden="true">
+    <div class="route-wrap">
+      <div class="map-frame" id="map-frame">
+        <!-- Locked MAP 02A sheet, cropped by CSS to its HOME → BANANA BOUTIQUE panel (x 22–1426, y 80–588); file untouched.
+             On portrait screens the panel is shown taller and pans to follow the car. -->
+        <div class="map-pan" id="map-pan">
+          <img class="map-plate" src="assets/MAP_02A_NOTTINGHAM_PROCUREMENT_LOCKED.png" width="1448" height="1086"
+               alt="Map 02A, Nottingham: a cyan route from HOME to BANANA BOUTIQUE" />
+          <!-- Overlay shares the sheet's pixel space so every layer sits exactly on the baked-in route. -->
+          <svg class="map-overlay" viewBox="0 0 1448 1086" aria-hidden="true">
+            <path class="route-halo" id="route-halo" d="M210 483 L268 483 L343 432 L1050 432 L1050 335 L1163 386" />
+            <path class="route-trail" id="route-trail" d="M210 483 L268 483 L343 432 L1050 432 L1050 335 L1163 386" />
+            <circle class="waypoint" id="wp-home" cx="210" cy="483" r="32" />
+            <circle class="waypoint" id="wp-store" cx="1163" cy="386" r="32" />
+            <g id="marker" transform="translate(210 483)">
+              <g id="marker-inner">
+                <!-- Compact UI vehicle marker (SVG icon, not character art). -->
+                <circle class="car-ring" r="46" />
+                <g id="car" class="car">
+                  <path class="car-body" d="M-34 6 L-34 -4 Q-34 -10 -27 -11 L-17 -12 L-9 -23 Q-6 -27 0 -27 L13 -27 Q19 -27 22 -22 L28 -12 L31 -11 Q36 -10 36 -4 L36 6 Q36 10 32 10 L-30 10 Q-34 10 -34 6 Z" />
+                  <path class="car-glass" d="M-12 -12 L-5 -22 L3 -22 L3 -12 Z M7 -12 L7 -22 L13 -22 Q16 -22 17 -19 L21 -12 Z" />
+                  <circle class="car-wheel" cx="-19" cy="10" r="7.5" /><circle class="car-wheel" cx="21" cy="10" r="7.5" />
+                </g>
+                <!-- Return leg: the approved banana for the chosen ripeness rides on the roof (src set by scene02.js). -->
+                <image id="marker-banana" class="marker-banana" href="assets/banana_ripe_v1.png" x="-40" y="-82" width="80" height="60" />
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="route-bar">
+        <img class="mission-icon" src="assets/banana_mission_icon.svg" width="128" height="128" alt="" />
+        <p class="route-label" id="route-label">MISSION: ACQUIRE BANANA · HOME → BANANA BOUTIQUE</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 6 — BANANA BOUTIQUE exterior arrival: locked building, push-in + glow on a dark field, then hard cut inside. -->
+  <section class="scene scene-exterior" id="s2-exterior" aria-hidden="true">
+    <div class="ext-glow"></div>
+    <img class="ext-building" src="assets/BANANA_BOUTIQUE_BUILDING_LOCKED.png" width="370" height="265"
+         alt="Banana Boutique: a black shopfront with a glowing gold banana sign" />
+  </section>
+
+  <!-- BEAT 7 — BANANA BOUTIQUE: flat approved interior + locked assistant idle + HTML choice cards. Choosing is required action 3. -->
+  <section class="scene scene-boutique" id="s2-boutique" aria-hidden="true">
+    <img class="bq-interior" src="assets/boutique_interior_v1.png" width="1672" height="941"
+         alt="Inside Banana Boutique: black and gold display plinths of green, ripe and extra-ripe bananas" />
+    <img class="bq-assistant" src="assets/assistant_idle_v1.png" width="1200" height="1700"
+         alt="Banana Boutique assistant in a black and gold apron" />
+    <div class="bq-say" id="bq-say" role="status"><small>BANANA BOUTIQUE</small><span id="bq-say-text">Good choice.</span></div>
+    <div class="bq-choices" id="bq-choices" role="group" aria-label="Choose your banana">
+      <button class="bq-card" data-pick="green">
+        <img src="assets/banana_green_v1.png" width="1600" height="1200" alt="" />
+        <b>GREEN</b><span class="bq-price">£0.85</span><em>Bold choice</em>
+      </button>
+      <button class="bq-card" data-pick="ripe">
+        <img src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" />
+        <b>RIPE</b><span class="bq-price">£0.95</span><em>The safe bet</em>
+      </button>
+      <button class="bq-card" data-pick="extra">
+        <img src="assets/banana_extra_ripe_v1.png" width="1600" height="1200" alt="" />
+        <b>EXTRA RIPE</b><span class="bq-price">£0.75</span><em>Living dangerously</em>
+      </button>
+    </div>
+    <div class="bq-paid" id="bq-paid" role="status"></div>
+    <div class="wipe" id="wipe" aria-hidden="true"></div>
+  </section>
+
+  <!-- BACK HOME: original Skeptical sprite + thought. The banana lives in the inventory chip (HUD), never floating. -->
+  <section class="scene scene-react scene-home" id="s2-home" aria-hidden="true">
+    <div class="burst"></div>
+    <div class="react-grid">
+      <div class="thought" id="home-thought">
+        <p id="home-thought-text"></p>
+        <span class="t1"></span><span class="t2"></span><span class="t3"></span>
+      </div>
+      <img class="sprite" src="assets/skeptical_locked.png" width="414" height="767"
+           alt="Valenté, skeptical, back home" />
+      <!-- Postal check: a fictionalised requirements card (UI), with the chosen banana failing the packaging check. -->
+      <div class="post-card" id="post-card" aria-live="polite">
+        <p class="post-head">SENDING FOOD BY POST</p>
+        <ul class="post-list">
+          <li>PACKAGE IT</li><li>SEAL IT</li><li>LABEL: PERISHABLE</li><li>USE A FAST SERVICE</li>
+        </ul>
+        <div class="post-item">
+          <img id="post-banana" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="The loose banana" />
+          <b class="post-stamp">LOOSE BANANA: NOT READY FOR POST</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PART 1 ENDING: automatic teaser (no buttons), then TO BE CONTINUED. Code-drawn schematic, not a map asset. -->
+  <section class="scene scene-teaser" id="s2-teaser" aria-hidden="true">
+    <div class="teaser" id="teaser">
+      <p class="eyebrow">PART 1 COMPLETE // BANANA ACQUIRED</p>
+      <svg class="t-route" viewBox="0 0 620 180" role="img" aria-label="A long route from Nottingham to TFY in Northampton">
+        <path class="t-path" d="M40 62 C190 42 250 142 370 124 S520 112 580 124" />
+        <circle class="t-home" cx="40" cy="62" r="11" />
+        <circle class="t-dest-pulse" cx="580" cy="124" r="14" /><circle class="t-dest" cx="580" cy="124" r="11" />
+        <text x="22" y="32" class="t-label">NOTTINGHAM · HOME</text>
+        <text x="600" y="168" class="t-label is-end">TFY · NORTHAMPTON</text>
+      </svg>
+      <p class="t-next">NEXT PROBLEM: GET IT TO TFY.</p>
+      <p class="t-loading">DELIVERY OPTIONS LOADING…</p>
+      <div class="t-slots" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+    <div class="the-end" id="the-end">
+      <p class="end-kicker">BANANA.EXE // PART 1</p>
+      <h2>TO BE CONTINUED</h2>
+      <p class="end-summary" id="end-summary"></p>
+      <div class="end-actions">
+        <button class="ghost" id="replay-part">↺ REPLAY PART 1</button>
+        <button class="ghost" id="replay-all">↺ FROM THE TOP</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Player guidance: one compact instruction per interactive step (shared by all scenes). -->
+  <div class="objective" id="objective" role="status" aria-live="polite"></div>
+  <div class="flash" id="flash"></div>
+</main>
+<script src="game.js"></script>
+<script src="scene02.js"></script>
+</body>
+</html>

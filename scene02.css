@@ -1,0 +1,229 @@
+/* BANANA.EXE — Part 1, second half (route, Banana Boutique, home, postal check, teaser, end). */
+
+/* ---------- Inventory chip (HUD): where the banana lives after purchase ---------- */
+.inv {
+  display: none; align-items: center; gap: 6px; flex-shrink: 0; margin-left: auto; margin-right: 10px;
+  background: rgba(9,15,27,.78); border: 1px solid var(--gold); border-radius: 999px; padding: 2px 10px 2px 4px;
+  font-size: 11px; font-weight: 900; letter-spacing: .06em; color: var(--white); white-space: nowrap;
+}
+.inv.is-on { display: flex; }
+.inv img { width: 34px; height: 26px; object-fit: contain; }
+.inv.is-pop { animation: inv-pop .6s cubic-bezier(.2,1.6,.4,1); }
+@keyframes inv-pop { 0% { transform: scale(.6); box-shadow: 0 0 0 0 rgba(255,214,83,.9); } 60% { transform: scale(1.12); box-shadow: 0 0 0 8px rgba(255,214,83,0); } 100% { transform: none; } }
+
+/* ---------- Route (HOME ⇄ BANANA BOUTIQUE) ---------- */
+.scene-route { background: var(--navy-900); }
+.scene-route.is-active { display: grid; place-items: center; padding: 50px 16px 64px; }
+.route-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+.map-frame {
+  position: relative; aspect-ratio: 1404 / 508;
+  width: min(100%, calc((100svh - 150px) * 2.764));
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+}
+/* The pan layer is the MAP 02A panel (1404×508 of the 1448×1086 sheet); plate + overlay are positioned so only it shows. */
+.map-pan { position: absolute; left: 0; top: 0; height: 100%; aspect-ratio: 1404 / 508; }
+.map-plate, .map-overlay { position: absolute; display: block; left: -1.567%; top: -15.748%; width: 103.134%; height: 213.78%; }
+.route-halo { fill: none; stroke: var(--cyan); stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; opacity: .22; filter: blur(6px); }
+.route-trail { fill: none; stroke: #d8fffd; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.waypoint { fill: none; stroke: var(--gold); stroke-width: 5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.waypoint.is-target { animation: waypoint 1.3s ease-out infinite; }
+.waypoint.is-reached { opacity: 1; stroke: var(--cyan); stroke-width: 7; animation: reached .6s ease-out both; }
+@keyframes waypoint { 0% { opacity: .9; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes reached { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* Vehicle marker: compact UI icon with a thin cyan ring. */
+#marker-inner { filter: drop-shadow(0 3px 4px rgba(0,0,0,.6)); }
+.car-ring { fill: rgba(9,15,27,.88); stroke: var(--cyan); stroke-width: 4; }
+.car-body { fill: var(--gold); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
+.car-glass { fill: #c9fbf8; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.car-wheel { fill: #16171b; stroke: #5b6470; stroke-width: 3; }
+.marker-banana { opacity: 0; transition: opacity .3s; }
+.marker-banana.is-on { opacity: 1; }
+#marker.is-driving #car { animation: rumble .18s ease-in-out infinite alternate; }
+@keyframes rumble { from { translate: 0 0; } to { translate: 0 -2px; } }
+.route-bar { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.mission-icon { width: 34px; height: 34px; flex-shrink: 0; }
+.route-label { margin: 0; font-family: var(--display); font-size: 13px; letter-spacing: .12em; color: var(--cyan); }
+
+/* ---------- Beat 6: Banana Boutique exterior (locked building only) ---------- */
+.scene-exterior { background: radial-gradient(ellipse at 50% 55%, #1a1508, var(--navy-950) 65%); overflow: hidden; }
+.ext-glow { position: absolute; left: 50%; top: 52%; width: min(90vw, 760px); aspect-ratio: 2 / 1; transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(255,214,83,.28), transparent 65%); animation: fade .6s ease-out; }
+.ext-building {
+  position: absolute; left: 50%; top: 52%; width: min(78vw, 560px, calc(70svh * 370 / 265)); height: auto;
+  transform: translate(-50%, -50%) scale(.92); filter: drop-shadow(0 20px 30px rgba(0,0,0,.6));
+}
+.scene-exterior.is-active .ext-building { animation: ext-push 1.7s cubic-bezier(.3,0,.2,1) forwards; }
+@keyframes ext-push { from { transform: translate(-50%, -50%) scale(.92); opacity: 0; } 15% { opacity: 1; } to { transform: translate(-50%, -50%) scale(1.06); opacity: 1; } }
+
+/* ---------- Beat 7: Banana Boutique ---------- */
+.scene-boutique { background: #07060a; overflow: hidden; }
+.bq-interior { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: filter .5s ease; }
+.scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65); }
+/* Locked assistant idle (1200×1700, foot anchor 0.5012 / 0.9518): right of centre on desktop, standing on the floor. */
+.bq-assistant {
+  --ah: 90svh;
+  position: absolute; z-index: 2; height: var(--ah); width: calc(var(--ah) * 1200 / 1700);
+  top: calc(98svh - var(--ah) * .9518); left: calc(68vw - var(--ah) * 1200 / 1700 * .5012);
+  pointer-events: none; animation: fade .4s ease-out;
+}
+.bq-say {
+  position: absolute; z-index: 4; left: calc(68vw - 330px); top: 16svh; max-width: 230px;
+  background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 14px;
+  box-shadow: 0 0 0 4px var(--gold); padding: 8px 16px; font-family: var(--display); font-size: 20px;
+  opacity: 0; transform: translateY(8px) scale(.9); transition: opacity .2s, transform .25s cubic-bezier(.2,1.6,.4,1);
+}
+.bq-say small { display: block; font-family: var(--body); font-size: 10px; font-weight: 800; letter-spacing: .15em; color: #5b6b78; }
+.bq-say::after { content: ""; position: absolute; right: -14px; top: 50%; border: 9px solid transparent; border-left-color: var(--ink); transform: translateY(-50%); }
+.bq-say.is-on { opacity: 1; transform: none; }
+
+.bq-choices {
+  position: absolute; z-index: 3; left: 4vw; bottom: max(8svh, calc(env(safe-area-inset-bottom) + 56px));
+  display: flex; gap: 14px; opacity: 0; transform: translateY(20px); pointer-events: none;
+  transition: opacity .3s ease, transform .35s cubic-bezier(.2,1.2,.4,1);
+}
+.scene-boutique.is-choosing .bq-choices { opacity: 1; transform: none; pointer-events: auto; }
+.scene-boutique.is-paid .bq-choices { opacity: 0; transition: none; }
+.bq-card {
+  width: clamp(150px, 14.5vw, 190px); min-height: 44px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: rgba(8,8,12,.9); border: 2px solid rgba(255,214,83,.5); border-radius: 14px; padding: 8px 10px 12px;
+  color: var(--white); text-align: center;
+  transition: transform .25s cubic-bezier(.2,1.4,.4,1), opacity .25s, border-color .15s, box-shadow .2s, filter .25s;
+}
+.bq-card img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; display: block; }
+.bq-card b { font-family: var(--display); font-size: 15px; letter-spacing: .06em; }
+.bq-price { font-size: 19px; font-weight: 900; color: var(--gold); }
+.bq-card em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); }
+.bq-card:not(:disabled):hover, .bq-card:focus-visible { border-color: var(--gold); transform: translateY(-4px); }
+.bq-card:disabled { cursor: default; }
+/* Selected: lift + scale + light ivory rim; the other two dim (gold alone would vanish against the gold interior). */
+.bq-card.is-picked { transform: translateY(-14px) scale(1.06); border-color: #fff4d6; box-shadow: 0 0 0 3px #fff4d6, 0 14px 30px rgba(0,0,0,.6); }
+.scene-boutique.is-chosen .bq-card:not(.is-picked) { opacity: .35; filter: grayscale(.5); }
+.bq-card.cue-pulse { animation: card-cue 1.2s ease-in-out infinite !important; }
+@keyframes card-cue { 50% { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(121,242,238,.6), 0 0 22px 6px rgba(121,242,238,.35); } }
+
+.bq-paid {
+  position: absolute; z-index: 5; left: 34vw; top: 30svh; transform: translate(-50%, 10px);
+  background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px; box-shadow: 0 0 0 4px var(--gold);
+  padding: 10px 18px; text-align: center; font-family: var(--display); font-size: 18px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+}
+.bq-paid small { display: block; font-family: var(--body); font-size: 11px; font-weight: 900; letter-spacing: .16em; color: #5b6b78; }
+.bq-paid.is-on { opacity: 1; transform: translate(-50%, 0); }
+/* Short gold/dark transaction wipe. */
+.wipe {
+  position: absolute; inset: 0; z-index: 10; pointer-events: none; transform: translateX(-105%);
+  background: linear-gradient(100deg, transparent 0, #0b0a0f 10%, #0b0a0f 42%, var(--gold) 49%, var(--gold-hi) 50%, var(--gold) 51%, #0b0a0f 58%, #0b0a0f 90%, transparent 100%);
+}
+
+/* ---------- Back home + postal check ---------- */
+.post-card {
+  grid-area: button; justify-self: start; align-self: start; margin-top: 40px; margin-left: 20px; width: min(340px, 100%);
+  background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 0 0 5px var(--cyan-dim);
+  padding: 14px 16px; opacity: 0; transform: translateY(18px); transition: opacity .3s, transform .35s cubic-bezier(.2,1.3,.4,1);
+}
+.scene-home.is-posting .post-card { opacity: 1; transform: none; }
+.post-head { margin: 0 0 8px; font-family: var(--display); font-size: 14px; letter-spacing: .08em; }
+.post-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; font-size: 13px; font-weight: 900; letter-spacing: .05em; }
+.post-list li { display: flex; align-items: center; gap: 8px; }
+.post-list li::before { content: ""; width: 16px; height: 16px; border: 2px solid #93a3b0; border-radius: 4px; display: grid; place-items: center; font-size: 12px; line-height: 1; }
+.post-list li.is-fail::before { content: "✕"; border-color: #d62c2c; color: #fff; background: #d62c2c; }
+.post-item { position: relative; display: flex; align-items: center; gap: 10px; border-top: 2px dashed #c3ccd4; padding-top: 10px; }
+.post-item img { width: 92px; height: 69px; object-fit: contain; flex-shrink: 0; }
+.post-stamp {
+  font-size: 12px; font-weight: 900; letter-spacing: .06em; color: #d62c2c; border: 3px solid #d62c2c; border-radius: 6px;
+  padding: 4px 8px; transform: rotate(-4deg) scale(1.4); opacity: 0; transition: opacity .2s, transform .3s cubic-bezier(.2,1.6,.4,1);
+}
+.scene-home.is-checked .post-stamp { opacity: 1; transform: rotate(-4deg); }
+.scene-home .thought p { font-size: clamp(20px, 2.6vw, 32px); }
+
+/* ---------- Part 1 ending: teaser → TO BE CONTINUED ---------- */
+.scene-teaser { background: radial-gradient(ellipse at 50% 40%, var(--navy-700), var(--navy-950) 70%); }
+.teaser, .the-end {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 64px 16px 40px; text-align: center; transition: opacity .5s ease;
+}
+/* visibility keeps the hidden layer out of the tab order and hit-testing, not just transparent. */
+.the-end { opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s .5s; }
+.scene-teaser.is-end .teaser { opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s .5s; }
+.scene-teaser.is-end .the-end { opacity: 1; visibility: visible; transition: opacity .5s ease; }
+.t-route { width: min(600px, 100%); height: auto; overflow: visible; }
+.t-path { fill: none; stroke: var(--cyan); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 10 10; opacity: .9; }
+.scene-teaser.is-active .t-path { animation: t-dash 1.4s linear infinite; }
+@keyframes t-dash { to { stroke-dashoffset: -40; } }
+.t-home { fill: var(--white); stroke: var(--ink); stroke-width: 3; }
+/* TFY canon: blue, neutral lettering — no gold. */
+.t-dest { fill: #3b7dff; stroke: var(--white); stroke-width: 3; }
+.t-dest-pulse { fill: none; stroke: #9cc0ff; stroke-width: 3; transform-box: fill-box; transform-origin: center; animation: waypoint 1.3s ease-out infinite; }
+.t-label { fill: var(--white); font-family: var(--display); font-size: 20px; letter-spacing: .06em; }
+.t-label.is-end { text-anchor: end; }
+.t-next { margin: 4px 0 0; font-family: var(--display); font-size: clamp(20px, 3.4vw, 32px); color: var(--white); }
+.t-loading { margin: 0; font-size: 12px; font-weight: 900; letter-spacing: .2em; color: var(--cyan); animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+.t-slots { display: flex; gap: 12px; }
+/* Each tile holds a deliberately indistinct, heavily blurred shape that pulses: "options are coming",
+   without depicting or naming any delivery method. Pure CSS; no artwork. */
+.t-slots span {
+  position: relative; overflow: hidden;
+  width: 64px; height: 64px; border-radius: 12px; border: 2px solid rgba(121,242,238,.35);
+  background: radial-gradient(circle at 50% 50%, rgba(121,242,238,.10), rgba(9,15,27,.6) 70%);
+  box-shadow: inset 0 0 14px rgba(121,242,238,.12);
+}
+.t-slots span::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 58%; height: 46%;
+  background: radial-gradient(ellipse at 45% 50%, rgba(201,251,248,.85), rgba(121,242,238,.45) 55%, transparent 75%);
+  border-radius: 58% 42% 50% 50% / 55% 60% 40% 45%; filter: blur(7px);
+  transform: translate(-50%, -50%) scale(.85); animation: t-ghost 2.2s ease-in-out infinite;
+}
+.t-slots span:nth-child(2)::before { width: 44%; height: 60%; border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%; animation-delay: .35s; }
+.t-slots span:nth-child(3)::before { width: 62%; height: 38%; border-radius: 50% 50% 42% 58% / 60% 40% 60% 40%; animation-delay: .7s; }
+.t-slots span::after {
+  content: ""; position: absolute; inset: -40% 0; background: linear-gradient(180deg, transparent 40%, rgba(121,242,238,.16) 50%, transparent 60%);
+  animation: t-scan 2.6s linear infinite;
+}
+@keyframes t-ghost { 0%, 100% { opacity: .35; transform: translate(-50%, -50%) scale(.82); } 50% { opacity: .95; transform: translate(-50%, -50%) scale(1.08); } }
+@keyframes t-scan { from { transform: translateY(-30%); } to { transform: translateY(30%); } }
+.end-kicker { margin: 0; font-size: 13px; font-weight: 900; letter-spacing: .24em; color: var(--cyan); }
+.the-end h2 { margin: 0; font-family: var(--display); font-size: clamp(36px, 7vw, 72px); line-height: 1; color: var(--gold); text-shadow: 0 5px 0 var(--gold-shadow), 0 0 40px rgba(255,214,83,.3); }
+.end-summary { margin: 4px 0 10px; font-weight: 900; letter-spacing: .08em; color: var(--white); }
+.end-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.end-actions .ghost { min-height: 44px; }
+
+/* ---------- Phone / portrait ---------- */
+@media (orientation: portrait), (max-width: 700px) {
+  .scene-route.is-active { padding: 56px 12px 64px; }
+  /* Taller window onto the map itself (panel header row excluded so no baked text is cut mid-word);
+     scene02.js pans it horizontally to follow the car. Inner map: y 135–565 of the sheet. */
+  .map-frame { width: 100%; aspect-ratio: 1.15; max-height: calc(100svh - 200px); border-radius: 14px; }
+  .map-pan { aspect-ratio: 1404 / 430; }
+  .map-plate, .map-overlay { top: -31.395%; height: 252.558%; }
+  .inv { margin-right: 6px; padding-right: 8px; font-size: 10px; }
+  .inv img { width: 28px; height: 22px; }
+  .inv-name { display: none; } /* phone: image + price only, so the BANANA.EXE title keeps its room */
+
+  .scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65) blur(2px); }
+  /* Assistant: head to mid-thigh above the card stack. */
+  .bq-assistant { --ah: min(91svh, 150vw); top: 50px; left: calc(62vw - var(--ah) * 1200 / 1700 * .5012); }
+  .bq-say { left: 12px; top: 96px; max-width: 150px; font-size: 17px; padding: 6px 12px; }
+  .bq-choices {
+    left: 12px; right: 12px; flex-direction: column; gap: 8px;
+    bottom: calc(max(14px, env(safe-area-inset-bottom)) + 44px);
+  }
+  .bq-card {
+    width: 100%; display: grid; grid-template-columns: 76px 1fr auto; grid-template-areas: "img name price" "img line price";
+    align-items: center; text-align: left; column-gap: 12px; row-gap: 0; padding: 6px 14px 6px 8px; min-height: 64px;
+    background: rgba(8,8,12,.97);
+  }
+  .bq-card img { grid-area: img; width: 76px; }
+  .bq-card b { grid-area: name; }
+  .bq-card em { grid-area: line; }
+  .bq-price { grid-area: price; }
+  .bq-card.is-picked { transform: translateX(6px) scale(1.03); }
+  .bq-card:not(:disabled):hover, .bq-card:focus-visible { transform: none; }
+  .bq-paid { left: 50%; top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 90px); font-size: 16px; }
+
+  .scene-home.is-posting .sprite { max-height: 30svh; }
+  .post-card { justify-self: center; margin: 0; width: min(340px, 100%); padding: 10px 14px; }
+  .post-list { grid-template-columns: 1fr 1fr; font-size: 11px; }
+  .t-slots span { width: 54px; height: 54px; }
+}
