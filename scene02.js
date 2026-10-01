@@ -116,6 +116,7 @@
   }
 
   function startRoute(direction) {
+    window.BX.setMusicTheme('main');
     dir = direction; driving = false;
     const back = dir === 'back';
     clearGuide();
@@ -195,6 +196,7 @@
   }
 
   function startBoutique() {
+    window.BX.setMusicTheme('boutique');
     show('s2-boutique', 'PART 1 // BANANA BOUTIQUE');
     clearGuide(); flash();
     resetBoutique();
