@@ -83,7 +83,7 @@
     lfo.connect(lg).connect(o1.frequency);
     o1.connect(lp); o2.connect(g2).connect(lp); lp.connect(out);
     road.connect(bp).connect(rg).connect(out);
-    out.connect(a.destination);
+    out.connect(window.BX.sfxOut());
     const srcs = [o1, o2, lfo, road];
     srcs.forEach((n) => n.start(t));
     engine = { a, out, o1, o2, srcs };
@@ -393,11 +393,29 @@
     window.BX.duckMusic(1100);
     p2.classList.add('is-analyzed');
     later(() => sfx.notice(), 520);
+    // Development flow: the analysis is followed by Attempt 01 (no extra click; Part 2 is not public yet).
+    later(startAttempt01, 4600);
   });
+
+  // ---------- PART 2 — ATTEMPT 01 (attempt01.js) ----------
+  // Costs £0: the budget is not touched. The selected banana is read through BX.getChoice().
+  const part2Results = [];
+  function startAttempt01() {
+    if (!choice) setChoice('ripe');
+    clearGuide();
+    window.BX.startAttempt01({
+      onComplete: (r) => {
+        part2Results.push(r);
+        dispatchEvent(new CustomEvent('bx:attempt-complete', { detail: r }));
+      },
+    });
+  }
+  window.BX.getPart2Results = () => part2Results.slice();
 
   // ---------- Replay / reset ----------
   function resetPart() {
     clearTimers(); clearGuide();
+    window.BX.resetAttempt01?.();
     driving = false; marker.classList.remove('is-driving'); engineStop(0.1);
     budget = STARTING_BUDGET; renderBudget();
     setChoice(null);
@@ -434,6 +452,16 @@
   if (jump === 'return') startRoute('back');
   if (jump === 'home') startHome();
   if (jump === 'teaser') startTeaser();
+  if (jump === 'attempt01') {
+    if (!choice) setChoice('ripe');
+    budget = STARTING_BUDGET - parseFloat(choice.price.replace('£',''));
+    renderBudget();
+    budgetEl.classList.add('is-unlocked');
+    inv.classList.add('is-on');
+    // attempt01.js loads after this file: start once every script has run.
+    if (document.readyState === 'loading') addEventListener('DOMContentLoaded', startAttempt01, { once: true });
+    else startAttempt01();
+  }
   if (jump === 'part2') {
     if (!choice) setChoice('ripe');
     budget = STARTING_BUDGET - parseFloat(choice.price.replace('£',''));

@@ -1,0 +1,99 @@
+/* BANANA.EXE — Part 2, Attempt 01: Long-Range Launch.
+   Existing tokens only. No keyframes or transitions here: every moving value is written each frame by the single
+   Attempt 01 loop in attempt01.js, so pausing freezes everything on its current frame. */
+
+.scene-attempt .a1-stage { position: absolute; inset: 0; z-index: 1; }
+
+/* ---------- Launcher rig (locked art + derived light layers) ---------- */
+.a1-rig {
+  --rw: min(900px, 68vw, calc((100svh - 120px) * 1.5));
+  position: absolute; left: 1vw; top: calc(50% + 24px - var(--rw) / 3);
+  width: var(--rw); aspect-ratio: 1536 / 1024; max-width: 100%;
+  transform-origin: 50% 95.215%; /* base / foot line, y ≈ 975 of 1024 */
+  opacity: 0; will-change: transform, opacity;
+}
+.a1-rig > img, .a1-coil { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.a1-glow { opacity: 0; will-change: opacity; }
+.a1-glow-a { filter: drop-shadow(0 0 6px var(--cyan)) drop-shadow(0 0 3px var(--cyan)); }
+.a1-glow-b { filter: drop-shadow(0 0 18px var(--cyan)) drop-shadow(0 0 9px var(--cyan)); }
+.a1-cyan { mix-blend-mode: screen; filter: blur(1px); opacity: 0; will-change: opacity; }
+.a1-coil {
+  overflow: hidden; mix-blend-mode: screen; opacity: 0;
+  -webkit-mask: url("assets/launcher-cyan-mask.webp") center / 100% 100% no-repeat;
+  mask: url("assets/launcher-cyan-mask.webp") center / 100% 100% no-repeat;
+}
+.a1-band {
+  position: absolute; left: 0; top: 0; width: 7.2%; height: 12.7%; opacity: 0; /* 14 % of the coil path */
+  background: linear-gradient(90deg, transparent, rgba(225, 255, 255, .95) 50%, transparent);
+  will-change: transform, opacity;
+}
+
+/* ---------- Route map (game-drawn, dark / gold) ---------- */
+.a1-map {
+  --ms: min(560px, calc(100svh - 150px));
+  position: absolute; width: var(--ms); height: var(--ms);
+  left: calc((100vw - 380px) / 2 - var(--ms) / 2); top: calc(50% + 24px - var(--ms) / 2);
+  opacity: 0; visibility: hidden;
+}
+.a1-map-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.a1-map-panel { fill: rgba(9, 15, 27, .94); stroke: var(--gold); stroke-opacity: .5; stroke-width: 3; }
+.a1-map-grid path { fill: none; stroke: rgba(121, 242, 238, .08); stroke-width: 2; }
+.a1-north path { fill: var(--gold); }
+.a1-north text { fill: var(--gold); font-family: var(--display); font-size: 30px; text-anchor: middle; }
+.a1-route { fill: none; stroke: var(--gold); stroke-width: 5; stroke-dasharray: 16 14; stroke-linecap: round; opacity: .85; }
+.a1-trail { fill: none; stroke: var(--gold); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: .45; }
+.a1-pt-nott { fill: var(--white); stroke: var(--ink); stroke-width: 4; }
+.a1-pt-leic { fill: var(--muted); stroke: var(--ink); stroke-width: 3; }
+.a1-pt-tfy { fill: #3b7dff; stroke: var(--white); stroke-width: 4; } /* TFY canon: blue, neutral lettering */
+.a1-tfy-pulse { fill: none; stroke: #9cc0ff; stroke-width: 4; opacity: 0; }
+.a1-leic-ring { fill: none; stroke: var(--gold); stroke-width: 5; opacity: 0; }
+.a1-label { fill: var(--white); font-family: var(--display); font-size: 34px; letter-spacing: 2px; }
+.a1-label-leic { fill: var(--muted); }
+.a1-label-leic.is-hit { fill: var(--gold); }
+.a1-proj {
+  position: absolute; left: 0; top: 0; width: 64px; height: auto; visibility: hidden;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .55)); will-change: transform; pointer-events: none;
+}
+
+/* ---------- UI (never shaken) ---------- */
+.a1-head, .a1-ctrl { position: absolute; z-index: 5; right: 32px; width: 330px; }
+.a1-head { top: 20%; }
+.a1-kicker { margin: 0 0 8px; font-family: var(--display); font-size: 20px; line-height: 1.15; letter-spacing: .04em; color: var(--gold); }
+.a1-target { margin: 0; font-size: 12px; font-weight: 900; letter-spacing: .16em; color: var(--cyan); }
+.a1-ctrl { top: calc(20% + 112px); display: grid; gap: 12px; }
+.a1-meter { display: grid; grid-template-columns: 1fr auto; align-items: baseline; row-gap: 6px; }
+.a1-meter-label { font-size: 11px; font-weight: 900; letter-spacing: .16em; color: var(--muted); }
+.a1-meter b { font-family: var(--display); font-size: 18px; color: var(--cyan); font-variant-numeric: tabular-nums; }
+.a1-meter-track { grid-column: 1 / -1; height: 12px; border-radius: 999px; overflow: hidden; background: var(--navy-700); border: 1px solid var(--navy-500); }
+.a1-meter-track i { display: block; height: 100%; background: var(--cyan); transform: scaleX(0); transform-origin: left center; box-shadow: 0 0 12px rgba(121, 242, 238, .6); }
+.a1-meter.is-flash .a1-meter-track, .a1-meter.is-flash .a1-meter-track i { background: var(--white); }
+.a1-meter.is-flash b { color: var(--white); }
+.a1-btn {
+  min-height: 60px; width: 100%; padding: 12px 16px; border: 3px solid var(--ink); border-radius: 14px;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold) 45%, var(--gold-deep)); color: var(--ink);
+  font-family: var(--display); font-size: 20px; letter-spacing: .05em;
+  box-shadow: 0 5px 0 var(--gold-shadow), 0 0 0 3px var(--white);
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.a1-btn[data-label="FIRE BANANA"] { box-shadow: 0 5px 0 var(--gold-shadow), 0 0 0 3px var(--white), 0 0 0 7px var(--cyan); }
+.a1-btn:disabled { visibility: hidden; }
+.a1-btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 6px; }
+.a1-hint { margin: 0; font-size: 12px; font-weight: 900; letter-spacing: .1em; color: var(--muted); text-align: center; }
+.a1-result { margin: 0; font-family: var(--display); font-size: 30px; letter-spacing: .05em; color: var(--gold); text-align: center; }
+.a1-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
+
+/* ---------- Flash (full screen, never shaken) ---------- */
+.a1-flash { position: absolute; inset: 0; z-index: 6; opacity: 0; pointer-events: none; }
+.a1-flash-radial { background: radial-gradient(circle at var(--fx, 85%) var(--fy, 20%), #fff 0, #fff 12%, rgba(121, 242, 238, .9) 26%, rgba(121, 242, 238, 0) 55%); }
+.a1-flash-white { background: #fff; }
+
+/* ---------- Phone / portrait: header above, launcher lower-middle, control below ---------- */
+@media (orientation: portrait), (max-width: 700px) {
+  .a1-rig { --rw: 100vw; left: 0; top: calc(48% - var(--rw) / 3); }
+  .a1-head { left: 16px; right: 16px; width: auto; top: 58px; text-align: center; }
+  .a1-kicker { font-size: 17px; }
+  .a1-ctrl { left: 16px; right: 16px; width: auto; top: auto; bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px)); }
+  .a1-map { --ms: min(calc(100vw - 32px), calc(100svh - 380px)); left: calc(50vw - var(--ms) / 2); top: 132px; }
+  .a1-proj { width: 44px; }
+  .a1-result { font-size: 24px; }
+}

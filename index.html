@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
   <link rel="stylesheet" href="style.css?v=20261001-1630" />
-  <link rel="stylesheet" href="scene02.css?v=20261001-1630" />
+  <link rel="stylesheet" href="scene02.css?v=20261001-1900" />
+  <link rel="stylesheet" href="attempt01.css?v=20261001-1900" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -260,9 +261,62 @@
     <div class="p2-analysis" id="p2-analysis" aria-live="polite">
       <article><small>DISTANCE</small><b>NOTTINGHAM → NORTHAMPTON</b><span>Not a local run.</span></article>
       <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
-      <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>Every attempt spends from the same pot.</span></article>
+      <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You still only have one budget.</span></article>
       <div class="p2-method-state"><small>DELIVERY METHOD</small><strong>UNDECIDED</strong></div>
     </div>
+  </section>
+
+  <!-- PART 2 — ATTEMPT 01: LONG-RANGE LAUNCH (attempt01.js). Development entry only: ?scene=part2 → SIZE UP THE PROBLEM.
+       Layers: stage (background, launcher rig, route map + projectile; receives shake) → UI → flash. -->
+  <section class="scene scene-attempt" id="p2-attempt01" aria-hidden="true">
+    <div class="a1-stage" id="a1-stage">
+      <div class="p2-grid-bg" aria-hidden="true"></div>
+      <div class="a1-rig" id="a1-rig" aria-hidden="true">
+        <!-- Glow: copies of the locked art with a cyan drop-shadow, sitting behind it (only the halo shows). -->
+        <img class="a1-glow a1-glow-a" id="a1-glow-a" src="assets/launcher.webp" width="1536" height="1024" alt="" />
+        <img class="a1-glow a1-glow-b" id="a1-glow-b" src="assets/launcher.webp" width="1536" height="1024" alt="" />
+        <img class="a1-launcher" src="assets/launcher.webp" width="1536" height="1024" alt="" />
+        <img class="a1-cyan" id="a1-cyan" src="assets/launcher-cyan-mask.webp" width="1536" height="1024" alt="" />
+        <div class="a1-coil" id="a1-coil"><i class="a1-band"></i><i class="a1-band"></i><i class="a1-band"></i><i class="a1-band"></i></div>
+      </div>
+      <div class="a1-map" id="a1-map">
+        <svg class="a1-map-svg" id="a1-map-svg" viewBox="0 0 1000 1000" role="img" aria-label="Route map: Nottingham, Leicester and TFY in Northampton">
+          <rect class="a1-map-panel" x="6" y="6" width="988" height="988" rx="34" />
+          <g class="a1-map-grid"><path d="M0 200H1000M0 400H1000M0 600H1000M0 800H1000M200 0V1000M400 0V1000M600 0V1000M800 0V1000" /></g>
+          <g class="a1-north" transform="translate(920 92)"><path d="M0 -40 L16 4 L0 -6 L-16 4 Z" /><text y="40">N</text></g>
+          <path class="a1-route a1-route-done" id="a1-route-done" />
+          <path class="a1-route a1-route-left" id="a1-route-left" />
+          <polyline class="a1-trail" id="a1-trail" points="" />
+          <circle class="a1-tfy-pulse" id="a1-tfy-pulse" cx="620" cy="860" r="16" />
+          <circle class="a1-pt a1-pt-tfy" cx="620" cy="860" r="14" />
+          <circle class="a1-leic-ring" id="a1-leic-ring" cx="430" cy="460" r="30" />
+          <circle class="a1-pt a1-pt-leic" cx="430" cy="460" r="11" />
+          <circle class="a1-pt a1-pt-nott" cx="400" cy="140" r="13" />
+          <text class="a1-label" x="428" y="152">NOTTINGHAM</text>
+          <text class="a1-label a1-label-leic" id="a1-leic-label" x="500" y="472">LEICESTER</text>
+          <text class="a1-label a1-label-tfy" x="620" y="934" text-anchor="middle">TFY // NORTHAMPTON</text>
+        </svg>
+        <img class="a1-proj" id="a1-proj" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="Your banana in flight" />
+      </div>
+    </div>
+
+    <div class="a1-head">
+      <p class="a1-kicker">ATTEMPT 01 // LONG-RANGE LAUNCH</p>
+      <p class="a1-target">TARGET: TFY // NORTHAMPTON</p>
+    </div>
+    <div class="a1-ctrl">
+      <div class="a1-meter" id="a1-meter" aria-hidden="true">
+        <span class="a1-meter-label">CHARGE</span><b id="a1-meter-pct">0%</b>
+        <div class="a1-meter-track"><i id="a1-meter-fill"></i></div>
+      </div>
+      <button class="a1-btn" id="a1-btn" type="button"><span class="a1-btn-cap">CHARGE LAUNCHER</span></button>
+      <p class="a1-hint" id="a1-hint">Press and hold</p>
+      <p class="a1-result" id="a1-result" hidden>RESULT: LEICESTER</p>
+      <p class="a1-live" id="a1-live" aria-live="polite" role="status"></p>
+    </div>
+
+    <div class="a1-flash a1-flash-radial" id="a1-flash-radial" aria-hidden="true"></div>
+    <div class="a1-flash a1-flash-white" id="a1-flash-white" aria-hidden="true"></div>
   </section>
 
   <!-- Player guidance: one compact instruction per interactive step (shared by all scenes). -->
@@ -272,7 +326,8 @@
   </div>
   <div class="flash" id="flash"></div>
 </main>
-<script src="game.js?v=20261001-1630"></script>
-<script src="scene02.js?v=20261001-1630"></script>
+<script src="game.js?v=20261001-1900"></script>
+<script src="scene02.js?v=20261001-1900"></script>
+<script src="attempt01.js?v=20261001-1900"></script>
 </body>
 </html>

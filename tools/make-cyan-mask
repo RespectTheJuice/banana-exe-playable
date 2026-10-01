@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""Derive Attempt 01 runtime images from the locked launcher artwork.
+
+    tools/make-cyan-mask            (run from the repository root; needs Pillow with WebP support)
+
+Reads   assets/launcher.png   (locked source; verified by SHA-256, never modified)
+Writes  assets/launcher.webp             transparent runtime copy, WebP quality 92, same 1536×1024
+        assets/launcher-cyan-mask.webp   original pixels only where B > 180, G > 150, R < 140;
+                                         everything else transparent; edges feathered ~1 px (lossless)
+"""
+import hashlib, pathlib, sys
+from PIL import Image, ImageChops, ImageFilter
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+SRC = ROOT / 'assets' / 'launcher.png'
+LOCKED_SHA256 = '087440f0c8ec6c617bfee3cedb24fc3f7ed557bce9c0765f613d1af5c2d2247e'
+
+digest = hashlib.sha256(SRC.read_bytes()).hexdigest()
+if digest != LOCKED_SHA256:
+    sys.exit(f'launcher.png does not match the locked SHA-256 ({digest}); refusing to derive assets.')
+
+src = Image.open(SRC)
+assert src.size == (1536, 1024) and src.mode == 'RGBA', (src.size, src.mode)
+
+# 1) Runtime copy: same pixels/dimensions, transparency preserved.
+src.save(ROOT / 'assets' / 'launcher.webp', 'WEBP', quality=92, alpha_quality=100, method=6)
+
+# 2) Cyan emission mask: keep the original pixel only where it reads as cyan light.
+r, g, b, a = src.split()
+sel = ImageChops.multiply(ImageChops.multiply(
+    b.point(lambda v: 255 if v > 180 else 0),
+    g.point(lambda v: 255 if v > 150 else 0)),
+    r.point(lambda v: 255 if v < 140 else 0))
+feathered = sel.filter(ImageFilter.GaussianBlur(1))          # ~1 px soft edge
+alpha = ImageChops.multiply(feathered, a)                     # never exceed the source alpha
+mask = Image.merge('RGBA', (r, g, b, alpha))
+mask.save(ROOT / 'assets' / 'launcher-cyan-mask.webp', 'WEBP', lossless=True, method=6)
+
+kept = sel.histogram()[255]
+print(f'launcher.png verified ({digest[:12]}…); wrote launcher.webp and launcher-cyan-mask.webp '
+      f'({kept} cyan source pixels, {kept / (1536 * 1024):.1%} of the canvas)')

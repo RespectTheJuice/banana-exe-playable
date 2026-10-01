@@ -246,7 +246,7 @@
 .end-actions .ghost { min-height: 44px; }
 
 /* ---------- Part 2 preview: delivery problem ---------- */
-.scene-part2 {
+.scene-part2, .scene-attempt {
   overflow:hidden;
   background:
     radial-gradient(circle at 72% 35%, rgba(121,242,238,.10), transparent 28%),

@@ -70,12 +70,24 @@
   }
 
   // ---------- Sound (WebAudio, synthesised — no audio files) ----------
-  let ctx = null, muted = false;
+  let ctx = null, muted = false, sfxGain = null;
   const audio = () => {
     if (!ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) ctx = new AC(); }
     if (ctx && ctx.state === 'suspended' && !paused) ctx.resume();
     return ctx;
   };
+  // Shared SFX bus (sits beside musicGain). Unity gain, so SFX loudness is unchanged; it is used for routing and
+  // SOUND OFF only. Pause stays with AudioContext.suspend()/resume() in setPaused().
+  const SFX_LEVEL = 1;
+  function sfxOut() {
+    const a = audio(); if (!a) return null;
+    if (!sfxGain) {
+      sfxGain = a.createGain();
+      sfxGain.gain.value = muted ? 0.0001 : SFX_LEVEL;
+      sfxGain.connect(a.destination);
+    }
+    return sfxGain;
+  }
   function tone(freq, start, dur, { type = 'square', vol = 0.12, slideTo = null } = {}) {
     const a = audio(); if (!a || muted) return;
     const t = a.currentTime + start;
@@ -83,7 +95,7 @@
     o.type = type; o.frequency.setValueAtTime(freq, t);
     if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
     g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+    o.connect(g).connect(sfxOut()); o.start(t); o.stop(t + dur + 0.02);
   }
   function noise(start, dur, vol = 0.2) {
     const a = audio(); if (!a || muted) return;
@@ -93,7 +105,7 @@
     const src = a.createBufferSource(), g = a.createGain(), f = a.createBiquadFilter();
     f.type = 'lowpass'; f.frequency.value = 900;
     src.buffer = buf; g.gain.value = vol;
-    src.connect(f).connect(g).connect(a.destination); src.start(a.currentTime + start);
+    src.connect(f).connect(g).connect(sfxOut()); src.start(a.currentTime + start);
   }
   const sfx = {
     click: () => tone(880, 0, 0.05, { vol: 0.06 }),
@@ -360,6 +372,14 @@
     }
   }
 
+  // SOUND OFF silences anything still sounding on the SFX bus (continuous hums included) within ~40 ms.
+  addEventListener('bx:mute', (e) => {
+    if (!sfxGain) return;
+    const t = ctx.currentTime;
+    sfxGain.gain.cancelScheduledValues(t);
+    sfxGain.gain.setTargetAtTime(e.detail.muted ? 0.0001 : SFX_LEVEL, t, 0.012);
+  });
+
   addEventListener('bx:mute', (e) => {
     if (!musicGain) return;
     const a = audio(); if (!a) return;
@@ -370,6 +390,10 @@
 
 
   $('#pause').addEventListener('click', () => setPaused(!paused));
+  // A hidden tab or an unfocused window pauses through the same system. Returning never auto-resumes:
+  // the player presses RESUME.
+  document.addEventListener('visibilitychange', () => { if (document.hidden) setPaused(true); });
+  addEventListener('blur', () => setPaused(true));
 
   $('#mute').addEventListener('click', (e) => {
     muted = !muted;
@@ -624,7 +648,7 @@
 
   // Shared with scene02.js
   window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, guide, clearGuide, pressVisual, audio,
-                isMuted: () => muted, isPaused: () => paused, setMusicTheme, startMusic, duckMusic, teaserSting, endSting, touchUI, resetScene01, startDesk };
+                isMuted: () => muted, isPaused: () => paused, sfxOut, setMusicTheme, startMusic, duckMusic, teaserSting, endSting, touchUI, resetScene01, startDesk };
 
   // Debug/test hooks: ?scene=desk|reveal|react jumps straight to a beat; ?debug=1 shows TEMP/PROVISIONAL art tags.
   const params = new URLSearchParams(location.search);
