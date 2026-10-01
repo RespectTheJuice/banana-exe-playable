@@ -201,7 +201,7 @@
     clearGuide(); flash();
     resetBoutique();
     sayText.textContent = 'Here are our premium bananas. Which one would you like?';
-    later(() => { say.classList.add('is-on'); s2sfx.selected(); }, 350);
+    later(() => { window.BX.duckMusic(2050); say.classList.add('is-on'); s2sfx.selected(); }, 350);
     later(() => {
       say.classList.remove('is-on');
       boutique.classList.add('is-showing');
@@ -212,6 +212,7 @@
       reaction.style.left = `${Math.round(r.left + r.width / 2)}px`;
       reaction.style.top = `${Math.max(64, Math.round(r.top - 66))}px`;
       reaction.classList.add('is-on');
+      window.BX.duckMusic(1750);
       sfx.pop();
     }, 2750);
     later(() => {
@@ -235,7 +236,7 @@
     card.classList.add('is-picked');
     boutique.classList.add('is-chosen');
     s2sfx.pick();
-    later(() => { sayText.textContent = 'Good choice.'; say.classList.add('is-on'); s2sfx.selected(); }, 350);
+    later(() => { window.BX.duckMusic(1350); sayText.textContent = 'Good choice.'; say.classList.add('is-on'); s2sfx.selected(); }, 350);
     // Transaction cut: the banana never travels across the scene — it is in the inventory on the far side of the wipe.
     later(() => {
       const anim = wipe.animate([
@@ -264,6 +265,7 @@
   };
 
   function typeThought(line, speed, done) {
+    window.BX.duckMusic(Math.max(1200, line.length * speed + 650));
     homeText.textContent = '';
     let i = 0;
     const next = () => {
@@ -300,6 +302,7 @@
   // ---------- PART 1 ENDING: automatic teaser → TO BE CONTINUED ----------
   const teaserScene = $('#s2-teaser');
   function startTeaser() {
+    window.BX.teaserSting();
     show('s2-teaser', 'PART 1 // NEXT PROBLEM');
     clearGuide(); flash();
     teaserScene.classList.remove('is-end');
@@ -307,6 +310,7 @@
     later(endPart, 3600);
   }
   function endPart() {
+    window.BX.endSting();
     teaserScene.classList.add('is-end');
     $('#end-summary').textContent = choice ? `BANANA #1: 1 × ${choice.name} · ${choice.price}` : '';
     sfx.notice();
