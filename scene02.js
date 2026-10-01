@@ -149,7 +149,7 @@
     clearGuide(); flash();
     resetBoutique();
     sayText.textContent = 'Here are our premium bananas. Which one would you like?';
-    later(() => { sayText.textContent = 'Good choice.'; say.classList.add('is-on'); s2sfx.selected(); }, 350);
+    later(() => { say.classList.add('is-on'); s2sfx.selected(); }, 350);
     later(() => {
       say.classList.remove('is-on');
       boutique.classList.add('is-showing');
@@ -183,7 +183,7 @@
     card.classList.add('is-picked');
     boutique.classList.add('is-chosen');
     s2sfx.pick();
-    later(() => { say.classList.add('is-on'); s2sfx.selected(); }, 350);
+    later(() => { sayText.textContent = 'Good choice.'; say.classList.add('is-on'); s2sfx.selected(); }, 350);
     // Transaction cut: the banana never travels across the scene — it is in the inventory on the far side of the wipe.
     later(() => {
       const anim = wipe.animate([
