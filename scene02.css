@@ -59,7 +59,7 @@
 /* ---------- Beat 7: Banana Boutique ---------- */
 .scene-boutique { background: #07060a; overflow: hidden; }
 .bq-interior { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: filter .5s ease; }
-.scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65); }
+.scene-boutique.is-showing .bq-interior, .scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65); }
 /* Locked assistant idle (1200×1700, foot anchor 0.5012 / 0.9518): right of centre on desktop, standing on the floor. */
 .bq-assistant {
   --ah: 90svh;
@@ -77,12 +77,26 @@
 .bq-say::after { content: ""; position: absolute; right: -14px; top: 50%; border: 9px solid transparent; border-left-color: var(--ink); transform: translateY(-50%); }
 .bq-say.is-on { opacity: 1; transform: none; }
 
+/* Valenté's price reaction is attached to the product he is reacting to, not the bottom edge. */
+.bq-reaction {
+  position: fixed; z-index: 7; display: flex; align-items: center; gap: 10px;
+  width: max-content; max-width: min(300px, calc(100vw - 28px));
+  background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px;
+  box-shadow: 0 0 0 4px var(--gold); padding: 8px 14px; font-weight: 900; font-size: 15px;
+  opacity: 0; pointer-events: none; transform: translate(-50%, 8px);
+  transition: opacity .2s, transform .2s;
+}
+.bq-reaction.is-on { opacity: 1; transform: translate(-50%, 0); }
+.bq-reaction small { display:block; font-size:10px; letter-spacing:.15em; color:#5b6b78; }
+
+
 .bq-choices {
   position: absolute; z-index: 3; left: 4vw; bottom: max(8svh, calc(env(safe-area-inset-bottom) + 56px));
   display: flex; gap: 14px; opacity: 0; transform: translateY(20px); pointer-events: none;
   transition: opacity .3s ease, transform .35s cubic-bezier(.2,1.2,.4,1);
 }
-.scene-boutique.is-choosing .bq-choices { opacity: 1; transform: none; pointer-events: auto; }
+.scene-boutique.is-showing .bq-choices, .scene-boutique.is-choosing .bq-choices { opacity: 1; transform: none; }
+.scene-boutique.is-choosing .bq-choices { pointer-events: auto; }
 .scene-boutique.is-paid .bq-choices { opacity: 0; transition: none; }
 .bq-card {
   width: clamp(150px, 14.5vw, 190px); min-height: 44px; display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -92,7 +106,8 @@
 }
 .bq-card img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; display: block; }
 .bq-card b { font-family: var(--display); font-size: 15px; letter-spacing: .06em; }
-.bq-price { font-size: 19px; font-weight: 900; color: var(--gold); }
+.bq-price { display: inline-block; font-size: 19px; font-weight: 900; color: var(--gold); transition: transform .25s, text-shadow .25s, color .25s; }
+.bq-card.is-noticed .bq-price { transform: scale(1.18); color: var(--gold-hi); text-shadow: 0 0 12px rgba(255,214,83,.65); }
 .bq-card em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); }
 .bq-card:not(:disabled):hover, .bq-card:focus-visible { border-color: var(--gold); transform: translateY(-4px); }
 .bq-card:disabled { cursor: default; }
@@ -201,10 +216,10 @@
   .inv img { width: 28px; height: 22px; }
   .inv-name { display: none; } /* phone: image + price only, so the BANANA.EXE title keeps its room */
 
-  .scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65) blur(2px); }
+  .scene-boutique.is-showing .bq-interior, .scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65) blur(2px); }
   /* Assistant: head to mid-thigh above the card stack. */
   .bq-assistant { --ah: min(91svh, 150vw); top: 50px; left: calc(62vw - var(--ah) * 1200 / 1700 * .5012); }
-  .bq-say { left: 12px; top: 96px; max-width: 150px; font-size: 17px; padding: 6px 12px; }
+  .bq-say { left: 12px; top: 78px; max-width: 210px; font-size: 15px; line-height: 1.15; padding: 7px 12px; }
   .bq-choices {
     left: 12px; right: 12px; flex-direction: column; gap: 8px;
     bottom: calc(max(14px, env(safe-area-inset-bottom)) + 44px);
