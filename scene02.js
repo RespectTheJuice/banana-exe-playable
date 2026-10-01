@@ -199,15 +199,34 @@
   // ---------- BEAT 7: BANANA BOUTIQUE (required action 3) ----------
   const boutique = $('#s2-boutique'), cards = [...document.querySelectorAll('.bq-card')];
   const say = $('#bq-say'), sayText = $('#bq-say-text'), reaction = $('#bq-reaction'), paid = $('#bq-paid'), wipe = $('#wipe');
+  const budgetFocus = $('#bq-budget-focus'), budgetMain = $('#bq-budget-main'), budgetProjection = $('#bq-budget-projection');
   const ripeCard = cards.find((c) => c.dataset.pick === 'ripe');
   const PICK_CLICK = 'Click a banana to choose it', PICK_TAP = 'Tap a banana to choose it';
   let choosing = false;
+
+  function money(n) {
+    return `${n < 0 ? '−' : ''}£${Math.abs(n).toFixed(2)}`;
+  }
+  function previewBudget(card = null) {
+    budgetMain.textContent = money(budget);
+    if (!card) {
+      budgetProjection.textContent = 'CHOOSE YOUR BANANA';
+      budgetFocus.classList.remove('is-preview', 'is-spent');
+      return;
+    }
+    const item = BANANAS[card.dataset.pick];
+    const cost = parseFloat(item.price.replace('£',''));
+    budgetProjection.textContent = `${money(budget)} → ${money(budget - cost)}`;
+    budgetFocus.classList.add('is-preview');
+    budgetFocus.classList.remove('is-spent');
+  }
 
   function resetBoutique() {
     choosing = false;
     boutique.classList.remove('is-showing', 'is-choosing', 'is-chosen', 'is-paid');
     cards.forEach((c) => { c.disabled = true; c.classList.remove('is-picked', 'is-noticed'); });
     say.classList.remove('is-on'); reaction.classList.remove('is-on'); paid.classList.remove('is-on'); paid.textContent = '';
+    budgetFocus.classList.remove('is-on', 'is-preview', 'is-spent'); previewBudget();
     wipe.getAnimations().forEach((a) => a.cancel());
   }
 
@@ -235,19 +254,33 @@
       reaction.classList.remove('is-on');
       ripeCard.classList.remove('is-noticed');
       boutique.classList.add('is-choosing');
+      budgetFocus.classList.add('is-on'); previewBudget();
       cards.forEach((c) => { c.disabled = false; });
       choosing = true;
       guide(cards, PICK_CLICK, PICK_TAP);
     }, 4700);
   }
 
-  cards.forEach((card) => card.addEventListener('click', () => pick(card)));
+  cards.forEach((card) => {
+    card.addEventListener('click', () => pick(card));
+    card.addEventListener('pointerenter', () => { if (choosing) previewBudget(card); });
+    card.addEventListener('pointerleave', () => { if (choosing) previewBudget(); });
+    card.addEventListener('focus', () => { if (choosing) previewBudget(card); });
+    card.addEventListener('blur', () => { if (choosing) previewBudget(); });
+  });
 
   function pick(card) {
     if (!choosing) return;
     choosing = false;
     setChoice(card.dataset.pick);
-    spend(parseFloat(choice.price.replace('£','')));
+    const before = budget;
+    const cost = parseFloat(choice.price.replace('£',''));
+    spend(cost);
+    budgetMain.textContent = `−£${cost.toFixed(2)}`;
+    budgetProjection.textContent = `${money(before)} → ${money(budget)}`;
+    budgetFocus.classList.add('is-on', 'is-spent');
+    budgetEl.classList.add('is-spending');
+    later(() => budgetEl.classList.remove('is-spending'), 900);
     clearGuide();
     cards.forEach((c) => { c.disabled = true; });
     card.classList.add('is-picked');
@@ -265,7 +298,7 @@
         boutique.classList.add('is-paid');
         say.classList.remove('is-on');
         inv.classList.add('is-on'); inv.classList.remove('is-pop'); void inv.offsetWidth; inv.classList.add('is-pop');
-        paid.innerHTML = `<small>PURCHASED</small>1 × ${choice.name} BANANA · ${choice.price}`;
+        paid.innerHTML = `<small>PURCHASED</small>1 × ${choice.name} BANANA · ${choice.price}<br><span>BUDGET: ${money(budget)}</span>`;
         paid.classList.add('is-on');
         s2sfx.kaching();
       }, 480);
