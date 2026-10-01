@@ -52,13 +52,13 @@
       if (ctx && ctx.state === 'running') ctx.suspend();
       document.body.classList.add('is-paused');
       overlay?.setAttribute('aria-hidden', 'false');
-      btn.textContent = 'RESUME';
+      btn.textContent = '▶ RESUME';
       btn.setAttribute('aria-pressed', 'true');
       btn.setAttribute('aria-label', 'Resume game');
     } else {
       document.body.classList.remove('is-paused');
       overlay?.setAttribute('aria-hidden', 'true');
-      btn.textContent = 'PAUSE';
+      btn.textContent = '⏸ PAUSE';
       btn.setAttribute('aria-pressed', 'false');
       btn.setAttribute('aria-label', 'Pause game');
       timers.forEach(armTask);
@@ -112,6 +112,113 @@
     route: () => [392, 494, 587].forEach((f, i) => tone(f, i * 0.12, 0.1, { type: 'triangle', vol: 0.08 })),
   };
 
+  // ---------- Music (original WebAudio score; no external audio files) ----------
+  // MAIN = playful retro-tech mission pulse.
+  // BOUTIQUE = slower, warmer premium lounge variation.
+  let musicTheme = 'main', musicStep = 0, musicTimer = null, musicGain = null;
+
+  const MUSIC = {
+    main: {
+      ms: 250,
+      bass: [110, 110, 146.83, 110, 164.81, 146.83, 123.47, 146.83],
+      lead: [440, 0, 523.25, 0, 659.25, 587.33, 523.25, 0],
+      chord: [
+        [220, 277.18, 329.63], [220, 277.18, 329.63],
+        [246.94, 293.66, 369.99], [246.94, 293.66, 369.99],
+        [261.63, 329.63, 392], [246.94, 293.66, 369.99],
+        [220, 261.63, 329.63], [246.94, 293.66, 369.99]
+      ]
+    },
+    boutique: {
+      ms: 330,
+      bass: [82.41, 0, 98, 0, 110, 0, 98, 0],
+      lead: [329.63, 392, 440, 392, 493.88, 440, 392, 329.63],
+      chord: [
+        [164.81, 196, 246.94], [164.81, 196, 246.94],
+        [196, 246.94, 293.66], [196, 246.94, 293.66],
+        [220, 261.63, 329.63], [220, 261.63, 329.63],
+        [196, 246.94, 293.66], [164.81, 196, 246.94]
+      ]
+    }
+  };
+
+  function ensureMusicGain() {
+    const a = audio(); if (!a) return null;
+    if (!musicGain) {
+      musicGain = a.createGain();
+      musicGain.gain.value = muted ? 0.0001 : 0.17;
+      musicGain.connect(a.destination);
+    }
+    return musicGain;
+  }
+
+  function musicNote(freq, dur = 0.2, vol = 0.04, type = 'triangle', delay = 0) {
+    if (!freq || muted || paused) return;
+    const a = audio(), out = ensureMusicGain(); if (!a || !out) return;
+    const t = a.currentTime + delay;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(out); o.start(t); o.stop(t + dur + 0.03);
+  }
+
+  function playMusicStep() {
+    if (!musicTimer) return;
+    if (!paused && !muted) {
+      const score = MUSIC[musicTheme] || MUSIC.main;
+      const i = musicStep % score.bass.length;
+      musicNote(score.bass[i], score.ms / 1000 * 0.82, musicTheme === 'boutique' ? 0.025 : 0.03, 'triangle');
+      if (score.lead[i]) musicNote(score.lead[i], score.ms / 1000 * 0.66, musicTheme === 'boutique' ? 0.018 : 0.022, 'square', 0.02);
+      if (i % 2 === 0) {
+        score.chord[i].forEach((f, n) => musicNote(f, score.ms / 1000 * 1.6, 0.008, n === 0 ? 'sine' : 'triangle', 0.04));
+      }
+      musicStep++;
+    }
+    const score = MUSIC[musicTheme] || MUSIC.main;
+    musicTimer = setTimeout(playMusicStep, score.ms);
+  }
+
+  function startMusic(theme = 'main') {
+    musicTheme = MUSIC[theme] ? theme : 'main';
+    musicStep = 0;
+    ensureMusicGain();
+    if (musicTimer) clearTimeout(musicTimer);
+    musicTimer = setTimeout(playMusicStep, 60);
+  }
+
+  function setMusicTheme(theme) {
+    if (!MUSIC[theme] || musicTheme === theme) return;
+    const a = audio(), out = ensureMusicGain();
+    if (a && out) {
+      const t = a.currentTime;
+      out.gain.cancelScheduledValues(t);
+      out.gain.setValueAtTime(Math.max(out.gain.value, 0.0001), t);
+      out.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      setTimeout(() => {
+        musicTheme = theme; musicStep = 0;
+        if (!muted && !paused) {
+          const now = a.currentTime;
+          out.gain.cancelScheduledValues(now);
+          out.gain.setValueAtTime(0.0001, now);
+          out.gain.exponentialRampToValueAtTime(0.17, now + 0.35);
+        }
+      }, 200);
+    } else {
+      musicTheme = theme; musicStep = 0;
+    }
+  }
+
+  addEventListener('bx:mute', (e) => {
+    if (!musicGain) return;
+    const a = audio(); if (!a) return;
+    const t = a.currentTime;
+    musicGain.gain.cancelScheduledValues(t);
+    musicGain.gain.setTargetAtTime(e.detail.muted ? 0.0001 : 0.17, t, 0.04);
+  });
+
+
   $('#pause').addEventListener('click', () => setPaused(!paused));
 
   $('#mute').addEventListener('click', (e) => {
@@ -163,6 +270,7 @@
   $('#start').addEventListener('click', () => {
     clearGuide();
     audio(); sfx.arcade();
+    startMusic('main');
     pressVisual($('#start'));
     later(startDesk, 220);
   });
@@ -360,7 +468,7 @@
 
   // Shared with scene02.js
   window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, guide, clearGuide, pressVisual, audio,
-                isMuted: () => muted, isPaused: () => paused, touchUI, resetScene01, startDesk };
+                isMuted: () => muted, isPaused: () => paused, setMusicTheme, startMusic, touchUI, resetScene01, startDesk };
 
   // Debug/test hooks: ?scene=desk|reveal|react jumps straight to a beat; ?debug=1 shows TEMP/PROVISIONAL art tags.
   const params = new URLSearchParams(location.search);
