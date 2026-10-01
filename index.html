@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="scene02.css" />
+  <link rel="stylesheet" href="style.css?v=20261001-1447" />
+  <link rel="stylesheet" href="scene02.css?v=20261001-1447" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -14,6 +14,7 @@
   <header class="hud">
     <div class="hud-tag"><b>BANANA<span>.</span>EXE</b> <em id="hud-scene">PART 1</em></div>
     <div class="inv" id="inv" role="status" aria-label="Inventory"><img id="inv-img" src="assets/banana_ripe_v1.png" alt="" /><span id="inv-text"></span></div>
+    <button id="pause" class="hud-btn" aria-pressed="false" aria-label="Pause game">PAUSE</button>
     <button id="mute" class="hud-btn" aria-pressed="false" aria-label="Mute sound">SOUND: ON</button>
   </header>
 
@@ -218,9 +219,12 @@
 
   <!-- Player guidance: one compact instruction per interactive step (shared by all scenes). -->
   <div class="objective" id="objective" role="status" aria-live="polite"></div>
+  <div class="pause-overlay" id="pause-overlay" aria-hidden="true">
+    <div class="pause-card"><b>PAUSED</b><span>Take your time.</span></div>
+  </div>
   <div class="flash" id="flash"></div>
 </main>
-<script src="game.js"></script>
-<script src="scene02.js"></script>
+<script src="game.js?v=20261001-1447"></script>
+<script src="scene02.js?v=20261001-1447"></script>
 </body>
 </html>
