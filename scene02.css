@@ -141,8 +141,17 @@
 .post-head { margin: 0 0 8px; font-family: var(--display); font-size: 14px; letter-spacing: .08em; }
 .post-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; font-size: 13px; font-weight: 900; letter-spacing: .05em; }
 .post-list li { display: flex; align-items: center; gap: 8px; }
-.post-list li::before { content: ""; width: 16px; height: 16px; border: 2px solid #93a3b0; border-radius: 4px; display: grid; place-items: center; font-size: 12px; line-height: 1; }
-.post-list li.is-fail::before { content: "✕"; border-color: #d62c2c; color: #fff; background: #d62c2c; }
+.post-list li { opacity: .42; transform: translateX(-5px); transition: opacity .2s, transform .25s, color .2s; }
+.post-list li::before {
+  content: "→"; width: 18px; height: 18px; border: 2px solid #93a3b0; border-radius: 50%;
+  display: grid; place-items: center; font-size: 11px; line-height: 1; color: #6d7c89;
+  transition: border-color .2s, color .2s, background .2s, transform .2s;
+}
+.post-list li.is-revealed { opacity: 1; transform: none; color: var(--ink); }
+.post-list li.is-revealed::before {
+  border-color: var(--gold); color: var(--ink); background: var(--gold);
+  transform: scale(1.08);
+}
 .post-item { position: relative; display: flex; align-items: center; gap: 10px; border-top: 2px dashed #c3ccd4; padding-top: 10px; }
 .post-item img { width: 92px; height: 69px; object-fit: contain; flex-shrink: 0; }
 .post-stamp {
@@ -150,6 +159,8 @@
   padding: 4px 8px; transform: rotate(-4deg) scale(1.4); opacity: 0; transition: opacity .2s, transform .3s cubic-bezier(.2,1.6,.4,1);
 }
 .scene-home.is-checked .post-stamp { opacity: 1; transform: rotate(-4deg); }
+.scene-home.is-bruising .post-card { opacity: .48; transform: scale(.98); filter: saturate(.7); }
+.scene-home.is-bruising .thought { z-index: 3; }
 .scene-home .thought p { font-size: clamp(20px, 2.6vw, 32px); }
 
 /* ---------- Part 1 ending: teaser → TO BE CONTINUED ---------- */
