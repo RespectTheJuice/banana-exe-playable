@@ -24,8 +24,24 @@
     ripe: { name: 'RIPE', price: '£5.00', line: 'The safe bet', img: PROPS + 'banana_ripe_v1.png' },
     extra: { name: 'EXTRA RIPE', price: '£3.00', line: 'Living dangerously', img: PROPS + 'banana_extra_ripe_v1.png' },
   };
+  const STARTING_BUDGET = 50;
+  let budget = STARTING_BUDGET;
   let choice = null;
-  const inv = $('#inv');
+  const inv = $('#inv'), budgetEl = $('#budget'), budgetValue = $('#budget-value');
+
+  function renderBudget() {
+    budgetValue.textContent = `${budget < 0 ? '−' : ''}£${Math.abs(budget).toFixed(2)}`;
+    budgetEl.classList.toggle('is-debt', budget < 0);
+  }
+
+  // Future delivery purchases are allowed to exceed the remaining budget.
+  // This is intentionally a game mechanic: same-day delivery can push the player into debt.
+  function spend(amount) {
+    budget -= Number(amount) || 0;
+    renderBudget();
+  }
+
+  renderBudget();
   function setChoice(key) {
     choice = key ? { key, ...BANANAS[key] } : null;
     if (key) stage.dataset.pick = key; else delete stage.dataset.pick;
@@ -231,6 +247,7 @@
     if (!choosing) return;
     choosing = false;
     setChoice(card.dataset.pick);
+    spend(parseFloat(choice.price.replace('£','')));
     clearGuide();
     cards.forEach((c) => { c.disabled = true; });
     card.classList.add('is-picked');
@@ -320,6 +337,7 @@
   function resetPart() {
     clearTimers(); clearGuide();
     driving = false; marker.classList.remove('is-driving'); engineStop(0.1);
+    budget = STARTING_BUDGET; renderBudget();
     setChoice(null);
     resetBoutique();
     home.classList.remove('is-posting', 'is-checked', 'is-bruising');
@@ -328,6 +346,8 @@
   }
 
   // YOU GOT IT (game.js) hands straight over to the outbound route.
+  window.BX.spendBudget = spend;
+  window.BX.getBudget = () => budget;
   window.BX.startScene02 = () => { audio(); resetPart(); startRoute('out'); };
   $('#replay-part').addEventListener('click', () => { sfx.click(); resetPart(); window.BX.resetScene01(); window.BX.startDesk(); });
   $('#replay-all').addEventListener('click', () => {
