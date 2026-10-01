@@ -139,13 +139,16 @@
     if (driving) return;
     driving = true;
     const L = trail.getTotalLength(), DURATION = 3600;
-    let t0 = null, prev = trail.getPointAtLength(0);
+    let lastTs = null, elapsed = 0, prev = trail.getPointAtLength(0);
     marker.classList.add('is-driving');
     engineStart();
     const frameFn = (ts) => {
       if (!driving) return;
-      if (t0 === null) t0 = ts;
-      const raw = Math.min(1, (ts - t0) / DURATION);
+      if (lastTs === null) lastTs = ts;
+      const dt = ts - lastTs; lastTs = ts;
+      if (window.BX.isPaused()) { requestAnimationFrame(frameFn); return; }
+      elapsed += Math.min(dt, 100);
+      const raw = Math.min(1, elapsed / DURATION);
       const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2; // easeInOutQuad
       const p = trail.getPointAtLength(L * t);
       faceCar(p.x - prev.x); prev = p;
