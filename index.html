@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
-  <link rel="stylesheet" href="style.css?v=20261001-1600" />
-  <link rel="stylesheet" href="scene02.css?v=20261001-1600" />
+  <link rel="stylesheet" href="style.css?v=20261001-1630" />
+  <link rel="stylesheet" href="scene02.css?v=20261001-1630" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -213,6 +213,7 @@
       <div class="t-slots" aria-hidden="true"><span></span><span></span><span></span></div>
     </div>
     <div class="the-end" id="the-end">
+      <img class="end-character" src="assets/skeptical_locked.png" width="414" height="767" alt="Valenté with the Part 1 mission complete" />
       <p class="end-kicker">BANANA.EXE // PART 1</p>
       <h2>TO BE CONTINUED</h2>
       <p class="end-summary" id="end-summary"></p>
@@ -223,6 +224,47 @@
     </div>
   </section>
 
+  <!-- PART 2 PREVIEW: not linked from the public Part 1 ending yet. Open with ?scene=part2&pick=ripe. -->
+  <section class="scene scene-part2" id="p2-intro" aria-hidden="true">
+    <div class="p2-grid-bg" aria-hidden="true"></div>
+    <img class="p2-character" src="assets/skeptical_locked.png" width="414" height="767"
+         alt="Valenté considering the delivery problem" />
+
+    <div class="p2-copy">
+      <p class="p2-kicker">BANANA.EXE // PART 2</p>
+      <h2>DELIVERY PROBLEM</h2>
+      <p class="p2-objective">GET THE BANANA TO TFY.</p>
+
+      <div class="p2-state" aria-label="Part 2 mission state">
+        <div><span>PAYLOAD</span><b id="p2-payload">1 × RIPE BANANA</b></div>
+        <div><span>BUDGET LEFT</span><b id="p2-budget">£45.00</b></div>
+        <div><span>DESTINATION</span><b>TFY · NORTHAMPTON</b></div>
+      </div>
+
+      <button class="arcade arcade-sm p2-analyze" id="p2-analyze">
+        <span class="cap">SIZE UP THE PROBLEM</span>
+      </button>
+    </div>
+
+    <div class="p2-route-card">
+      <div class="p2-route-head"><span>NOTTINGHAM</span><span>TFY · NORTHAMPTON</span></div>
+      <svg viewBox="0 0 700 190" role="img" aria-label="Illustrative delivery route from Nottingham to TFY in Northampton">
+        <path class="p2-route-halo" d="M58 115 C180 55 255 150 365 105 S545 82 642 116" />
+        <path class="p2-route-line" d="M58 115 C180 55 255 150 365 105 S545 82 642 116" />
+        <circle class="p2-home" cx="58" cy="115" r="10" />
+        <circle class="p2-tfy-pulse" cx="642" cy="116" r="17" />
+        <circle class="p2-tfy" cx="642" cy="116" r="11" />
+      </svg>
+    </div>
+
+    <div class="p2-analysis" id="p2-analysis" aria-live="polite">
+      <article><small>DISTANCE</small><b>NOTTINGHAM → NORTHAMPTON</b><span>Not a local run.</span></article>
+      <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
+      <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>Every attempt spends from the same pot.</span></article>
+      <div class="p2-method-state"><small>DELIVERY METHOD</small><strong>UNDECIDED</strong></div>
+    </div>
+  </section>
+
   <!-- Player guidance: one compact instruction per interactive step (shared by all scenes). -->
   <div class="objective" id="objective" role="status" aria-live="polite"></div>
   <div class="pause-overlay" id="pause-overlay" aria-hidden="true">
@@ -230,7 +272,7 @@
   </div>
   <div class="flash" id="flash"></div>
 </main>
-<script src="game.js?v=20261001-1600"></script>
-<script src="scene02.js?v=20261001-1600"></script>
+<script src="game.js?v=20261001-1630"></script>
+<script src="scene02.js?v=20261001-1630"></script>
 </body>
 </html>
