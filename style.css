@@ -49,10 +49,15 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 .hud-tag em { font-style: normal; font-family: var(--body); font-weight: 600; color: var(--muted); margin-left: 8px; font-size: 11px; }
 .hud-status { display:flex; align-items:center; gap:7px; margin-left:auto; margin-right:8px; min-width:0; }
 .budget {
-  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  display:none; align-items:center; gap:6px; flex-shrink:0;
   background:rgba(9,15,27,.78); border:1px solid var(--cyan-dim); border-radius:999px;
   padding:5px 9px; color:var(--white); font-size:11px; line-height:1;
 }
+.budget.is-unlocked { display:flex; }
+.budget.is-intro { animation: budget-intro .75s cubic-bezier(.2,1.5,.4,1) both; }
+.budget.is-spending { animation: budget-spend .7s cubic-bezier(.2,1.5,.4,1); }
+@keyframes budget-intro { 0% { opacity:0; transform:scale(.55); } 60% { opacity:1; transform:scale(1.18); } 100% { transform:none; } }
+@keyframes budget-spend { 0%,100% { transform:none; } 35% { transform:scale(1.25); filter:brightness(1.5); } }
 .budget-label { font-size:9px; font-weight:900; letter-spacing:.12em; color:var(--muted); }
 .budget b { font-family:var(--display); font-size:12px; color:var(--gold); }
 .budget.is-debt { border-color:#ff5c5c; box-shadow:0 0 12px rgba(255,92,92,.28); }
