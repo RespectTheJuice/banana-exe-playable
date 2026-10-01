@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
-  <link rel="stylesheet" href="style.css?v=20261001-1530" />
-  <link rel="stylesheet" href="scene02.css?v=20261001-1530" />
+  <link rel="stylesheet" href="style.css?v=20261001-1545" />
+  <link rel="stylesheet" href="scene02.css?v=20261001-1545" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -152,6 +152,9 @@
          alt="Banana Boutique assistant in a black and gold apron" />
     <div class="bq-say" id="bq-say" role="status"><small>BANANA BOUTIQUE</small><span id="bq-say-text">Here are our premium bananas. Which one would you like?</span></div>
     <div class="bq-reaction" id="bq-reaction" role="status"><span class="cap-face" aria-hidden="true"></span><span class="cap-text"><small>VALENTÉ</small>£5… for one?!</span></div>
+    <div class="bq-budget-focus" id="bq-budget-focus" role="status" aria-live="polite">
+      <small>AVAILABLE BUDGET</small><strong id="bq-budget-main">£50.00</strong><span id="bq-budget-projection"></span>
+    </div>
     <div class="bq-choices" id="bq-choices" role="group" aria-label="Choose your banana">
       <button class="bq-card" data-pick="green">
         <img src="assets/banana_green_v1.png" width="1600" height="1200" alt="" />
@@ -227,7 +230,7 @@
   </div>
   <div class="flash" id="flash"></div>
 </main>
-<script src="game.js?v=20261001-1530"></script>
-<script src="scene02.js?v=20261001-1530"></script>
+<script src="game.js?v=20261001-1545"></script>
+<script src="scene02.js?v=20261001-1545"></script>
 </body>
 </html>
