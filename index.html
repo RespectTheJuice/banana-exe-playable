@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
-  <link rel="stylesheet" href="style.css?v=20261001-1515" />
-  <link rel="stylesheet" href="scene02.css?v=20261001-1515" />
+  <link rel="stylesheet" href="style.css?v=20261001-1530" />
+  <link rel="stylesheet" href="scene02.css?v=20261001-1530" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -13,7 +13,10 @@
   <!-- HUD -->
   <header class="hud">
     <div class="hud-tag"><b>BANANA<span>.</span>EXE</b> <em id="hud-scene">PART 1</em></div>
-    <div class="inv" id="inv" role="status" aria-label="Inventory"><img id="inv-img" src="assets/banana_ripe_v1.png" alt="" /><span id="inv-text"></span></div>
+    <div class="hud-status">
+      <div class="budget" id="budget" role="status" aria-label="Budget"><span class="budget-label">BUDGET</span><b id="budget-value">£50.00</b></div>
+      <div class="inv" id="inv" role="status" aria-label="Inventory"><img id="inv-img" src="assets/banana_ripe_v1.png" alt="" /><span id="inv-text"></span></div>
+    </div>
     <button id="pause" class="hud-btn" aria-pressed="false" aria-label="Pause game">⏸ PAUSE</button>
     <button id="mute" class="hud-btn" aria-pressed="false" aria-label="Mute sound">SOUND: ON</button>
   </header>
@@ -224,7 +227,7 @@
   </div>
   <div class="flash" id="flash"></div>
 </main>
-<script src="game.js?v=20261001-1515"></script>
-<script src="scene02.js?v=20261001-1515"></script>
+<script src="game.js?v=20261001-1530"></script>
+<script src="scene02.js?v=20261001-1530"></script>
 </body>
 </html>
