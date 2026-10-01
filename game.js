@@ -329,9 +329,12 @@
   function startMusic(theme = 'main') {
     musicTheme = MUSIC[theme] ? theme : 'main';
     musicStep = 0;
+    clearTimeout(musicDuckTimer);
+    musicDucked = false;
+    if (musicTimer) clearTimeout(musicTimer);
+    musicTimer = null;
     ensureMusicGain();
     setMusicLevel(MUSIC_LEVEL, 0.08);
-    if (musicTimer) clearTimeout(musicTimer);
     musicTimer = setTimeout(playMusicStep, 60);
   }
 
