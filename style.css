@@ -215,12 +215,30 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 }
 .cap-text { min-width: 0; }
 
-/* Inbeeb reactions are attached to the browser area, not the bottom edge. */
+/* Inbeeb reactions are physically anchored to the listing / search item Valenté is reacting to. */
 .scene-desk .caption {
-  left: auto; right: clamp(18px, 4vw, 56px); top: 72px; bottom: auto;
-  transform: translateY(8px); max-width: min(360px, calc(100vw - 36px));
+  left: 24px; top: 72px; right: auto; bottom: auto;
+  transform: translateY(6px) scale(.98);
+  max-width: min(340px, calc(100vw - 24px));
+  background: rgba(8,18,30,.96); color: var(--white);
+  border: 2px solid var(--cyan); box-shadow: 0 0 0 3px rgba(255,214,83,.9), 0 12px 28px rgba(0,0,0,.35);
+  border-radius: 14px; padding: 9px 14px;
 }
 .scene-desk .caption.is-on { transform: none; }
+.scene-desk .caption small { color: var(--gold); }
+.scene-desk .caption::after {
+  content: ""; position: absolute; width: 12px; height: 12px;
+  background: rgba(8,18,30,.96); transform: rotate(45deg);
+}
+.scene-desk .caption[data-tail="left"]::after {
+  left: -7px; top: 50%; margin-top: -6px; border-left: 2px solid var(--cyan); border-bottom: 2px solid var(--cyan);
+}
+.scene-desk .caption[data-tail="right"]::after {
+  right: -7px; top: 50%; margin-top: -6px; border-right: 2px solid var(--cyan); border-top: 2px solid var(--cyan);
+}
+.scene-desk .caption[data-tail="top"]::after {
+  top: -7px; left: 50%; margin-left: -6px; border-left: 2px solid var(--cyan); border-top: 2px solid var(--cyan);
+}
 
 .objective {
   position: absolute; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translate(-50%, 8px);
@@ -258,7 +276,14 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 }
 .scene-reveal.is-active .reveal-frame { animation: fade .25s ease-out; }
 .scene-reveal.is-pushing .reveal-img { transform: scale(1.75); }
-.reveal-caption { left: auto; right: 24px; top: 64px; bottom: auto; transform: translateY(8px); }
+.reveal-caption {
+  left: auto; right: 5vw; top: 12svh; bottom: auto; transform: translateY(8px) scale(.96);
+  background: rgba(8,18,30,.94); color: var(--white); border: 2px solid var(--gold);
+  box-shadow: 0 0 0 2px var(--ink), 0 14px 34px rgba(0,0,0,.42);
+  border-radius: 18px; padding: 12px 18px; font-family: var(--display); font-size: clamp(18px, 2.2vw, 28px);
+}
+.reveal-caption .cap-face { display: none; }
+.reveal-caption small { color: var(--cyan); }
 .reveal-caption.is-on { transform: none; }
 
 
@@ -323,9 +348,10 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
   .pov { top: 48px; bottom: 110px; width: calc(100vw - 24px); padding: 6px; border-radius: 12px; }
   .caption { font-size: 14px; }
   .scene-desk .caption {
-    left: auto; right: 14px; top: 62px; bottom: auto;
-    max-width: min(280px, calc(100vw - 28px)); transform: translateY(8px);
+    right: auto; bottom: auto; max-width: min(286px, calc(100vw - 24px));
+    font-size: 13px; padding: 8px 11px; transform: translateY(6px) scale(.98);
   }
+  .scene-desk .caption .cap-face { --d: 36px; }
   .scene-desk .caption.is-on { transform: none; }
 
   /* Portrait: show a 940×1024 window of the plate (head + laptop), then push in on BANANA. */
@@ -333,8 +359,9 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
   .reveal-img { object-position: 64% 50%; transform-origin: 69.6% 61.2%; }
   .scene-reveal.is-pushing .reveal-img { transform: scale(1.8); }
   .reveal-caption {
-    left: auto; right: 14px; top: 68px; bottom: auto;
-    max-width: min(230px, calc(100vw - 28px)); transform: translateY(8px);
+    left: auto; right: 14px; top: 76px; bottom: auto;
+    max-width: min(210px, calc(100vw - 28px)); transform: translateY(6px) scale(.96);
+    font-size: 18px; padding: 10px 14px;
   }
   .reveal-caption.is-on { transform: none; }
 
