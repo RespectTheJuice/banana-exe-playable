@@ -225,8 +225,8 @@
   function startHome() {
     show('s2-home', 'PART 1 // BACK HOME');
     clearGuide(); flash();
-    home.classList.remove('is-posting', 'is-checked');
-    document.querySelectorAll('.post-list li').forEach((li) => li.classList.remove('is-fail'));
+    home.classList.remove('is-posting', 'is-checked', 'is-bruising');
+    document.querySelectorAll('.post-list li').forEach((li) => li.classList.remove('is-revealed'));
     homeThought.classList.remove('is-on'); homeText.textContent = '';
     later(() => { homeThought.classList.add('is-on'); sfx.pop(); }, 450);
     later(() => typeThought(LINES.home, 40, () => later(startPost, 1400)), 700);
@@ -236,9 +236,12 @@
     typeThought(LINES.post, 45, () => {
       later(() => { home.classList.add('is-posting'); sfx.open(); }, 400);
       document.querySelectorAll('.post-list li').forEach((li, i) =>
-        later(() => { li.classList.add('is-fail'); s2sfx.fail(); }, 1000 + i * 380));
-      later(() => { home.classList.add('is-checked'); sfx.nah(); }, 1000 + 4 * 380 + 200);
-      later(() => typeThought(LINES.bruise, 38, () => later(startTeaser, 1900)), 1000 + 4 * 380 + 1500);
+        later(() => { li.classList.add('is-revealed'); sfx.click(); }, 900 + i * 340));
+      later(() => { home.classList.add('is-checked'); sfx.nah(); }, 900 + 4 * 340 + 260);
+      later(() => {
+        home.classList.add('is-bruising');
+        typeThought(LINES.bruise, 38, () => later(startTeaser, 1900));
+      }, 900 + 4 * 340 + 1450);
     });
   }
 
@@ -263,7 +266,7 @@
     driving = false; marker.classList.remove('is-driving');
     setChoice(null);
     resetBoutique();
-    home.classList.remove('is-posting', 'is-checked');
+    home.classList.remove('is-posting', 'is-checked', 'is-bruising');
     homeThought.classList.remove('is-on'); homeText.textContent = '';
     teaserScene.classList.remove('is-end');
   }
