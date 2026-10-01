@@ -64,11 +64,11 @@
 .bq-assistant {
   --ah: 90svh;
   position: absolute; z-index: 2; height: var(--ah); width: calc(var(--ah) * 1200 / 1700);
-  top: calc(98svh - var(--ah) * .9518); left: calc(68vw - var(--ah) * 1200 / 1700 * .5012);
+  top: calc(98svh - var(--ah) * .9518); left: calc(72vw - var(--ah) * 1200 / 1700 * .5012);
   pointer-events: none; animation: fade .4s ease-out;
 }
 .bq-say {
-  position: absolute; z-index: 4; left: calc(68vw - 330px); top: 16svh; max-width: 230px;
+  position: absolute; z-index: 4; left: calc(72vw - 350px); top: 14svh; max-width: 250px;
   background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 14px;
   box-shadow: 0 0 0 4px var(--gold); padding: 8px 16px; font-family: var(--display); font-size: 20px;
   opacity: 0; transform: translateY(8px) scale(.9); transition: opacity .2s, transform .25s cubic-bezier(.2,1.6,.4,1);
@@ -91,7 +91,7 @@
 
 
 .bq-choices {
-  position: absolute; z-index: 3; left: 4vw; bottom: max(8svh, calc(env(safe-area-inset-bottom) + 56px));
+  position: absolute; z-index: 3; left: clamp(28px, 5vw, 72px); bottom: max(7svh, calc(env(safe-area-inset-bottom) + 56px));
   display: flex; gap: 14px; opacity: 0; transform: translateY(20px); pointer-events: none;
   transition: opacity .3s ease, transform .35s cubic-bezier(.2,1.2,.4,1);
 }
@@ -118,7 +118,7 @@
 @keyframes card-cue { 50% { border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(121,242,238,.6), 0 0 22px 6px rgba(121,242,238,.35); } }
 
 .bq-paid {
-  position: absolute; z-index: 5; left: 34vw; top: 30svh; transform: translate(-50%, 10px);
+  position: absolute; z-index: 5; left: 31vw; top: 34svh; transform: translate(-50%, 10px);
   background: var(--white); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px; box-shadow: 0 0 0 4px var(--gold);
   padding: 10px 18px; text-align: center; font-family: var(--display); font-size: 18px; white-space: nowrap;
   opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
@@ -218,12 +218,14 @@
 
   .scene-boutique.is-showing .bq-interior, .scene-boutique.is-choosing .bq-interior, .scene-boutique.is-chosen .bq-interior { filter: brightness(.65) blur(2px); }
   /* Assistant: head to mid-thigh above the card stack. */
-  .bq-assistant { --ah: min(91svh, 150vw); top: 50px; left: calc(62vw - var(--ah) * 1200 / 1700 * .5012); }
-  .bq-say { left: 12px; top: 78px; max-width: 210px; font-size: 15px; line-height: 1.15; padding: 7px 12px; }
+  .bq-assistant { --ah: min(76svh, 132vw); top: 54px; left: calc(68vw - var(--ah) * 1200 / 1700 * .5012); }
+  .bq-say { left: 12px; top: 72px; max-width: 205px; font-size: 15px; line-height: 1.15; padding: 7px 12px; }
   .bq-choices {
     left: 12px; right: 12px; flex-direction: column; gap: 8px;
-    bottom: calc(max(14px, env(safe-area-inset-bottom)) + 44px);
+    bottom: calc(max(14px, env(safe-area-inset-bottom)) + 34px);
   }
+  .bq-say::after { right: -12px; top: 58%; }
+  .bq-reaction { max-width: min(260px, calc(100vw - 24px)); font-size: 14px; padding: 7px 12px; }
   .bq-card {
     width: 100%; display: grid; grid-template-columns: 76px 1fr auto; grid-template-areas: "img name price" "img line price";
     align-items: center; text-align: left; column-gap: 12px; row-gap: 0; padding: 6px 14px 6px 8px; min-height: 64px;
@@ -235,7 +237,7 @@
   .bq-price { grid-area: price; }
   .bq-card.is-picked { transform: translateX(6px) scale(1.03); }
   .bq-card:not(:disabled):hover, .bq-card:focus-visible { transform: none; }
-  .bq-paid { left: 50%; top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 90px); font-size: 16px; }
+  .bq-paid { left: 50%; top: auto; bottom: calc(max(14px, env(safe-area-inset-bottom)) + 100px); font-size: 15px; max-width: calc(100vw - 24px); white-space: normal; }
 
   .scene-home.is-posting .sprite { max-height: 30svh; }
   .post-card { justify-self: center; margin: 0; width: min(340px, 100%); padding: 10px 14px; }
