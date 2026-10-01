@@ -2,7 +2,7 @@
 
 /* ---------- Inventory chip (HUD): where the banana lives after purchase ---------- */
 .inv {
-  display: none; align-items: center; gap: 6px; flex-shrink: 0; margin-left: auto; margin-right: 10px;
+  display: none; align-items: center; gap: 6px; flex-shrink: 0; margin: 0;
   background: rgba(9,15,27,.78); border: 1px solid var(--gold); border-radius: 999px; padding: 2px 10px 2px 4px;
   font-size: 11px; font-weight: 900; letter-spacing: .06em; color: var(--white); white-space: nowrap;
 }
@@ -223,7 +223,7 @@
   .map-frame { width: 100%; aspect-ratio: 1.15; max-height: calc(100svh - 200px); border-radius: 14px; }
   .map-pan { aspect-ratio: 1404 / 430; }
   .map-plate, .map-overlay { top: -31.395%; height: 252.558%; }
-  .inv { margin-right: 6px; padding-right: 8px; font-size: 10px; }
+  .inv { margin: 0; padding-right: 8px; font-size: 10px; }
   .inv img { width: 28px; height: 22px; }
   .inv-name { display: none; } /* phone: image + price only, so the BANANA.EXE title keeps its room */
 
