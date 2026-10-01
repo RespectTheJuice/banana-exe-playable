@@ -11,7 +11,6 @@
   const PROPS = 'assets/';
 
   const s2sfx = {
-    drive: () => noise(0, 0.03, 0.06),
     arrive: () => [523, 659, 784].forEach((f, i) => tone(f, i * 0.09, 0.14, { type: 'triangle', vol: 0.1 })),
     pick: () => { tone(880, 0, 0.08, { type: 'triangle', vol: 0.1 }); tone(1175, 0.07, 0.08, { type: 'triangle', vol: 0.1 }); },
     selected: () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * 0.08, 0.16, { type: 'square', vol: 0.08 })),
@@ -46,6 +45,52 @@
   const trail = $('#route-trail'), halo = $('#route-halo');
   const wpHome = $('#wp-home'), wpStore = $('#wp-store');
   let dir = 'out', driving = false, kScale = 1;
+
+  // ---------- Car sound: continuous synthesized engine + road hum (WebAudio, no files) ----------
+  // Ported from the approved scene02-review implementation.
+  let engine = null;
+  function engineStart() {
+    if (engine || window.BX.isMuted()) return;
+    const a = audio(); if (!a) return;
+    const t = a.currentTime, out = a.createGain();
+    out.gain.setValueAtTime(0.0001, t); out.gain.exponentialRampToValueAtTime(0.07, t + 0.5);
+    const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420; lp.Q.value = 0.7;
+    const o1 = a.createOscillator(); o1.type = 'sawtooth'; o1.frequency.value = 46;
+    const o2 = a.createOscillator(); o2.type = 'triangle'; o2.frequency.value = 93;
+    const g2 = a.createGain(); g2.gain.value = 0.5;
+    const lfo = a.createOscillator(), lg = a.createGain(); lfo.frequency.value = 7; lg.gain.value = 1.6;
+    const buf = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const road = a.createBufferSource(); road.buffer = buf; road.loop = true;
+    const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 360; bp.Q.value = 0.6;
+    const rg = a.createGain(); rg.gain.value = 0.32;
+    lfo.connect(lg).connect(o1.frequency);
+    o1.connect(lp); o2.connect(g2).connect(lp); lp.connect(out);
+    road.connect(bp).connect(rg).connect(out);
+    out.connect(a.destination);
+    const srcs = [o1, o2, lfo, road];
+    srcs.forEach((n) => n.start(t));
+    engine = { a, out, o1, o2, srcs };
+  }
+  function engineSpeed(v) {
+    if (!engine) return;
+    const t = engine.a.currentTime;
+    engine.o1.frequency.setTargetAtTime(44 + v * 24, t, 0.12);
+    engine.o2.frequency.setTargetAtTime(89 + v * 46, t, 0.12);
+  }
+  function engineStop(fade = 0.6) {
+    if (!engine) return;
+    const { a, out, srcs } = engine, t = a.currentTime;
+    engine = null;
+    out.gain.cancelScheduledValues(t);
+    out.gain.setValueAtTime(Math.max(out.gain.value, 0.0001), t);
+    out.gain.exponentialRampToValueAtTime(0.0001, t + fade);
+    srcs.forEach((n) => n.stop(t + fade + 0.05));
+  }
+  addEventListener('bx:mute', (e) => {
+    if (e.detail.muted) engineStop(0.08);
+    else if (driving) engineStart();
+  });
 
   // Marker about the size of the baked HOME / BOUTIQUE rings; never smaller than ~22 CSS px radius.
   function sizeMarker() {
@@ -94,8 +139,9 @@
     if (driving) return;
     driving = true;
     const L = trail.getTotalLength(), DURATION = 3600;
-    let t0 = null, lastTick = 0, prev = trail.getPointAtLength(0);
+    let t0 = null, prev = trail.getPointAtLength(0);
     marker.classList.add('is-driving');
+    engineStart();
     const frameFn = (ts) => {
       if (!driving) return;
       if (t0 === null) t0 = ts;
@@ -105,7 +151,7 @@
       faceCar(p.x - prev.x); prev = p;
       placeMarker(p);
       setTrail(t);
-      if (ts - lastTick > 180 && raw < 0.97) { s2sfx.drive(); lastTick = ts; }
+      engineSpeed(raw < 0.5 ? raw * 2 : (1 - raw) * 2);
       if (raw < 1) requestAnimationFrame(frameFn);
       else arrived();
     };
@@ -115,6 +161,7 @@
   function arrived() {
     driving = false;
     marker.classList.remove('is-driving');
+    engineStop(0.6);
     const wp = dir === 'back' ? wpHome : wpStore;
     wp.classList.remove('is-target'); wp.classList.add('is-reached');
     s2sfx.arrive();
@@ -263,7 +310,7 @@
   // ---------- Replay / reset ----------
   function resetPart() {
     clearTimers(); clearGuide();
-    driving = false; marker.classList.remove('is-driving');
+    driving = false; marker.classList.remove('is-driving'); engineStop(0.1);
     setChoice(null);
     resetBoutique();
     home.classList.remove('is-posting', 'is-checked', 'is-bruising');
