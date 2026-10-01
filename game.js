@@ -119,34 +119,59 @@
 
   const MUSIC = {
     main: {
-      ms: 250,
-      bass: [110, 110, 146.83, 110, 164.81, 146.83, 123.47, 146.83],
-      lead: [440, 0, 523.25, 0, 659.25, 587.33, 523.25, 0],
-      chord: [
-        [220, 277.18, 329.63], [220, 277.18, 329.63],
-        [246.94, 293.66, 369.99], [246.94, 293.66, 369.99],
-        [261.63, 329.63, 392], [246.94, 293.66, 369.99],
-        [220, 261.63, 329.63], [246.94, 293.66, 369.99]
+      // 24 × 375 ms = 9 seconds before the phrase repeats.
+      ms: 375,
+      bass: [
+        110, 0, 110, 146.83, 164.81, 0, 146.83, 123.47,
+        110, 0, 146.83, 164.81, 196, 164.81, 146.83, 0,
+        123.47, 0, 146.83, 110, 164.81, 146.83, 123.47, 110
+      ],
+      lead: [
+        440, 0, 523.25, 0, 659.25, 587.33, 523.25, 0,
+        440, 493.88, 523.25, 0, 659.25, 0, 587.33, 523.25,
+        0, 440, 523.25, 587.33, 659.25, 587.33, 523.25, 0
+      ],
+      chords: [
+        [220, 277.18, 329.63],
+        [246.94, 293.66, 369.99],
+        [261.63, 329.63, 392],
+        [246.94, 293.66, 369.99],
+        [220, 261.63, 329.63],
+        [220, 277.18, 329.63]
       ]
     },
     boutique: {
-      ms: 330,
-      bass: [82.41, 0, 98, 0, 110, 0, 98, 0],
-      lead: [329.63, 392, 440, 392, 493.88, 440, 392, 329.63],
-      chord: [
-        [164.81, 196, 246.94], [164.81, 196, 246.94],
-        [196, 246.94, 293.66], [196, 246.94, 293.66],
-        [220, 261.63, 329.63], [220, 261.63, 329.63],
-        [196, 246.94, 293.66], [164.81, 196, 246.94]
+      // 20 × 420 ms = 8.4 seconds; same DNA, slower and warmer.
+      ms: 420,
+      bass: [
+        82.41, 0, 98, 0, 110, 0, 98, 0,
+        82.41, 0, 110, 0, 123.47, 110, 98, 0,
+        82.41, 98, 110, 0
+      ],
+      lead: [
+        329.63, 392, 0, 440, 392, 0, 493.88, 440,
+        392, 329.63, 0, 392, 440, 493.88, 0, 440,
+        392, 329.63, 293.66, 0
+      ],
+      chords: [
+        [164.81, 196, 246.94],
+        [196, 246.94, 293.66],
+        [220, 261.63, 329.63],
+        [196, 246.94, 293.66],
+        [164.81, 196, 246.94]
       ]
     }
   };
+
+  const MUSIC_LEVEL = 0.15;
+  const MUSIC_DUCK_LEVEL = 0.075;
+  let musicDucked = false, musicDuckTimer = null;
 
   function ensureMusicGain() {
     const a = audio(); if (!a) return null;
     if (!musicGain) {
       musicGain = a.createGain();
-      musicGain.gain.value = muted ? 0.0001 : 0.17;
+      musicGain.gain.value = muted ? 0.0001 : MUSIC_LEVEL;
       musicGain.connect(a.destination);
     }
     return musicGain;
@@ -171,13 +196,82 @@
       const i = musicStep % score.bass.length;
       musicNote(score.bass[i], score.ms / 1000 * 0.82, musicTheme === 'boutique' ? 0.025 : 0.03, 'triangle');
       if (score.lead[i]) musicNote(score.lead[i], score.ms / 1000 * 0.66, musicTheme === 'boutique' ? 0.018 : 0.022, 'square', 0.02);
-      if (i % 2 === 0) {
-        score.chord[i].forEach((f, n) => musicNote(f, score.ms / 1000 * 1.6, 0.008, n === 0 ? 'sine' : 'triangle', 0.04));
+      if (i % 4 === 0) {
+        const chord = score.chords[Math.floor(i / 4) % score.chords.length];
+        chord.forEach((f, n) => musicNote(f, score.ms / 1000 * 2.2, 0.008, n === 0 ? 'sine' : 'triangle', 0.04));
       }
       musicStep++;
     }
     const score = MUSIC[musicTheme] || MUSIC.main;
     musicTimer = setTimeout(playMusicStep, score.ms);
+  }
+
+  function musicTargetLevel() {
+    if (muted) return 0.0001;
+    return musicDucked ? MUSIC_DUCK_LEVEL : MUSIC_LEVEL;
+  }
+
+  function setMusicLevel(level, seconds = 0.12) {
+    const a = audio(), out = ensureMusicGain(); if (!a || !out) return;
+    const t = a.currentTime;
+    out.gain.cancelScheduledValues(t);
+    out.gain.setValueAtTime(Math.max(out.gain.value, 0.0001), t);
+    out.gain.exponentialRampToValueAtTime(Math.max(0.0001, level), t + seconds);
+  }
+
+  function duckMusic(ms = 1600) {
+    musicDucked = true;
+    clearTimeout(musicDuckTimer);
+    setMusicLevel(MUSIC_DUCK_LEVEL, 0.09);
+    musicDuckTimer = setTimeout(() => {
+      musicDucked = false;
+      setMusicLevel(musicTargetLevel(), 0.22);
+    }, ms);
+  }
+
+  function stopMusic(fade = 0.25) {
+    if (musicTimer) clearTimeout(musicTimer);
+    musicTimer = null;
+    clearTimeout(musicDuckTimer);
+    musicDucked = false;
+    if (musicGain) setMusicLevel(0.0001, fade);
+  }
+
+  function teaserSting() {
+    stopMusic(0.18);
+    const a = audio(), out = ensureMusicGain(); if (!a || !out || muted) return;
+    const t = a.currentTime + 0.22;
+    out.gain.cancelScheduledValues(t);
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(0.12, t + 0.08);
+    [392, 523.25, 659.25].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = i === 2 ? 'triangle' : 'sine';
+      o.frequency.setValueAtTime(f, t + i * 0.22);
+      g.gain.setValueAtTime(0.0001, t + i * 0.22);
+      g.gain.exponentialRampToValueAtTime(0.055, t + i * 0.22 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.22 + 0.42);
+      o.connect(g).connect(out);
+      o.start(t + i * 0.22); o.stop(t + i * 0.22 + 0.46);
+    });
+    out.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+  }
+
+  function endSting() {
+    const a = audio(), out = ensureMusicGain(); if (!a || !out || muted) return;
+    const t = a.currentTime;
+    out.gain.cancelScheduledValues(t);
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(0.14, t + 0.04);
+    [110, 220, 329.63, 440].forEach((f, i) => {
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = i === 0 ? 'sawtooth' : 'triangle';
+      o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(i === 0 ? 0.035 : 0.02, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+      o.connect(g).connect(out); o.start(t); o.stop(t + 0.95);
+    });
+    out.gain.exponentialRampToValueAtTime(0.0001, t + 1.05);
   }
 
   function startMusic(theme = 'main') {
@@ -202,7 +296,7 @@
           const now = a.currentTime;
           out.gain.cancelScheduledValues(now);
           out.gain.setValueAtTime(0.0001, now);
-          out.gain.exponentialRampToValueAtTime(0.17, now + 0.35);
+          out.gain.exponentialRampToValueAtTime(musicTargetLevel(), now + 0.35);
         }
       }, 200);
     } else {
@@ -215,7 +309,7 @@
     const a = audio(); if (!a) return;
     const t = a.currentTime;
     musicGain.gain.cancelScheduledValues(t);
-    musicGain.gain.setTargetAtTime(e.detail.muted ? 0.0001 : 0.17, t, 0.04);
+    musicGain.gain.setTargetAtTime(e.detail.muted ? 0.0001 : musicTargetLevel(), t, 0.04);
   });
 
 
@@ -307,6 +401,7 @@
   }
 
   function say(text, ms = 1800, el = caption, anchor = null) {
+    duckMusic(Math.max(900, ms + 180));
     el.innerHTML = `<span class="cap-face" aria-hidden="true"></span><span class="cap-text"><small>VALENTÉ</small>${text}</span>`;
     if (el === caption) positionDeskCaption(anchor || searchAnchor);
     el.classList.add('is-on');
@@ -414,6 +509,7 @@
   const LINE = 'You want a banana?';
 
   function cutToReaction() {
+    duckMusic(2500);
     flash();
     show('s-react', 'PART 1 // THE ASK');
     later(() => { thought.classList.add('is-on'); sfx.pop(); }, 450);
@@ -468,7 +564,7 @@
 
   // Shared with scene02.js
   window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, guide, clearGuide, pressVisual, audio,
-                isMuted: () => muted, isPaused: () => paused, setMusicTheme, startMusic, touchUI, resetScene01, startDesk };
+                isMuted: () => muted, isPaused: () => paused, setMusicTheme, startMusic, duckMusic, teaserSting, endSting, touchUI, resetScene01, startDesk };
 
   // Debug/test hooks: ?scene=desk|reveal|react jumps straight to a beat; ?debug=1 shows TEMP/PROVISIONAL art tags.
   const params = new URLSearchParams(location.search);
