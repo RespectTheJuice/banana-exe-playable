@@ -7,14 +7,73 @@
 (() => {
   const $ = (s) => document.querySelector(s);
   const timers = [];
-  const later = (fn, ms) => timers.push(setTimeout(fn, ms));
-  const clearTimers = () => { timers.forEach(clearTimeout); timers.length = 0; };
+  let paused = false, pausedAnimations = [];
+
+  function armTask(task) {
+    if (task.done || task.cancelled || paused) return;
+    task.started = performance.now();
+    task.id = setTimeout(() => {
+      task.id = null;
+      if (task.cancelled || task.done || paused) return;
+      task.done = true;
+      task.fn();
+    }, Math.max(0, task.remaining));
+  }
+  const later = (fn, ms) => {
+    const task = { fn, remaining: ms, started: 0, id: null, done: false, cancelled: false };
+    timers.push(task);
+    armTask(task);
+    return task;
+  };
+  const clearTimers = () => {
+    timers.forEach((task) => {
+      if (task.id) clearTimeout(task.id);
+      task.id = null; task.cancelled = true;
+    });
+    timers.length = 0;
+  };
+
+  function setPaused(next) {
+    if (paused === next) return;
+    paused = next;
+    const btn = $('#pause'), overlay = $('#pause-overlay');
+
+    if (paused) {
+      const now = performance.now();
+      timers.forEach((task) => {
+        if (!task.done && !task.cancelled && task.id) {
+          clearTimeout(task.id);
+          task.id = null;
+          task.remaining = Math.max(0, task.remaining - (now - task.started));
+        }
+      });
+      pausedAnimations = document.getAnimations().filter((a) => a.playState === 'running');
+      pausedAnimations.forEach((a) => a.pause());
+      if (ctx && ctx.state === 'running') ctx.suspend();
+      document.body.classList.add('is-paused');
+      overlay?.setAttribute('aria-hidden', 'false');
+      btn.textContent = 'RESUME';
+      btn.setAttribute('aria-pressed', 'true');
+      btn.setAttribute('aria-label', 'Resume game');
+    } else {
+      document.body.classList.remove('is-paused');
+      overlay?.setAttribute('aria-hidden', 'true');
+      btn.textContent = 'PAUSE';
+      btn.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-label', 'Pause game');
+      timers.forEach(armTask);
+      pausedAnimations.forEach((a) => { try { a.play(); } catch (_) {} });
+      pausedAnimations = [];
+      if (ctx && !muted && ctx.state === 'suspended') ctx.resume();
+    }
+    dispatchEvent(new CustomEvent('bx:pause', { detail: { paused } }));
+  }
 
   // ---------- Sound (WebAudio, synthesised — no audio files) ----------
   let ctx = null, muted = false;
   const audio = () => {
     if (!ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) ctx = new AC(); }
-    if (ctx && ctx.state === 'suspended') ctx.resume();
+    if (ctx && ctx.state === 'suspended' && !paused) ctx.resume();
     return ctx;
   };
   function tone(freq, start, dur, { type = 'square', vol = 0.12, slideTo = null } = {}) {
@@ -52,6 +111,8 @@
     },
     route: () => [392, 494, 587].forEach((f, i) => tone(f, i * 0.12, 0.1, { type: 'triangle', vol: 0.08 })),
   };
+
+  $('#pause').addEventListener('click', () => setPaused(!paused));
 
   $('#mute').addEventListener('click', (e) => {
     muted = !muted;
@@ -299,7 +360,7 @@
 
   // Shared with scene02.js
   window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, guide, clearGuide, pressVisual, audio,
-                isMuted: () => muted, touchUI, resetScene01, startDesk };
+                isMuted: () => muted, isPaused: () => paused, touchUI, resetScene01, startDesk };
 
   // Debug/test hooks: ?scene=desk|reveal|react jumps straight to a beat; ?debug=1 shows TEMP/PROVISIONAL art tags.
   const params = new URLSearchParams(location.search);
