@@ -112,7 +112,7 @@
   let captionTimer = null, found = false, deskStep = 0, deskToken = 0;
 
   function say(text, ms = 1800, el = caption) {
-    el.innerHTML = `<small>VALENTÉ</small>${text}`;
+    el.innerHTML = `<span class="cap-face" aria-hidden="true"></span><span class="cap-text"><small>VALENTÉ</small>${text}</span>`;
     el.classList.add('is-on');
     clearTimeout(captionTimer);
     captionTimer = setTimeout(() => el.classList.remove('is-on'), ms);
