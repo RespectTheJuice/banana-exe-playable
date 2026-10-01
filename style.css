@@ -47,6 +47,16 @@ button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 .hud-tag { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; font-family: var(--display); font-size: 13px; letter-spacing: .08em; color: var(--gold); }
 .hud-tag span { color: var(--cyan); }
 .hud-tag em { font-style: normal; font-family: var(--body); font-weight: 600; color: var(--muted); margin-left: 8px; font-size: 11px; }
+.hud-status { display:flex; align-items:center; gap:7px; margin-left:auto; margin-right:8px; min-width:0; }
+.budget {
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  background:rgba(9,15,27,.78); border:1px solid var(--cyan-dim); border-radius:999px;
+  padding:5px 9px; color:var(--white); font-size:11px; line-height:1;
+}
+.budget-label { font-size:9px; font-weight:900; letter-spacing:.12em; color:var(--muted); }
+.budget b { font-family:var(--display); font-size:12px; color:var(--gold); }
+.budget.is-debt { border-color:#ff5c5c; box-shadow:0 0 12px rgba(255,92,92,.28); }
+.budget.is-debt .budget-label, .budget.is-debt b { color:#ff6b6b; }
 .hud-btn {
   pointer-events: auto; white-space: nowrap; flex-shrink: 0; background: rgba(9,15,27,.7); border: 1px solid var(--navy-500);
   border-radius: 999px; padding: 6px 12px; font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--cyan);
@@ -364,6 +374,10 @@ body.is-paused .scene { pointer-events: none; }
   .hud-tag em { display: none; } /* narrow screens: the header reads just BANANA.EXE */
   .hud { gap: 6px; }
   .hud-btn { padding: 6px 8px; font-size: 10px; }
+  .hud-status { gap:5px; margin-right:4px; }
+  .budget { padding:5px 7px; }
+  .budget-label { display:none; }
+  .budget b { font-size:11px; }
   .pov { top: 48px; bottom: 110px; width: calc(100vw - 24px); padding: 6px; border-radius: 12px; }
   .caption { font-size: 14px; }
   .scene-desk .caption {
