@@ -323,7 +323,7 @@ After either launch path:
 11. fox disappears into trees;
 12. **FAILED ATTEMPT**
 13. **RESULT: LEICESTER**
-14. carry forward with a determined Valenté beat **only after a replacement asset is approved**.
+14. carry forward with locked pose `08_determined_transition_goggles_LOCKED.png`.
 
 ---
 
@@ -359,7 +359,11 @@ After either launch path:
 
 ### OPEN / REPLACE
 - **07 replacement shake plate**
-- **08 determined carry-forward pose** — the image shown as `08 later` in the Claude Design consultation is **REJECTED for character-style drift** and is not production authority. A new 08 must be created from the locked Valenté character authority before use.
+
+### LOCKED TRANSITION ASSET
+- **08 determined carry-forward:** `08_determined_transition_goggles_LOCKED.png`
+- This is the approved post-Leicester transition pose.
+- Safety goggles remain on for continuity from the launcher sequence.
 
 ### DERIVED, NO REPAINT
 - banana projectile sprite
@@ -399,4 +403,4 @@ The `08 later` character shown in the Claude Design consultation PDF entered the
 - it must not be used by Claude Design or Claude Code as character authority;
 - it must not ship;
 - the consultation PDF remains archived as a historical design-review record, but this Markdown specification overrides its lock status;
-- create a replacement determined/carry-forward pose from the locked Valenté turnaround and approved face/detail authority before the Leicester post-failure transition is implemented.
+- the rejected earlier determined asset must never be used; it has now been replaced by approved asset `08_determined_transition_goggles_LOCKED.png`.
