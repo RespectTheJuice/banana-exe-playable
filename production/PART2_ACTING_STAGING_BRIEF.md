@@ -95,16 +95,19 @@ All new artwork must preserve the locked Valenté identity in `production/CANON_
 
 The trebuchet should not appear to fire autonomously.
 
-### D. Determined carry-forward pose
+### D. Determined carry-forward pose — OPEN / REPLACE
 
 **Beat:** after Attempt 01 fails.
+
+**Status:** No approved production asset currently exists. An earlier generated determined pose was mistakenly treated as locked and is rejected for character-style drift.
 
 **Performance:**
 - composed;
 - determined;
-- ready to move to the next solution.
+- ready to move to the next solution;
+- must preserve the locked Valenté photo-caricature face language, proportions, stick legs, glove design, sock height, shorts shape, and yellow sneaker design.
 
-Do not use a defeated or melodramatically disappointed reaction.
+Do not use a defeated or melodramatically disappointed reaction. Do not use the rejected earlier determined asset.
 
 ---
 
@@ -175,7 +178,7 @@ Do not add a long disappointed-character beat.
 After the failure is clear:
 
 - preserve forward momentum;
-- use the determined carry-forward pose if Valenté appears;
+- use the determined carry-forward pose only after a replacement asset has been generated and approved;
 - proceed to the next delivery solution.
 
 Tone: **that did not work; try the next thing.**
