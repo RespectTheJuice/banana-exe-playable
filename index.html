@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
   <link rel="stylesheet" href="style.css?v=20261001-1630" />
-  <link rel="stylesheet" href="scene02.css?v=20261001-1900" />
-  <link rel="stylesheet" href="attempt01.css?v=20261001-1900" />
+  <link rel="stylesheet" href="scene02.css?v=20261002-1100" />
+  <link rel="stylesheet" href="attempt01.css?v=20261002-1100" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -249,13 +249,18 @@
 
     <div class="p2-route-card">
       <div class="p2-route-head"><span>NOTTINGHAM</span><span>TFY · NORTHAMPTON</span></div>
-      <svg viewBox="0 0 700 190" role="img" aria-label="Illustrative delivery route from Nottingham to TFY in Northampton">
-        <path class="p2-route-halo" d="M58 115 C180 55 255 150 365 105 S545 82 642 116" />
-        <path class="p2-route-line" d="M58 115 C180 55 255 150 365 105 S545 82 642 116" />
-        <circle class="p2-home" cx="58" cy="115" r="10" />
-        <circle class="p2-tfy-pulse" cx="642" cy="116" r="17" />
-        <circle class="p2-tfy" cx="642" cy="116" r="11" />
+      <svg viewBox="0 0 700 190" role="img" aria-label="Illustrative delivery route from Nottingham home to TFY in Northampton">
+        <path class="p2-route-halo" d="M88 118 C200 56 265 150 365 105 S522 82 610 116" />
+        <path class="p2-route-line" d="M88 118 C200 56 265 150 365 105 S522 82 610 116" />
       </svg>
+      <div class="p2-landmark p2-landmark-home">
+        <img src="assets/home_canon.webp" width="260" height="204" alt="Approved HOME building" />
+        <b>HOME</b><span>NOTTINGHAM</span>
+      </div>
+      <div class="p2-landmark p2-landmark-tfy">
+        <img src="assets/tfy_canon.webp" width="220" height="125" alt="Approved TFY building" />
+        <b>TFY</b><span>NORTHAMPTON</span>
+      </div>
     </div>
 
     <div class="p2-analysis" id="p2-analysis" aria-live="polite">
@@ -263,6 +268,9 @@
       <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
       <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You still only have one budget.</span></article>
       <div class="p2-method-state"><small>DELIVERY METHOD</small><strong>UNDECIDED</strong></div>
+      <button class="arcade arcade-sm p2-continue" id="p2-continue" type="button">
+        <span class="cap">CONTINUE</span>
+      </button>
     </div>
   </section>
 
@@ -326,8 +334,8 @@
   </div>
   <div class="flash" id="flash"></div>
 </main>
-<script src="game.js?v=20261001-1900"></script>
-<script src="scene02.js?v=20261001-1900"></script>
-<script src="attempt01.js?v=20261001-1900"></script>
+<script src="game.js?v=20261002-1100"></script>
+<script src="scene02.js?v=20261002-1100"></script>
+<script src="attempt01.js?v=20261002-1100"></script>
 </body>
 </html>
