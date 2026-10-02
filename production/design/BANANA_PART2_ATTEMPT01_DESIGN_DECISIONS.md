@@ -290,12 +290,12 @@ The comedy path changes according to player behavior, but Attempt 01 always ends
 
 ## 11. Projectile and duplicate-banana guard
 
-Create the projectile sprite as an **alpha crop** of the banana from `banana_launcher_LOCKED.png`.
+Use the **player's selected banana asset** for the projectile. The existing implementation already resolves this through `BX.getChoice()` in `attempt01.js`, with `assets/banana_ripe_v1.png` as fallback.
 
-- No repaint.
-- Scale to approximately **160 px** in plate space.
-- Spawn from **A6**.
-- Exit along barrel axis, approximately **-18°**.
+- Do **not** hard-code a projectile cropped from the launcher.
+- Preserve the Part 1 banana choice into Attempt 01.
+- Spawn the selected banana projectile from **A6**.
+- Exit along the barrel axis, approximately **-18°**.
 
 Because the rig plate still contains the baked banana:
 - cover A6 with a muzzle bloom during launch;
@@ -357,16 +357,17 @@ After either launch path:
 - 06 second interruption / one-hand shrug
 - futuristic banana launcher
 
-### OPEN / REPLACE
-- **07 replacement shake plate**
+### LOCKED INTERACTION ASSET
+- **07 third interruption / shake:** `07_third_interruption_shake_LOCKED.png`
+- Use this as the new registration candidate against plate 04. Claude Design must remeasure it before implementation and report any remaining offset/scale/barrel-angle mismatch.
 
 ### LOCKED TRANSITION ASSET
 - **08 determined carry-forward:** `08_determined_transition_goggles_LOCKED.png`
 - This is the approved post-Leicester transition pose.
 - Safety goggles remain on for continuity from the launcher sequence.
 
-### DERIVED, NO REPAINT
-- banana projectile sprite
+### PROJECTILE
+- **No new banana art required.** Reuse the player's selected Part 1 banana asset via the existing `BX.getChoice()` path; fallback remains `assets/banana_ripe_v1.png`.
 
 ### BUILT LIVE IN CODE
 - charge glow
