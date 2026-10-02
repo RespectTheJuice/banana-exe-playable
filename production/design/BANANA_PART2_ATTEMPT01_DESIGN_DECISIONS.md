@@ -323,7 +323,7 @@ After either launch path:
 11. fox disappears into trees;
 12. **FAILED ATTEMPT**
 13. **RESULT: LEICESTER**
-14. carry forward with determined Valenté beat.
+14. carry forward with a determined Valenté beat **only after a replacement asset is approved**.
 
 ---
 
@@ -355,11 +355,11 @@ After either launch path:
 - 04 operator / bracing
 - 05 first interruption / turn toward player
 - 06 second interruption / one-hand shrug
-- 08 determined carry-forward
 - futuristic banana launcher
 
-### OPEN
+### OPEN / REPLACE
 - **07 replacement shake plate**
+- **08 determined carry-forward pose** — the image shown as `08 later` in the Claude Design consultation is **REJECTED for character-style drift** and is not production authority. A new 08 must be created from the locked Valenté character authority before use.
 
 ### DERIVED, NO REPAINT
 - banana projectile sprite
@@ -386,3 +386,17 @@ Run three separate passes:
 3. **Combined playthrough**
 
 Do not use polish to mask a comprehension or continuity failure.
+
+
+---
+
+## 16. Correction — rejected 08 asset
+
+The `08 later` character shown in the Claude Design consultation PDF entered the review package because an earlier generated file named `determined_red_hoodie_character_sticker.png` was mistakenly treated as locked.
+
+**Correction:**
+- that image is rejected;
+- it must not be used by Claude Design or Claude Code as character authority;
+- it must not ship;
+- the consultation PDF remains archived as a historical design-review record, but this Markdown specification overrides its lock status;
+- create a replacement determined/carry-forward pose from the locked Valenté turnaround and approved face/detail authority before the Leicester post-failure transition is implemented.
