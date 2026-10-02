@@ -298,11 +298,18 @@
         boutique.classList.add('is-paid');
         say.classList.remove('is-on');
         inv.classList.add('is-on'); inv.classList.remove('is-pop'); void inv.offsetWidth; inv.classList.add('is-pop');
-        paid.innerHTML = `<small>PURCHASED</small>1 × ${choice.name} BANANA · ${choice.price}<br><span>BUDGET: ${money(budget)}</span>`;
+        paid.innerHTML = `
+          <small>PURCHASE COMPLETE</small>
+          <strong>1 × ${choice.name} BANANA</strong>
+          <em>−£${cost.toFixed(2)}</em>
+          <span>${money(before)} → ${money(budget)} REMAINING</span>
+        `;
         paid.classList.add('is-on');
         s2sfx.kaching();
+        later(() => sfx.notice(), 650);
       }, 480);
-      anim.onfinish = () => later(() => startRoute('back'), 1500);
+      // Event-weight hold: action → consequence → time to absorb it → continue.
+      anim.onfinish = () => later(() => startRoute('back'), 3200);
     }, 1700);
   }
 
@@ -368,7 +375,7 @@
 
   // ---------- PART 2 PREVIEW ----------
   // Kept behind ?scene=part2 until the first attempt sequence is locked.
-  const p2 = $('#p2-intro'), p2Analyze = $('#p2-analyze'), p2Analysis = $('#p2-analysis');
+  const p2 = $('#p2-intro'), p2Analyze = $('#p2-analyze'), p2Analysis = $('#p2-analysis'), p2Continue = $('#p2-continue');
 
   function startPart2Preview() {
     if (!choice) setChoice('ripe');
@@ -381,6 +388,7 @@
     $('#p2-analysis-budget').textContent = money(budget);
     p2.classList.remove('is-analyzed');
     p2Analyze.disabled = false;
+    p2Continue.disabled = true;
     guide(p2Analyze, 'Click SIZE UP THE PROBLEM', 'Tap SIZE UP THE PROBLEM');
     later(sfx.route, 250);
   }
@@ -392,9 +400,19 @@
     sfx.arcade();
     window.BX.duckMusic(1100);
     p2.classList.add('is-analyzed');
-    later(() => sfx.notice(), 520);
-    // Development flow: the analysis is followed by Attempt 01 (no extra click; Part 2 is not public yet).
-    later(startAttempt01, 4600);
+    later(() => {
+      sfx.notice();
+      p2Continue.disabled = false;
+      guide(p2Continue, 'Click CONTINUE when you are ready', 'Tap CONTINUE when you are ready');
+    }, 520);
+  });
+
+  p2Continue.addEventListener('click', () => {
+    if (p2Continue.disabled) return;
+    p2Continue.disabled = true;
+    clearGuide();
+    sfx.arcade();
+    startAttempt01();
   });
 
   // ---------- PART 2 — ATTEMPT 01 (attempt01.js) ----------
