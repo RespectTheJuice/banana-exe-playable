@@ -211,7 +211,9 @@ Current delivery-method needs:
 After the transition/problem dependencies are covered:
 - forest/canopy treatment;
 - fox;
-- reusable neon Banana Boutique banana sign/mark.
+- reusable **neon Banana Boutique banana mark only** extracted from the locked Banana Boutique sign.
+
+**Important:** this means the glowing banana graphic itself, **not the full Banana Boutique sign**. Do not carry over the sign panel, wording, frame, building frontage, or other surrounding sign elements.
 
 ---
 
@@ -242,7 +244,7 @@ Exact truck style/composition remains open for asset design.
 
 These ideas are approved enough to remain in the production queue even though they are not all immediate dependencies:
 
-- reusable **neon Banana Boutique banana** sign/mark extracted from the locked building identity;
+- reusable **neon banana graphic only** extracted from the locked Banana Boutique sign identity. This is **not the whole sign**: no Banana Boutique wording, sign board/panel, frame, building frontage, or surrounding sign treatment;
 - Banana Boutique dealer, using the already approved dealer identity;
 - Exotic Fruits dealer, using the already approved identity/brand direction;
 - Sam as a silhouette rather than a detailed portrait;
