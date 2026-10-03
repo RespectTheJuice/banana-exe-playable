@@ -310,7 +310,7 @@
 .p2-landmark span { font-size:9px; font-weight:900; color:var(--muted); letter-spacing:.12em; }
 .p2-landmark-home { left:8px; }
 .p2-landmark-tfy { right:8px; }
-.p2-landmark-tfy img { width:126px; object-fit:cover; border:2px solid rgba(156,192,255,.8); }
+.p2-landmark-tfy img { width:126px; } /* standalone locked render: shown whole (contain), no crop or frame */
 .p2-route-halo { fill:none; stroke:var(--cyan); stroke-width:20; opacity:.12; filter:blur(5px); }
 .p2-route-line { fill:none; stroke:var(--cyan); stroke-width:4; stroke-linecap:round; stroke-dasharray:9 11; animation:p2-dash 1.2s linear infinite; }
 @keyframes p2-dash { to { stroke-dashoffset:-40; } }
