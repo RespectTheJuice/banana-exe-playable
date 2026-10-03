@@ -71,8 +71,8 @@ Approved uses include:
 - TREBUCHET selection locking in;
 - rental truck arriving at HOME;
 - important problem-page elements dropping into their final positions;
-- explanatory banana reaching TFY;
-- receiving basket/target cue at TFY.
+- explanatory banana landing in the TFY roof basket;
+- TFY roof basket/receiver confirming the catch.
 
 The pulse should be restrained: one confirmation beat, not a looping effect.
 
@@ -95,23 +95,39 @@ Put **NOTTINGHAM** and **NORTHAMPTON** on the map itself rather than repeating b
 ### Map
 
 - Keep the map **frameless / without a heavy container**.
+- Let the map breathe rather than boxing it into another panel.
 - HOME and TFY should become more visually prominent on the sized-up state.
 - The second state should be more map/goal-centric than the first.
 - Valenté may appear as a small circular face/avatar marker at HOME rather than a large character competing with the information.
+- At phone widths, controls and information cards must stack/space cleanly with no button-card overlap.
 
-### Explanatory route feedback
+### Locked TFY receiving interaction
 
-For the problem explanation, the map may show a short illustrative delivery journey:
+The explanatory route should have a **specific physical target**, not a generic destination dot.
 
-1. Valenté marker sits at HOME.
-2. A banana icon departs HOME.
-3. Banana follows the route toward TFY.
-4. TFY has a visible receiving cue such as a small basket/bin/target.
-5. Banana lands with a short `swish`.
-6. TFY receiving cue reacts.
-7. HOME/Valenté marker gives a small feedback bounce/pulse.
+- Place a **basket/receiving basket on top of the TFY building**.
+- The basket should be visible enough to understand at the problem-page map scale.
+- The explanatory banana travels from HOME toward TFY.
+- The banana **lands inside the basket on top of the TFY building**.
+- Play a short, satisfying **`swish`** as it drops into the basket.
+- The basket/TFY endpoint gives a small settle/bounce or glow confirmation after the catch.
+- HOME/Valenté may answer with a small jump/bounce/glow response so both ends of the route acknowledge success.
 
-This is an explanatory micro-animation, not the full Attempt 01 flight sequence. Keep it short and readable.
+This basket-on-TFY interaction is part of the problem-page explanatory animation. It is not the real Attempt 01 outcome.
+
+### Explanatory route feedback — sequence
+
+1. Valenté circular face marker sits at HOME.
+2. A banana icon appears beside/at HOME.
+3. Banana departs HOME.
+4. Banana follows the route toward TFY.
+5. The TFY rooftop basket is already visible as the receiving target.
+6. Banana drops into the basket.
+7. Play the **swish**.
+8. Basket/TFY gives a small receive reaction and glow pulse.
+9. HOME/Valenté marker gives a small feedback bounce/pulse.
+
+Keep this journey short, clear, and satisfying. It is an explanatory micro-animation, not the full Attempt 01 flight sequence.
 
 ### Delivery Method
 
@@ -123,6 +139,8 @@ Preferred semantic direction:
 - similarly neutral delivery graphic.
 
 Do not use a trebuchet icon while the state still says **UNDECIDED**.
+
+Once a method is actually selected later, the icon may evolve to represent that method.
 
 ### Budget
 
@@ -145,7 +163,7 @@ Reserve this behavior for high-value information only, such as:
 - budget;
 - delivery method.
 
-Do not animate every decorative label or object this way.
+Do not animate every decorative label or object this way. The effect should communicate **assembly of the problem**, not become background spectacle.
 
 ---
 
@@ -159,9 +177,12 @@ Create or prepare location authority needed for readable map/scene staging first
 
 Current priority:
 - HOME;
-- TFY.
+- TFY;
+- **TFY rooftop receiving basket** as a separate overlay or clean building variant, whichever preserves the locked TFY building best.
 
-They should support larger presentation on the sized-up problem state.
+HOME and TFY should support larger presentation on the sized-up problem state.
+
+The TFY receiving basket must be positioned so the explanatory banana can visibly land in it with the swish/glow feedback.
 
 Do not create unnecessary rental-depot architecture solely to explain the trebuchet delivery.
 
@@ -196,7 +217,7 @@ After the transition/problem dependencies are covered:
 
 ## 6. Trebuchet rental vehicle — asset brief seed
 
-The first new asset to design from this checkpoint should be the **rental delivery truck**, because the new Part 2 transition depends on it.
+The first new delivery-method asset to design from this checkpoint should be the **rental delivery truck**, because the new Part 2 transition depends on it.
 
 ### Must communicate
 
@@ -217,7 +238,22 @@ Exact truck style/composition remains open for asset design.
 
 ---
 
-## 7. Existing Claude review — preserve unless superseded here
+## 7. Other approved visual/world assets to preserve in the queue
+
+These ideas are approved enough to remain in the production queue even though they are not all immediate dependencies:
+
+- reusable **neon Banana Boutique banana** sign/mark extracted from the locked building identity;
+- Banana Boutique dealer, using the already approved dealer identity;
+- Exotic Fruits dealer, using the already approved identity/brand direction;
+- Sam as a silhouette rather than a detailed portrait;
+- forest/canopy asset for the Leicester miss;
+- fox asset and fox look-left / look-right / exit treatment.
+
+Do not let immediate transition work cause these approved concepts to disappear from the record.
+
+---
+
+## 8. Existing Claude review — preserve unless superseded here
 
 The recent implementation review remains useful for:
 
@@ -234,13 +270,15 @@ This checkpoint supersedes any review detail that conflicts with the following:
 
 - Part 2 begins with the three-option selector/rental-delivery transition before the problem screen;
 - compact route wording is **HOME → TFY**;
+- the TFY building carries the rooftop receiving basket for the explanatory banana journey;
+- the banana lands in that basket with a **swish** and endpoint feedback;
 - Delivery Method uses a neutral icon while undecided;
 - rental cost is visibly charged before the problem page;
-- asset work is prioritized **buildings → people → delivery-method assets where necessary**, with the rental truck as the immediate new dependency.
+- asset work is prioritized **buildings → people → delivery-method assets where necessary**, while the rental truck remains the immediate delivery-method dependency.
 
 ---
 
-## 8. Workflow rule
+## 9. Workflow rule
 
 Before generating or implementing a new idea:
 
