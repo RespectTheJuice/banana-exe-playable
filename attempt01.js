@@ -18,13 +18,17 @@
   const VIS = { w: 1624, h: 893 };                     // 1672 × 941 minus 24 px overscan per edge
   const A6 = { x: 1510, y: 118 }, SHOT = { w: 192, h: 144 }, BARREL = -17.5 * Math.PI / 180;
   const CHARGE_MS = 2400, TAP_GUARD = 0.12;
-  const PD = { dur: 800, tau: 220, end: 700, thunk: 600, swap: 620, fade: 90, ticks: [680, 760] };
-  const MINI = { dur: 300, tau: 90, end: 300 };
-  const T3 = { stutter: 350, shake: 520, flicker: 33, arcs: 650, freeze: 1400, whump: 1650, cut: 1900 };
+  // Clean power-down (review pass 01: 1200 ms). Release impact → strong early drop (fast term) → descending whine →
+  // slower mechanical decay (slow term) → settle thunk. Power reaches zero at `end`; the pose swaps under the thunk.
+  const PD = { dur: 1200, fast: 110, slow: 420, share: 0.55, taper: 880, end: 1080, vibTau: 300, thunk: 980, swap: 1000, fade: 90, ticks: [1060, 1140] };
+  const MINI = { dur: 300, fast: 90, slow: 90, share: 1, taper: 300, end: 300, vibTau: 150 };
+  const REACT_HOLD = 3000; // 05 / 06 hold after the swap before the rig returns to 04 by itself
+  // Third release (review pass 01): staged build, WHUMP at 3350 ms.
+  const T3 = { wrong: 600, shudder: 1000, enter07: 1450, flicker: 33, arcsSparse: 1750, grow: 2150, peak: 2750, still: 2950, whump: 3350, cut: 3600 };
   const FULL = { whump: 250, cut: 500 };
   const SETUP = { fadeIn: 300, say1: 500, say1Off: 2900, p02: 3100, p03: 4500, say2: 4700, say2Off: 7000, cut04: 7200, push: 700 };
-  const FLIGHT = { A: 900, B: 1050, C: 1750, cut: 2150 };
-  const FOREST = { fall: 700, thud: 1300, foxIn: 3300, lookL: 3800, lookR: 4500, foxOut: 5200, failed: 5900, result: 6600, carry: 8200, carryIn: 350, done: 9000 };
+  const FLIGHT = { A: 1400, B: 2300, C: 3500, cut: 4600 };
+  const FOREST = { fall: 1100, rustle: 0.9, thud: 2300, pause: 2700, foxIn: 4800, foxMove: 300, lookL: 5900, lookR: 7100, foxOut: 8300, failed: 9600, result: 10900, carry: 12600, carryIn: 500, done: 14200 };
   const LINES = { inspect: 'How do I use this thing?', goggles: 'Let me at least put my goggles on.' };
 
   // Controlled art for the Leicester gag has not been supplied yet. When it lands, set the paths here (fox: one frame
@@ -147,7 +151,8 @@
     o1.stop(t + 0.2); o2.stop(t + 0.2);
   }
   // Power-down whine: its pitch, filter and gain are sampled from the same p(t) the visuals read every frame.
-  const pCurve = (t, c0, m) => (t < m.end ? c0 * Math.exp(-t / m.tau) : 0);
+  const smooth = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+  const pCurve = (t, c0, m) => (t < m.end ? c0 * (m.share * Math.exp(-t / m.fast) + (1 - m.share) * Math.exp(-t / m.slow)) * (1 - smooth(m.taper, m.end, t)) : 0);
   let whine = null, sched = [];
   function whineStart(c0, f0, m) {
     whineStop();
@@ -155,7 +160,8 @@
     const n = Math.ceil(m.dur / 10) + 1, fr = new Float32Array(n), gn = new Float32Array(n), lp = new Float32Array(n);
     for (let i = 0; i < n; i++) {
       const t = (i / (n - 1)) * m.dur, rel = c0 > 0 ? pCurve(t, c0, m) / c0 : 0;
-      fr[i] = 90 + (f0 - 90) * rel; gn[i] = (0.04 + 0.06 * c0) * rel; lp[i] = 300 + 2100 * rel;
+      // Louder at the start so the release itself is heard; the same rel drives the glow.
+      fr[i] = 90 + (f0 - 90) * rel; gn[i] = (0.05 + 0.07 * c0) * rel * (1 + 0.9 * Math.exp(-t / 140)); lp[i] = 300 + 2600 * rel;
     }
     const t0 = a.currentTime, d = m.dur / 1000;
     const o1 = a.createOscillator(), o2 = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain(), out = a.createGain();
@@ -181,16 +187,27 @@
   const fx = {
     chirp: () => tn(200, 620, 0, 0.09, 0.06, 'triangle'),
     cap: () => { nz(0, 0.015, 0.05, 'highpass', 3000); tn(1700, 1500, 0, 0.03, 0.025, 'square'); },
-    powerDown: () => { // settle thunk + clunk at 600 ms, relay ticks at 680 / 760 ms; no buzzer, no early noise
-      tn(70, 45, PD.thunk / 1000, 0.12, 0.16, 'sine', sched);
-      nz(PD.thunk / 1000, 0.04, 0.12, 'lowpass', 800, sched);
+    impact: () => { // the release itself: contactor drop + a short spark of discharge (no buzzer)
+      nz(0, 0.06, 0.24, 'lowpass', 1600, sched); tn(190, 70, 0, 0.11, 0.13, 'triangle', sched);
+      nz(0.01, 0.12, 0.06, 'highpass', 2800, sched);
+    },
+    powerDown: (c0) => { // impact, mechanical spin-down under the whine, settle thunk, two relay ticks
+      fx.impact();
+      tn(34 + 40 * c0, 22, 0.15, 0.85, 0.07, 'triangle', sched);
+      tn(70, 42, PD.thunk / 1000, 0.16, 0.18, 'sine', sched);
+      nz(PD.thunk / 1000, 0.05, 0.13, 'lowpass', 700, sched);
       PD.ticks.forEach((ms, i) => nz(ms / 1000, 0.015, i ? 0.04 : 0.05, 'highpass', 3000, sched));
     },
-    third: () => { // instability rattle at 11 Hz on the shake, then the WHUMP
-      for (let ms = T3.shake; ms < T3.freeze; ms += 91) {
-        const k = (ms - T3.shake) / (T3.freeze - T3.shake);
-        nz(ms / 1000, 0.05, 0.05 + 0.08 * k, 'bandpass', 700 + 500 * Math.random(), sched);
-        tn(140 + 60 * Math.random(), 90, ms / 1000, 0.04, 0.04 + 0.04 * k, 'square', sched);
+    third: (c0) => { // familiar impact, then: mechanical shudder → rattle that builds to the peak → silence → WHUMP
+      fx.impact();
+      for (let ms = T3.shudder; ms < T3.enter07; ms += 140 + 40 * Math.random()) {
+        nz(ms / 1000, 0.06, 0.05, 'bandpass', 380 + 200 * Math.random(), sched); tn(70, 50, ms / 1000, 0.06, 0.05, 'triangle', sched);
+      }
+      tn(60, 30, T3.enter07 / 1000, 0.18, 0.18, 'sine', sched); // the lunge onto the grips
+      for (let ms = T3.enter07; ms < T3.still; ms += 91) {
+        const k = (ms - T3.enter07) / (T3.still - T3.enter07);
+        nz(ms / 1000, 0.05, 0.04 + 0.11 * k, 'bandpass', 700 + 500 * Math.random(), sched);
+        tn(140 + 60 * Math.random(), 90, ms / 1000, 0.04, 0.03 + 0.06 * k, 'square', sched);
       }
       fx.whump(T3.whump / 1000, sched);
     },
@@ -199,7 +216,7 @@
       tn(120, 35, at, 0.28, 0.4, 'sine', g); nz(at, 0.09, 0.32, 'lowpass', 1500, g);
       tn(2000, 200, at, 0.15, 0.06, 'sawtooth', g); nz(at + 0.05, 0.6, 0.05, 'lowpass', 500, g);
     },
-    whistle: () => tn(1500, 420, 0, 0.7, 0.035, 'sine'),
+    whistle: (dur = 0.7) => tn(1500, 420, 0, dur, 0.035, 'sine'),
     rustle: (dur = 0.6, vol = 0.09) => {
       for (let i = 0; i < 9; i++) nz(Math.random() * dur, 0.05 + Math.random() * 0.08, vol * (0.5 + Math.random() * 0.5), 'bandpass', 2600 + Math.random() * 2400);
     },
@@ -258,15 +275,15 @@
     s.c0 = s.c; s.f0 = 110 + 410 * s.c; s.peak = s.c; s.swapped = false; s.abort = false; s.mini = false;
     humSet(110, 0, 300); // the whine voice takes over from the hum
     if (fromPause) { // a pause is not the player letting go: power down without a pose swap or a count
-      s.abort = true; enter('powerdown'); whineStart(s.c0, s.f0, PD); return;
+      s.abort = true; enter('powerdown'); whineStart(s.c0, s.f0, PD); fx.impact(); return;
     }
     if (s.c < TAP_GUARD) { s.mini = true; enter('powerdown'); whineStart(s.c0, s.f0, MINI); return; }
     s.count += 1;
     if (s.count < 3) {
-      enter('powerdown'); whineStart(s.c0, s.f0, PD); fx.powerDown();
+      enter('powerdown'); whineStart(s.c0, s.f0, PD); fx.powerDown(s.c0);
       announce('Powering down');
     } else {
-      enter('third'); s.smoke = []; whineStart(s.c0, s.f0, PD); whineCut(T3.stutter); fx.third();
+      enter('third'); s.smoke = []; whineStart(s.c0, s.f0, PD); whineCut(T3.wrong); fx.third(s.c0);
       announce('Powering down… something is wrong');
     }
   }
@@ -310,7 +327,7 @@
 
   function update(dt) {
     const rm = reduced(), pt = s.t - s.phaseT;
-    let x = 0, y = 0, r = 0, g = 0, motion = 0, arcOn = false, flash = 0, bloomOp = 0, tremor = 0;
+    let x = 0, y = 0, r = 0, g = 0, motion = 0, arcOn = 0, flash = 0, bloomOp = 0, tremor = 0;
     let hf = 110, hg = 0, hlp = 700, hSnap = false, ringSpeed = 0;
     const wob = (A, f) => { s.vph += dt / 1000 * f; return { x: A * vnoise(s.vph), y: 0.5 * A * vnoise(s.vph + 97.3) }; };
     // Shake must stay readable on phones: never below ~1.5 CSS px on screen once it is meant to be felt.
@@ -319,9 +336,15 @@
     switch (s.phase) {
       case 'setup': runSetup(pt); break;
       case 'idle': {
+        // Reaction hold: 05 / 06 stay up for REACT_HOLD after the swap, then the rig returns to 04, ready.
+        if ((s.pose === '05' || s.pose === '06') && s.t - s.swapT >= REACT_HOLD) {
+          setPose('04'); s.prev = null; s.jolt = s.t; fx.chirp(); announce('Ready');
+        }
         const on = s.pose === '04';
         g = on ? 0.15 : 0; hg = on ? 0.02 : 0;
         const w = wob(on ? 0.4 : 0, 14); x = w.x; y = w.y; // keeps 04's baked motion arcs reading as live
+        const j = s.t - s.jolt;
+        if (on && j < 160) { const k = 1 - j / 160; x -= 2 * k; y += 1 * k; g += 0.25 * k; } // settles back onto the grips
         ringSpeed = on ? 0.3 : 0;
         break;
       }
@@ -347,11 +370,13 @@
         const p = pCurve(pt, s.c0, m), rel = s.c0 > 0 ? p / s.c0 : 0;
         s.c = p;
         g = (0.15 + 0.85 * p) * rel;
-        const A = (0.4 + 3.6 * s.c0 * s.c0) * Math.exp(-pt / 150), w = wob(A, 14 + 18 * p); x = w.x; y = w.y;
+        const imp = !s.mini && pt < 90 ? (1 - pt / 90) : 0; // release impact: a kick, then the drain
+        const A = (0.4 + 3.6 * s.c0 * s.c0) * Math.exp(-pt / m.vibTau) + 3 * imp, w = wob(A, 14 + 18 * p); x = w.x - 2 * imp; y = w.y + 1.5 * imp;
+        g = Math.min(1, g + 0.3 * imp);
         ringSpeed = -(0.3 + 2.2 * p); // rings run back to the breech
         if (!s.mini && pt >= PD.thunk && pt <= PD.thunk + 160) y += 2 * Math.sin(Math.PI * (pt - PD.thunk) / 160); // settle
         if (!s.mini && !s.abort && !s.swapped && pt >= PD.swap) { // swap under the thunk; coil in 05/06 is baked dim
-          s.swapped = true; setPose(s.count === 1 ? '05' : '06', PD.fade);
+          s.swapped = true; s.swapT = s.t; setPose(s.count === 1 ? '05' : '06', PD.fade);
         }
         if (!s.mini && PD.ticks.some((ms) => pt >= ms && pt < ms + 40)) g *= 0.2; // hub blinks off on each relay tick
         hg = 0; // the whine voice carries the sound (same p(t))
@@ -399,32 +424,45 @@
 
   // ---------- Third interruption: familiar, then wrong, then still, then WHUMP ----------
   function runThird(t, wob, floorA) {
-    const o = { x: 0, y: 0, r: 0, g: 0, motion: 0, arcOn: false, flash: 0, bloomOp: 0, hf: 0, hg: 0, hlp: 2600, hSnap: false, ringSpeed: 0, tremor: 0 };
-    if (t < T3.stutter) { // B1: identical to the clean power-down
-      const p = pCurve(t, s.c0, PD), rel = s.c0 > 0 ? p / s.c0 : 0;
-      s.c = p; o.g = (0.15 + 0.85 * p) * rel; o.ringSpeed = -(0.3 + 2.2 * p);
-      const w = wob((0.4 + 3.6 * s.c0 * s.c0) * Math.exp(-t / 150), 14 + 18 * p); o.x = w.x; o.y = w.y;
+    const o = { x: 0, y: 0, r: 0, g: 0, motion: 0, arcOn: 0, flash: 0, bloomOp: 0, hf: 0, hg: 0, hlp: 2600, hSnap: false, ringSpeed: 0, tremor: 0 };
+    const flick = (lo, hi) => { if (s.t > s.gStep) { s.gVal = lo + (hi - lo) * Math.random(); s.gStep = s.t + 40 + 30 * Math.random(); s.hfG = 160 * (Math.random() > 0.5 ? 1.5 : 0.7); } return s.gVal; };
+    if (t < T3.wrong) { // 1. the familiar clean power-down (same curve, same impact)
+      const p = pCurve(t, s.c0, PD), rel = s.c0 > 0 ? p / s.c0 : 0, imp = t < 90 ? 1 - t / 90 : 0;
+      s.c = p; o.g = Math.min(1, (0.15 + 0.85 * p) * rel + 0.3 * imp); o.ringSpeed = -(0.3 + 2.2 * p);
+      const w = wob((0.4 + 3.6 * s.c0 * s.c0) * Math.exp(-t / PD.vibTau) + 3 * imp, 14 + 18 * p); o.x = w.x - 2 * imp; o.y = w.y + 1.5 * imp;
       o.hf = 0; // the whine voice
-    } else if (t < T3.shake) { // B2: stutter / pitch glitch
-      if (s.t > s.gStep) { s.gVal = 0.2 + 0.8 * Math.random(); s.gStep = s.t + 40 + 30 * Math.random(); s.hfG = 160 * (Math.random() > 0.5 ? 1.5 : 0.7); }
-      o.g = s.gVal; s.c = 0.15 * s.gVal;
-      const w = wob(1, 20); o.x = w.x; o.y = w.y; o.tremor = 1.5;
+    } else if (t < T3.shudder) { // 2. something is wrong: the whine stops, pitch glitches, the coil stutters
+      o.g = flick(0.15, 0.85); s.c = 0.2 * s.gVal;
+      const w = wob(0.8, 20); o.x = w.x; o.y = w.y; o.tremor = 1;
       o.hf = s.hfG; o.hg = 0.05; o.hlp = 1600; o.hSnap = true;
-    } else if (t < T3.freeze) { // B3–B4: 07 enters under a flicker frame; shake, arcs, smoke
-      if (once('p07')) { setPose('07'); s.prev = null; }
-      if (t < T3.shake + T3.flicker) o.flash = 0.55;
-      const k = (t - T3.shake) / (T3.freeze - T3.shake), A = floorA(6 + 4 * k, 1.5), ph = TAU * 10 * t / 1000;
-      o.x = A * Math.sin(ph) + (Math.random() - 0.5) * 1.5; o.y = 0.4 * A * Math.sin(ph + 1); o.r = 0.8 * Math.sin(ph + 0.5);
-      if (s.t > s.gStep) { s.gVal = (0.3 + 0.7 * k) * (0.6 + 0.4 * Math.random()); s.gStep = s.t + 40 + 30 * Math.random(); }
-      o.g = s.gVal; s.c = Math.min(1, 0.3 + 0.7 * k); o.ringSpeed = 0.3 + 2.2 * s.c;
-      o.arcOn = t > T3.arcs; o.tremor = 2;
-      o.hf = 180 + 720 * k + 25 * Math.sin(TAU * 8 * t / 1000); o.hg = 0.06 + 0.03 * k;
-      if (t > 700 && once('smokeA')) { puff(500, 520, 5); puff(500, 605, 5); }
-      if (t > 1000 && once('smokeB')) puff(870, 800, 6);
-      if (t > 1200 && once('smokeC')) puff(500, 520, 3);
-    } else if (t < T3.whump) { // B5: dead still, near silence
-      o.g = 1; s.c = 1; o.hf = 3200; o.hg = 0.004; o.hlp = 6000;
-    } else { // B6: WHUMP — the banana leaves
+      if (once('wrong')) announce('Something is wrong');
+    } else if (t < T3.enter07) { // 3. small mechanical shudder (still 04)
+      const k = (t - T3.shudder) / (T3.enter07 - T3.shudder), ph = TAU * 7 * t / 1000;
+      const A = floorA(1.5 + 1.5 * k, 1);
+      o.x = A * Math.sin(ph) * (0.7 + 0.3 * vnoise(t / 60)); o.y = 0.5 * A * Math.sin(ph * 1.3 + 1); o.r = 0.15 * Math.sin(ph);
+      o.g = flick(0.25, 0.6); s.c = 0.25 + 0.1 * k; o.ringSpeed = 0.6; o.tremor = 1.2;
+      o.hf = 120 + 30 * Math.sin(TAU * 7 * t / 1000); o.hg = 0.04; o.hlp = 1200;
+    } else if (t < T3.still) { // 4–7. 07: Valenté fights it; instability grows to a peak
+      if (once('p07')) { setPose('07'); s.prev = null; announce('Valenté shakes the launcher'); }
+      if (t < T3.enter07 + T3.flicker) o.flash = 0.55;
+      const k = (t - T3.enter07) / (T3.still - T3.enter07);
+      let A, f;
+      if (t < T3.grow) { const u = (t - T3.enter07) / (T3.grow - T3.enter07); A = 4 + 2.5 * u; f = 9; }               // fighting
+      else if (t < T3.peak) { const u = (t - T3.grow) / (T3.peak - T3.grow); A = 6.5 + 3.5 * u; f = 9 + 2 * u; }    // growing
+      else { A = 10.5; f = 11; o.flash = Math.random() < 0.12 ? 0.3 : 0; }                                           // peak
+      A = floorA(A, 1.5);
+      const ph = TAU * f * t / 1000;
+      o.x = A * Math.sin(ph) + (Math.random() - 0.5) * (t >= T3.peak ? 3 : 1.5); o.y = 0.4 * A * Math.sin(ph + 1); o.r = 0.8 * (A / 10) * Math.sin(ph + 0.5);
+      o.g = flick(0.3 + 0.6 * k, 0.6 + 0.4 * k); s.c = Math.min(1, 0.35 + 0.65 * k); o.ringSpeed = 0.3 + 2.2 * s.c;
+      o.arcOn = t < T3.arcsSparse ? 0 : t < T3.grow ? 1 : 3; o.tremor = 1.5 + 1.5 * k;
+      o.hf = 180 + 720 * k + 25 * Math.sin(TAU * 8 * t / 1000); o.hg = 0.05 + 0.05 * k;
+      if (t > T3.grow - 200 && once('smokeA')) { puff(500, 520, 4); puff(500, 605, 4); }
+      if (t > T3.grow + 150 && once('smokeB')) puff(870, 800, 6);
+      if (t > T3.grow + 400 && once('smokeC')) { puff(500, 520, 4); puff(500, 605, 3); }
+      if (t > T3.peak && once('smokeD')) { puff(500, 520, 4); puff(870, 800, 4); }
+    } else if (t < T3.whump) { // 8–9. sudden complete stillness and silence, held for a beat
+      o.g = 1; s.c = 1; o.hf = 60; o.hg = 0; o.hSnap = true;
+    } else { // 10. WHUMP — the banana leaves
       const u = (t - T3.whump) / 1000;
       Object.assign(o, launch(u, t - T3.whump, 10, 6, 0.6, 1));
       if (once('whumpSmoke')) { puff(500, 520, 4); puff(500, 605, 4); puff(870, 800, 5); s.path = 'third'; announce('Whump!'); setLabel('LAUNCHING…'); }
@@ -454,7 +492,7 @@
     const sx = A6.x + dist * Math.cos(BARREL) - SHOT.w / 2, sy = A6.y + dist * Math.sin(BARREL) - SHOT.h / 2;
     shot.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px) rotate(${rm ? 0 : (720 * u).toFixed(1)}deg) scale(${(1 - 0.4 * Math.min(1, u * 4)).toFixed(3)})`;
     return {
-      x: -rx * damp, y: ry * damp, r: -rr * damp, g: Math.max(0, 1 - u * 3), motion: 0, arcOn: false,
+      x: -rx * damp, y: ry * damp, r: -rr * damp, g: Math.max(0, 1 - u * 3), motion: 0, arcOn: 0,
       flash: ms < 33 ? peak : Math.max(0, peak - (ms - 33) / 220), bloomOp: 1, hf: 60, hg: 0, ringSpeed: 0, tremor: 0,
     };
   }
@@ -489,10 +527,10 @@
     motionG.setAttribute('opacity', (s.pose === '04' ? motion : 0).toFixed(3));
     if (motion > 0 && !rm) motionG.setAttribute('transform', `translate(${((Math.random() - 0.5) * 3).toFixed(1)} ${((Math.random() - 0.5) * 3).toFixed(1)})`);
     // L3 arcs (third interruption only), redrawn every 50–70 ms between barrel and capacitor anchors.
-    if (arcOn && s.t > s.arcAt) {
-      s.arcAt = s.t + 50 + 20 * Math.random();
+    if (arcOn && s.t > s.arcAt) { // arcOn = how many arcs (1 = sparse, 3 = dense)
+      s.arcAt = s.t + (arcOn > 1 ? 50 + 20 * Math.random() : 110 + 60 * Math.random());
       const pts = [bolt(1000, 345, 1270, 258, 9, 18), bolt(450, 470, 560, 630, 7, 14), bolt(600, 470, 760, 400, 6, 12)];
-      arcLines.forEach((el, i) => el.setAttribute('points', pts[i % 3]));
+      arcLines.forEach((el, i) => el.setAttribute('points', i % 3 < arcOn && Math.random() > (arcOn > 1 ? 0 : 0.3) ? pts[i % 3] : ''));
     }
     arcsG.setAttribute('opacity', arcOn ? '1' : '0');
     flashEl.style.opacity = flash.toFixed(3);
@@ -570,7 +608,7 @@
       ang = a0 + (rm ? 0 : 0.18 * Math.sin(u * TAU));
     } else if (ft < FLIGHT.C) { // descent: gravity wins, onto Leicester
       const u = (ft - FLIGHT.B) / (FLIGHT.C - FLIGHT.B);
-      if (once('whistle')) { fx.whistle(); announce('Descending'); }
+      if (once('whistle')) { fx.whistle((FLIGHT.C - FLIGHT.B) / 1000); announce('Descending'); }
       const sx = stallPt.x + Math.cos(a0) * 6, sy0 = stallPt.y + Math.sin(a0) * 6 + 3;
       x = sx + (P.leic[0] - sx) * u; y = sy0 + (P.leic[1] - sy0) * u * u;
       ang = rm ? a0 : a0 + Math.PI * 3 * u * u;
@@ -605,15 +643,15 @@
       const u = t / FOREST.fall, W = forest.clientWidth, H = forest.clientHeight, bw = W * 0.13;
       const x = W * 0.55 - bw / 2 + (rm ? 0 : W * 0.03 * u), y = -bw + (H * 0.74 + bw) * u * u;
       fall.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${rm ? 0 : (300 * u).toFixed(1)}deg)`;
-    } else if (once('rustle')) { fall.style.visibility = 'hidden'; beat('rustle', 'RUSTLE…'); fx.rustle(); announce('Rustling leaves'); }
+    } else if (once('rustle')) { fall.style.visibility = 'hidden'; beat('rustle', 'RUSTLE…'); fx.rustle(FOREST.rustle); announce('Rustling leaves'); }
     if (t >= FOREST.thud && once('thud')) { beat('thud', 'THUD.'); fx.thud(); announce('Thud'); }
-    if (t >= FOREST.thud + 400 && once('hold')) beat('hold', '…');
+    if (t >= FOREST.pause && once('hold')) beat('hold', '…');
     // 8–11: the fox (art pending; the placeholder shows the player's banana so the carried choice can be checked).
     if (t >= FOREST.foxIn && once('foxIn')) { beat('fox-up', 'FOX APPEARS — BANANA IN ITS MOUTH'); setFox('up'); fx.rustle(0.25, 0.06); announce('A fox appears with the banana'); }
     if (t >= FOREST.lookL && once('lookL')) { beat('fox-left', 'FOX LOOKS LEFT'); setFox('left'); }
     if (t >= FOREST.lookR && once('lookR')) { beat('fox-right', 'FOX LOOKS RIGHT'); setFox('right'); }
     if (t >= FOREST.foxOut && once('foxOut')) { beat('fox-gone', 'FOX DISAPPEARS INTO THE FOREST'); setFox(null); fx.rustle(0.25, 0.06); announce('The fox is gone'); }
-    const foxRise = t >= FOREST.foxIn && t < FOREST.foxOut ? clamp((t - FOREST.foxIn) / 220) : t >= FOREST.foxOut ? 1 - clamp((t - FOREST.foxOut) / 220) : 0;
+    const foxRise = t >= FOREST.foxIn && t < FOREST.foxOut ? clamp((t - FOREST.foxIn) / FOREST.foxMove) : t >= FOREST.foxOut ? 1 - clamp((t - FOREST.foxOut) / FOREST.foxMove) : 0;
     pendingBanana.style.opacity = foxRise.toFixed(3);
     fox.style.opacity = foxRise.toFixed(3);
     fox.style.transform = rm ? '' : `translateY(${((1 - foxRise) * 30).toFixed(1)}%)`;
