@@ -391,6 +391,8 @@
     p2Continue.disabled = true;
     guide(p2Analyze, 'Click SIZE UP THE PROBLEM', 'Tap SIZE UP THE PROBLEM');
     later(sfx.route, 250);
+    // Fetch and decode the Attempt 01 plates while the player reads the problem.
+    later(() => window.BX.preloadAttempt01?.(), 600);
   }
 
   p2Analyze.addEventListener('click', () => {

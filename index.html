@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
   <link rel="stylesheet" href="style.css?v=20261001-1630" />
-  <link rel="stylesheet" href="scene02.css?v=20261002-1100" />
-  <link rel="stylesheet" href="attempt01.css?v=20261002-1100" />
+  <link rel="stylesheet" href="scene02.css?v=20261003-1800" />
+  <link rel="stylesheet" href="attempt01.css?v=20261003-1800" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -277,16 +277,76 @@
   <!-- PART 2 — ATTEMPT 01: LONG-RANGE LAUNCH (attempt01.js). Development entry only: ?scene=part2 → SIZE UP THE PROBLEM.
        Layers: stage (background, launcher rig, route map + projectile; receives shake) → UI → flash. -->
   <section class="scene scene-attempt" id="p2-attempt01" aria-hidden="true">
-    <div class="a1-stage" id="a1-stage">
-      <div class="p2-grid-bg" aria-hidden="true"></div>
-      <div class="a1-rig" id="a1-rig" aria-hidden="true">
-        <!-- Glow: copies of the locked art with a cyan drop-shadow, sitting behind it (only the halo shows). -->
-        <img class="a1-glow a1-glow-a" id="a1-glow-a" src="assets/launcher.webp" width="1536" height="1024" alt="" />
-        <img class="a1-glow a1-glow-b" id="a1-glow-b" src="assets/launcher.webp" width="1536" height="1024" alt="" />
-        <img class="a1-launcher" src="assets/launcher.webp" width="1536" height="1024" alt="" />
-        <img class="a1-cyan" id="a1-cyan" src="assets/launcher-cyan-mask.webp" width="1536" height="1024" alt="" />
-        <div class="a1-coil" id="a1-coil"><i class="a1-band"></i><i class="a1-band"></i><i class="a1-band"></i><i class="a1-band"></i></div>
+    <div class="p2-grid-bg" aria-hidden="true"></div>
+    <div class="a1-head">
+      <p class="a1-kicker">ATTEMPT 01 // LONG-RANGE LAUNCH</p>
+      <p class="a1-target">TARGET: TFY // NORTHAMPTON</p>
+    </div>
+
+    <div class="a1-cell" id="a1-cell">
+      <!-- Launcher scene. Plate space is 1672 × 941 (plate 04 is the registration authority); 24 px overscan is cropped on
+           every edge. Locked art is only shown, swapped, moved and lit from live layers above it — never edited. -->
+      <div class="a1-view" id="a1-view" aria-hidden="true">
+        <div class="a1-space" id="a1-space">
+          <div class="a1-cam" id="a1-cam">
+            <!-- Setup beats 01–03: alpha cutouts beside the locked launcher reference on the plate-navy stage. -->
+            <div class="a1-setup" id="a1-setup">
+              <img class="a1-setup-launcher" data-src="assets/launcher.png" width="1536" height="1024" alt="" />
+              <img class="a1-setup-pose" data-pose="01" data-src="assets/part2/01_confused_inspecting_LOCKED.png" width="1024" height="1536" alt="" />
+              <img class="a1-setup-pose" data-pose="02" data-src="assets/part2/02_shrug_acceptance_LOCKED.png" width="1024" height="1536" alt="" />
+              <img class="a1-setup-pose" data-pose="03" data-src="assets/part2/03_goggles_on_ready_LOCKED.png" width="1024" height="1536" alt="" />
+            </div>
+            <!-- L1 rig plates (one visible) + L2 energy, L3 arcs, L4 motion lines; the whole rig moves as one. -->
+            <div class="a1-rig" id="a1-rig">
+              <img class="a1-plate" data-pose="04" data-src="assets/part2/04_operator_bracing_LOCKED.png" width="1672" height="941" alt="" />
+              <img class="a1-plate" data-pose="05" data-src="assets/part2/05_first_interruption_turn_look_LOCKED.png" width="1672" height="941" alt="" />
+              <img class="a1-plate" data-pose="06" data-src="assets/part2/06_second_interruption_one_hand_shrug_LOCKED.png" width="1672" height="941" alt="" />
+              <img class="a1-plate" data-pose="07" data-src="assets/part2/07_third_interruption_shake_LOCKED.png" width="1672" height="941" alt="" />
+              <svg class="a1-fx" viewBox="0 0 1672 941" width="1672" height="941">
+                <defs>
+                  <filter id="a1-glowblur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9" /></filter>
+                  <filter id="a1-softblur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" /></filter>
+                </defs>
+                <g class="a1-energy">
+                  <g transform="rotate(-17.5 1130 300)">
+                    <rect id="a1-coil" x="985" y="270" width="290" height="60" rx="30" fill="#39d5ff" filter="url(#a1-glowblur)" opacity="0" />
+                    <g id="a1-rings" fill="none" stroke="#bff6ff" stroke-width="4" filter="url(#a1-softblur)" opacity="0">
+                      <ellipse cy="300" rx="7" ry="30" /><ellipse cy="300" rx="7" ry="30" /><ellipse cy="300" rx="7" ry="30" />
+                      <ellipse cy="300" rx="7" ry="30" /><ellipse cy="300" rx="7" ry="30" /><ellipse cy="300" rx="7" ry="30" />
+                    </g>
+                  </g>
+                  <circle id="a1-hub" cx="585" cy="497" r="40" fill="none" stroke="#5fe0ff" stroke-width="10" filter="url(#a1-softblur)" opacity="0" />
+                  <g fill="#5fe0ff" filter="url(#a1-softblur)">
+                    <rect class="a1-cap" x="448" y="482" width="88" height="12" rx="6" opacity="0" />
+                    <rect class="a1-cap" x="452" y="574" width="96" height="12" rx="6" opacity="0" />
+                    <rect class="a1-cap" x="468" y="612" width="80" height="10" rx="5" opacity="0" />
+                  </g>
+                  <ellipse id="a1-table" cx="890" cy="722" rx="165" ry="22" fill="none" stroke="#5fe0ff" stroke-width="8" filter="url(#a1-softblur)" opacity="0" />
+                  <g id="a1-pads" fill="#5fe0ff" filter="url(#a1-softblur)" opacity="0">
+                    <rect x="715" y="874" width="90" height="10" rx="5" /><rect x="255" y="806" width="110" height="9" rx="4" /><rect x="1255" y="822" width="110" height="9" rx="4" />
+                  </g>
+                </g>
+                <!-- L4: cradle and pad lines only. Valenté's motion arcs are baked into the plates. -->
+                <g id="a1-motion" fill="none" stroke="#8ee6ff" stroke-width="3" stroke-linecap="round" opacity="0">
+                  <path d="M1612 92 q14 22 0 44" /><path d="M1630 80 q22 34 0 68" /><path d="M1190 818 q-12 18 0 36" /><path d="M1172 810 q-18 26 0 52" /><path d="M700 884 q-12 16 0 32" />
+                </g>
+                <!-- L3: third interruption only. -->
+                <g id="a1-arcs" fill="none" stroke-linejoin="round" opacity="0">
+                  <g stroke="#7fe7ff" stroke-width="9" filter="url(#a1-softblur)" opacity=".7"><polyline /><polyline /><polyline /></g>
+                  <g stroke="#dffbff" stroke-width="3"><polyline /><polyline /><polyline /></g>
+                </g>
+              </svg>
+            </div>
+            <canvas class="a1-smoke" id="a1-smoke" width="836" height="471"></canvas>
+            <div class="a1-bloom" id="a1-bloom"></div>
+            <img class="a1-shot" id="a1-shot" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" />
+            <div class="a1-flash" id="a1-flash"></div>
+          </div>
+        </div>
       </div>
+      <div class="a1-say" id="a1-say" role="status"><small>VALENTÉ</small><span id="a1-say-text"></span></div>
+
+      <!-- Flight: the Nottingham → Leicester route map. -->
       <div class="a1-map" id="a1-map">
         <svg class="a1-map-svg" id="a1-map-svg" viewBox="0 0 1000 1000" role="img" aria-label="Route map: Nottingham, Leicester and TFY in Northampton">
           <rect class="a1-map-panel" x="6" y="6" width="988" height="988" rx="34" />
@@ -304,27 +364,40 @@
           <text class="a1-label a1-label-leic" id="a1-leic-label" x="500" y="472">LEICESTER</text>
           <text class="a1-label a1-label-tfy" x="620" y="934" text-anchor="middle">TFY // NORTHAMPTON</text>
         </svg>
-        <img class="a1-proj" id="a1-proj" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="Your banana in flight" />
+        <img class="a1-proj" id="a1-proj" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" />
+      </div>
+
+      <!-- Leicester failure gag. The forest and fox art layers stay empty until the controlled assets are supplied;
+           until then a labelled review placeholder carries the timing. -->
+      <div class="a1-forest" id="a1-forest" data-beat="">
+        <div class="a1-forest-frame">
+          <img class="a1-forest-art" id="a1-forest-art" alt="" hidden />
+          <div class="a1-forest-pending" id="a1-forest-pending">
+            <p class="a1-pending-tag">LEICESTER · FOREST / FOX ART PENDING</p>
+            <p class="a1-pending-beat" id="a1-pending-beat"></p>
+            <div class="a1-canopy-line"><span>CANOPY</span></div>
+            <img class="a1-pending-banana" id="a1-pending-banana" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" />
+          </div>
+          <div class="a1-fall-clip"><img class="a1-fall" id="a1-fall" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" /></div>
+          <div class="a1-fox" id="a1-fox" data-look="" hidden><img class="a1-fox-art" id="a1-fox-art" alt="" /></div>
+          <div class="a1-verdict" id="a1-verdict">
+            <p class="a1-failed" id="a1-failed">FAILED ATTEMPT</p>
+            <p class="a1-result" id="a1-result">RESULT: LEICESTER</p>
+          </div>
+          <img class="a1-carry" id="a1-carry" data-src="assets/part2/08_determined_transition_goggles_TRANSPARENT_LOCKED.png" width="827" height="1402" alt="Valenté, goggles on, ready for the next attempt" />
+        </div>
       </div>
     </div>
 
-    <div class="a1-head">
-      <p class="a1-kicker">ATTEMPT 01 // LONG-RANGE LAUNCH</p>
-      <p class="a1-target">TARGET: TFY // NORTHAMPTON</p>
-    </div>
-    <div class="a1-ctrl">
+    <div class="a1-ctrl" id="a1-ctrl">
       <div class="a1-meter" id="a1-meter" aria-hidden="true">
         <span class="a1-meter-label">CHARGE</span><b id="a1-meter-pct">0%</b>
-        <div class="a1-meter-track"><i id="a1-meter-fill"></i></div>
+        <div class="a1-meter-track"><i class="a1-meter-peak" id="a1-meter-peak"></i><i class="a1-meter-fill" id="a1-meter-fill"></i></div>
       </div>
-      <button class="a1-btn" id="a1-btn" type="button"><span class="a1-btn-cap">CHARGE LAUNCHER</span></button>
-      <p class="a1-hint" id="a1-hint">Press and hold</p>
-      <p class="a1-result" id="a1-result" hidden>RESULT: LEICESTER</p>
-      <p class="a1-live" id="a1-live" aria-live="polite" role="status"></p>
+      <button class="a1-btn" id="a1-btn" type="button" disabled><span class="a1-btn-cap">HOLD TO CHARGE</span></button>
+      <p class="a1-hint" id="a1-hint"></p>
     </div>
-
-    <div class="a1-flash a1-flash-radial" id="a1-flash-radial" aria-hidden="true"></div>
-    <div class="a1-flash a1-flash-white" id="a1-flash-white" aria-hidden="true"></div>
+    <p class="a1-live" id="a1-live" aria-live="polite" role="status"></p>
   </section>
 
   <!-- Player guidance: one compact instruction per interactive step (shared by all scenes). -->
@@ -335,7 +408,7 @@
   <div class="flash" id="flash"></div>
 </main>
 <script src="game.js?v=20261002-1100"></script>
-<script src="scene02.js?v=20261002-1100"></script>
-<script src="attempt01.js?v=20261002-1100"></script>
+<script src="scene02.js?v=20261003-1800"></script>
+<script src="attempt01.js?v=20261003-1800"></script>
 </body>
 </html>
