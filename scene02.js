@@ -383,7 +383,7 @@
     clearGuide(); flash();
     window.BX.setMusicTheme('main');
 
-    $('#p2-payload').textContent = `1 × ${choice.name} BANANA`;
+    $('#p2-payload').textContent = `1 ${choice.name} BANANA`;
     $('#p2-budget').textContent = money(budget);
     $('#p2-analysis-budget').textContent = money(budget);
     p2.classList.remove('is-analyzed');

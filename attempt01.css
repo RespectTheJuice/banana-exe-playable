@@ -35,9 +35,15 @@
 
 .a1-setup-launcher { left: 326px; top: 25px; width: 1336px; height: 891px; } /* launcher reference at 0.87 */
 .a1-setup-pose { width: 402px; height: 604px; visibility: hidden; } /* ≈ 590 plate px figure, feet on y ≈ 740 */
-.a1-setup-pose[data-pose="01"] { left: 131px; top: 142px; } /* close to the machine, so 01's up-right look lands on it */
-.a1-setup-pose[data-pose="02"] { left: 144px; top: 160px; }
-.a1-setup-pose[data-pose="03"] { left: 140px; top: 150px; }
+/* Grounded: soles on y ≈ 812, the floor line of the launcher's rear-left pad (launcher reference unmoved).
+   01–03 share one foot line, so the pose cuts do not jump. */
+.a1-setup-pose[data-pose="01"] { left: 131px; top: 214px; } /* close to the machine, so 01's up-right look lands on it */
+.a1-setup-pose[data-pose="02"] { left: 144px; top: 232px; }
+.a1-setup-pose[data-pose="03"] { left: 140px; top: 222px; }
+.a1-setup-shadow {
+  position: absolute; left: 196px; top: 790px; width: 320px; height: 40px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, .55), rgba(0, 0, 0, 0)); pointer-events: none;
+}
 
 .a1-fx { position: absolute; z-index: 5; left: 0; top: 0; width: 1672px; height: 941px; overflow: visible; mix-blend-mode: screen; pointer-events: none; }
 .a1-smoke { position: absolute; left: 0; top: 0; width: 1672px; height: 941px; pointer-events: none; }
@@ -64,23 +70,24 @@
 .a1-say::after { content: ""; position: absolute; left: 44%; bottom: -21px; border: 9px solid transparent; border-top-color: var(--ink); }
 .a1-say.is-on { opacity: 1; visibility: visible; }
 
-/* ---------- Flight map ---------- */
-.a1-map { width: var(--ms); height: var(--ms); opacity: 0; visibility: hidden; }
-.a1-map-svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.a1-map-panel { fill: rgba(9, 15, 27, .94); stroke: var(--gold); stroke-opacity: .5; stroke-width: 3; }
-.a1-map-grid path { fill: none; stroke: rgba(121, 242, 238, .08); stroke-width: 2; }
-.a1-north path { fill: var(--gold); }
-.a1-north text { fill: var(--gold); font-family: var(--display); font-size: 30px; text-anchor: middle; }
-.a1-route { fill: none; stroke: var(--gold); stroke-width: 5; stroke-dasharray: 16 14; stroke-linecap: round; opacity: .85; }
-.a1-trail { fill: none; stroke: var(--gold); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: .45; }
+/* ---------- Flight map: left → right, receding into depth (same window as the launcher scene) ---------- */
+.a1-map { width: var(--vw); height: var(--vh); opacity: 0; visibility: hidden; overflow: hidden; border-radius: 10px; background: #071420; box-shadow: 0 0 0 2px rgba(255, 214, 83, .35); }
+.a1-map-svg { width: 100%; height: 100%; display: block; }
+.a1-map-ground { fill: rgba(19, 40, 58, .55); stroke: rgba(255, 214, 83, .35); stroke-width: 3; }
+.a1-map-grid { fill: none; stroke: rgba(121, 242, 238, .12); stroke-width: 2; }
+.a1-route { fill: none; stroke: var(--gold); stroke-width: 6; stroke-dasharray: 18 16; stroke-linecap: round; opacity: .85; }
+.a1-trail { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .4; stroke-dasharray: 2 10; }
+.a1-proj-shadow { fill: rgba(0, 0, 0, .45); opacity: 0; }
+.a1-stem { stroke: var(--white); stroke-width: 4; opacity: .7; }
 .a1-pt-nott { fill: var(--white); stroke: var(--ink); stroke-width: 4; }
 .a1-pt-leic { fill: var(--muted); stroke: var(--ink); stroke-width: 3; }
 .a1-pt-tfy { fill: #3b7dff; stroke: var(--white); stroke-width: 4; } /* TFY canon: blue, neutral lettering */
 .a1-tfy-pulse { fill: none; stroke: #9cc0ff; stroke-width: 4; opacity: 0; }
 .a1-leic-ring { fill: none; stroke: var(--gold); stroke-width: 5; opacity: 0; }
-.a1-label { fill: var(--white); font-family: var(--display); font-size: 34px; letter-spacing: 2px; }
+.a1-label { fill: var(--white); font-family: var(--display); font-size: 40px; letter-spacing: 2px; paint-order: stroke; stroke: #071420; stroke-width: 8px; }
 .a1-label-leic { fill: var(--muted); }
 .a1-label-leic.is-hit { fill: var(--gold); }
+.a1-label-tfy { font-size: 34px; }
 .a1-proj {
   position: absolute; left: 0; top: 0; width: 64px; height: auto; visibility: hidden;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .55)); will-change: transform; pointer-events: none;

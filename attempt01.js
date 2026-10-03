@@ -18,17 +18,19 @@
   const VIS = { w: 1624, h: 893 };                     // 1672 × 941 minus 24 px overscan per edge
   const A6 = { x: 1510, y: 118 }, SHOT = { w: 192, h: 144 }, BARREL = -17.5 * Math.PI / 180;
   const CHARGE_MS = 2400, TAP_GUARD = 0.12;
-  // Clean power-down (review pass 01: 1200 ms). Release impact → strong early drop (fast term) → descending whine →
-  // slower mechanical decay (slow term) → settle thunk. Power reaches zero at `end`; the pose swaps under the thunk.
-  const PD = { dur: 1200, fast: 110, slow: 420, share: 0.55, taper: 880, end: 1080, vibTau: 300, thunk: 980, swap: 1000, fade: 90, ticks: [1060, 1140] };
+  // Clean power-down (review pass 02: 1700 ms). Release impact → strong early drop (fast term) → long descending whine →
+  // slow mechanical spin-down (slow term) → settle thunk. Power reaches zero at `end`; the pose swaps under the thunk.
+  const PD = { dur: 1700, fast: 150, slow: 620, share: 0.5, taper: 1260, end: 1540, vibTau: 450, thunk: 1440, swap: 1460, fade: 90, ticks: [1560, 1640] };
   const MINI = { dur: 300, fast: 90, slow: 90, share: 1, taper: 300, end: 300, vibTau: 150 };
   const REACT_HOLD = 3000; // 05 / 06 hold after the swap before the rig returns to 04 by itself
-  // Third release (review pass 01): staged build, WHUMP at 3350 ms.
-  const T3 = { wrong: 600, shudder: 1000, enter07: 1450, flicker: 33, arcsSparse: 1750, grow: 2150, peak: 2750, still: 2950, whump: 3350, cut: 3600 };
-  const FULL = { whump: 250, cut: 500 };
+  // Third release (review pass 02): HE loses his temper → HE shakes it → HE breaks it.
+  // Familiar wind-down, something feels off, 07 angry face held still, THEN the shake, the machine reacts, escalates,
+  // peaks, goes dead with a flatline tone, silence, WHUMP.
+  const T3 = { wrong: 600, anger: 1000, shake: 1450, react: 1650, arcsSparse: 2000, grow: 2300, peak: 2650, dead: 2850, flat: 650, whump: 3800, cut: 4050 };
+  const FULL = { whump: 700, cut: 950 }; // full-charge plateau: 700 ms at maximum, then launch
   const SETUP = { fadeIn: 300, say1: 500, say1Off: 2900, p02: 3100, p03: 4500, say2: 4700, say2Off: 7000, cut04: 7200, push: 700 };
-  const FLIGHT = { A: 1400, B: 2300, C: 3500, cut: 4600 };
-  const FOREST = { fall: 1100, rustle: 0.9, thud: 2300, pause: 2700, foxIn: 4800, foxMove: 300, lookL: 5900, lookR: 7100, foxOut: 8300, failed: 9600, result: 10900, carry: 12600, carryIn: 500, done: 14200 };
+  const FLIGHT = { A: 1600, B: 2600, C: 4000, cut: 5200 };
+  const FOREST = { fall: 1300, thud: 2700, pause: 3150, foxIn: 5650, foxMove: 350, lookL: 6950, lookR: 8400, foxOut: 9800, failed: 11300, result: 12850, carry: 14850, carryIn: 550, done: 16750 };
   const LINES = { inspect: 'How do I use this thing?', goggles: 'Let me at least put my goggles on.' };
 
   // Controlled art for the Leicester gag has not been supplied yet. When it lands, set the paths here (fox: one frame
@@ -36,9 +38,10 @@
   // Until then a labelled review placeholder carries the timing. No forest or fox art is drawn in code.
   const FOREST_ART = { forest: null, fox: { up: null, left: null, right: null }, mouth: null };
 
-  // Map flight (re-used Nottingham → Leicester route). Map space is 0–1000, north up.
-  const P = { nott: [400, 140], leic: [430, 460], tfy: [620, 860], ctrl: [120, 450] };
+  // Map flight: left → right on a ground plane receding into depth (map space 1600 × 880; front edge y 840, far edge y 250).
+  const P = { nott: [300, 720], tfy: [1320, 330], ctrl: [760, 600] };
   const ROUTE = `M${P.nott} Q${P.ctrl} ${P.tfy}`;
+  const LEIC_AT = 0.43, ALT = 190; // Leicester's place along the route; cruise altitude in map units (at the front)
 
   // ---------- DOM ----------
   const scene = $('#p2-attempt01'), cell = $('#a1-cell'), view = $('#a1-view'), cam = $('#a1-cam');
@@ -53,7 +56,7 @@
   const bloom = $('#a1-bloom'), shot = $('#a1-shot'), flashEl = $('#a1-flash');
   const say = $('#a1-say'), sayText = $('#a1-say-text');
   const map = $('#a1-map'), mapSvg = $('#a1-map-svg'), routeDone = $('#a1-route-done'), routeLeft = $('#a1-route-left');
-  const trail = $('#a1-trail'), proj = $('#a1-proj'), leicRing = $('#a1-leic-ring'), leicLabel = $('#a1-leic-label'), tfyPulse = $('#a1-tfy-pulse');
+  const trail = $('#a1-trail'), proj = $('#a1-proj'), leicRing = $('#a1-leic-ring'), leicLabel = $('#a1-leic-label'), tfyPulse = $('#a1-tfy-pulse'), projShadow = $('#a1-proj-shadow');
   const forest = $('#a1-forest'), forestArt = $('#a1-forest-art'), pending = $('#a1-forest-pending'), pendingBeat = $('#a1-pending-beat');
   const pendingBanana = $('#a1-pending-banana'), fall = $('#a1-fall'), fox = $('#a1-fox'), foxArt = $('#a1-fox-art');
   const failedEl = $('#a1-failed'), resultEl = $('#a1-result'), carry = $('#a1-carry');
@@ -161,7 +164,7 @@
     for (let i = 0; i < n; i++) {
       const t = (i / (n - 1)) * m.dur, rel = c0 > 0 ? pCurve(t, c0, m) / c0 : 0;
       // Louder at the start so the release itself is heard; the same rel drives the glow.
-      fr[i] = 90 + (f0 - 90) * rel; gn[i] = (0.05 + 0.07 * c0) * rel * (1 + 0.9 * Math.exp(-t / 140)); lp[i] = 300 + 2600 * rel;
+      fr[i] = 55 + (f0 - 55) * Math.pow(rel, 0.6); gn[i] = (0.05 + 0.07 * c0) * rel * (1 + 0.9 * Math.exp(-t / 160)); lp[i] = 300 + 2600 * rel;
     }
     const t0 = a.currentTime, d = m.dur / 1000;
     const o1 = a.createOscillator(), o2 = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain(), out = a.createGain();
@@ -191,57 +194,96 @@
       nz(0, 0.06, 0.24, 'lowpass', 1600, sched); tn(190, 70, 0, 0.11, 0.13, 'triangle', sched);
       nz(0.01, 0.12, 0.06, 'highpass', 2800, sched);
     },
-    powerDown: (c0) => { // impact, mechanical spin-down under the whine, settle thunk, two relay ticks
+    powerDown: (c0) => { // impact, slow mechanical spin-down under the whine, settle thunk, two relay ticks
       fx.impact();
-      tn(34 + 40 * c0, 22, 0.15, 0.85, 0.07, 'triangle', sched);
+      tn(36 + 44 * c0, 20, 0.15, 1.3, 0.08, 'triangle', sched);
       tn(70, 42, PD.thunk / 1000, 0.16, 0.18, 'sine', sched);
       nz(PD.thunk / 1000, 0.05, 0.13, 'lowpass', 700, sched);
       PD.ticks.forEach((ms, i) => nz(ms / 1000, 0.015, i ? 0.04 : 0.05, 'highpass', 3000, sched));
     },
-    third: (c0) => { // familiar impact, then: mechanical shudder → rattle that builds to the peak → silence → WHUMP
+    third: () => { // familiar impact; his shaking makes the knocks, then the rattle builds; dead → flatline; WHUMP
       fx.impact();
-      for (let ms = T3.shudder; ms < T3.enter07; ms += 140 + 40 * Math.random()) {
-        nz(ms / 1000, 0.06, 0.05, 'bandpass', 380 + 200 * Math.random(), sched); tn(70, 50, ms / 1000, 0.06, 0.05, 'triangle', sched);
+      for (let ms = T3.shake; ms < T3.grow; ms += 166) { // deliberate shakes (6 Hz): the machine knocks on each one
+        const k = (ms - T3.shake) / (T3.grow - T3.shake);
+        nz(ms / 1000, 0.07, 0.07 + 0.06 * k, 'bandpass', 420 + 160 * Math.random(), sched); tn(80, 52, ms / 1000, 0.07, 0.06 + 0.04 * k, 'triangle', sched);
       }
-      tn(60, 30, T3.enter07 / 1000, 0.18, 0.18, 'sine', sched); // the lunge onto the grips
-      for (let ms = T3.enter07; ms < T3.still; ms += 91) {
-        const k = (ms - T3.enter07) / (T3.still - T3.enter07);
-        nz(ms / 1000, 0.05, 0.04 + 0.11 * k, 'bandpass', 700 + 500 * Math.random(), sched);
-        tn(140 + 60 * Math.random(), 90, ms / 1000, 0.04, 0.03 + 0.06 * k, 'square', sched);
+      for (let ms = T3.react + 100; ms < T3.dead; ms += 91) { // the machine's own instability, building to the peak
+        const k = (ms - T3.react) / (T3.dead - T3.react);
+        nz(ms / 1000, 0.05, 0.03 + 0.12 * k, 'bandpass', 700 + 500 * Math.random(), sched);
+        tn(140 + 60 * Math.random(), 90, ms / 1000, 0.04, 0.02 + 0.07 * k, 'square', sched);
       }
+      fx.hold(1000, T3.dead / 1000, T3.flat / 1000, 0.06, 'sine', sched);   // flatline: alive → chaos → DEAD
+      fx.hold(2000, T3.dead / 1000, T3.flat / 1000, 0.012, 'triangle', sched);
       fx.whump(T3.whump / 1000, sched);
     },
-    full: () => { tn(520, 1040, 0, FULL.whump / 1000, 0.05, 'triangle', sched); fx.whump(FULL.whump / 1000, sched); },
+    full: () => { // reaches 100 %: a rising lock-in, then the fully charged tone sustains through the plateau
+      tn(520, 1040, 0, 0.2, 0.05, 'triangle', sched);
+      fx.hold(1040, 0.18, FULL.whump / 1000 - 0.18, 0.04, 'triangle', sched, 7);
+      fx.whump(FULL.whump / 1000, sched);
+    },
+    hold: (f, at, dur, vol, type = 'sine', group = null, vib = 0) => { // a flat, sustained tone (optional vibrato)
+      const a = audio(); if (!a || muted()) return;
+      const t = a.currentTime + at, o = a.createOscillator(), g = a.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      if (vib) { const l = a.createOscillator(), lg = a.createGain(); l.frequency.value = vib; lg.gain.value = f * 0.006; l.connect(lg).connect(o.frequency); l.start(t); l.stop(t + dur + 0.05); if (group) group.push(l); }
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.012);
+      g.gain.setValueAtTime(vol, t + dur - 0.03); g.gain.linearRampToValueAtTime(0.0001, t + dur);
+      o.connect(g).connect(bus()); o.start(t); o.stop(t + dur + 0.02);
+      if (group) group.push(o);
+    },
     whump: (at, g) => {
       tn(120, 35, at, 0.28, 0.4, 'sine', g); nz(at, 0.09, 0.32, 'lowpass', 1500, g);
       tn(2000, 200, at, 0.15, 0.06, 'sawtooth', g); nz(at + 0.05, 0.6, 0.05, 'lowpass', 500, g);
     },
     whistle: (dur = 0.7) => tn(1500, 420, 0, dur, 0.035, 'sine'),
-    rustle: (dur = 0.6, vol = 0.09) => {
-      for (let i = 0; i < 9; i++) nz(Math.random() * dur, 0.05 + Math.random() * 0.08, vol * (0.5 + Math.random() * 0.5), 'bandpass', 2600 + Math.random() * 2400);
+    // Foliage: continuous filtered noise with slow, irregular envelopes (no clusters of short hard transients).
+    foliage: ({ dur, vol, bands, atk = 0.06, rel = 0.3, sweep = 1, gust = 0.45, branch = null }) => {
+      const a = audio(); if (!a || muted()) return;
+      if (!noiseBuf) nz(0, 0.001, 0.0001); // creates the shared noise buffer
+      const t0 = a.currentTime + 0.01, n = Math.ceil(dur * 60) + 2, env = new Float32Array(n);
+      let w = 0.6, target = 0.6;
+      for (let i = 0; i < n; i++) {
+        const t = (i / (n - 1)) * dur;
+        if (i % 6 === 0) target = 1 - gust + gust * Math.random(); // a new gust every ~100 ms, glided to
+        w += (target - w) * 0.18;
+        env[i] = vol * w * smooth(0, atk, t) * (1 - smooth(dur - rel, dur, t)) + 0.0001;
+      }
+      const eg = a.createGain(); eg.gain.setValueCurveAtTime(env, t0, dur); eg.connect(bus());
+      bands.forEach(([f, q, g]) => {
+        const src = a.createBufferSource(), bp = a.createBiquadFilter(), bg = a.createGain();
+        src.buffer = noiseBuf; src.loop = true; src.playbackRate.value = 0.85 + 0.3 * Math.random();
+        bp.type = 'bandpass'; bp.Q.value = q; bp.frequency.setValueAtTime(f, t0);
+        if (sweep !== 1) bp.frequency.exponentialRampToValueAtTime(f * sweep, t0 + dur);
+        bg.gain.value = g; src.connect(bp).connect(bg).connect(eg);
+        src.start(t0, Math.random() * 0.5); src.stop(t0 + dur + 0.05);
+      });
+      if (branch) { // one soft branch movement: a low swish, not a click
+        const [at, d, v] = branch, src = a.createBufferSource(), lp = a.createBiquadFilter(), g = a.createGain(), t = t0 + at;
+        src.buffer = noiseBuf; lp.type = 'bandpass'; lp.Q.value = 1.4; lp.frequency.setValueAtTime(700, t); lp.frequency.exponentialRampToValueAtTime(320, t + d);
+        g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + d * 0.35); g.gain.linearRampToValueAtTime(0.0001, t + d);
+        src.connect(lp).connect(g).connect(bus()); src.start(t, 0.3); src.stop(t + d + 0.05);
+      }
     },
+    canopy: () => fx.foliage({ dur: 1.1, vol: 0.32, atk: 0.07, rel: 0.45, gust: 0.5, bands: [[3800, 0.7, 1], [1500, 0.9, 0.55], [7000, 0.8, 0.3]], branch: [0.34, 0.2, 0.16] }),
+    foxIn: () => fx.foliage({ dur: 0.4, vol: 0.24, atk: 0.05, rel: 0.18, gust: 0.35, bands: [[2400, 1.1, 1], [850, 1.0, 0.5]] }),
+    foxOut: () => fx.foliage({ dur: 0.55, vol: 0.15, atk: 0.04, rel: 0.35, gust: 0.4, sweep: 0.55, bands: [[3200, 0.9, 1], [1200, 1.0, 0.35]] }),
     thud: () => { tn(95, 45, 0, 0.25, 0.26, 'sine'); nz(0, 0.08, 0.16, 'lowpass', 500); },
   };
 
-  // ---------- Map geometry (re-used flight) ----------
+  // ---------- Map geometry: Nottingham (front left) → TFY (far right) ----------
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', ROUTE); mapSvg.appendChild(path); path.style.visibility = 'hidden';
-  const L = path.getTotalLength(), STALL = 0.32;
-  (() => { // split the intended curve at 32 %: the part flown vs. the part the banana never reaches
-    const [x0, y0] = P.nott, [cx, cy] = P.ctrl, [x1, y1] = P.tfy, target = path.getPointAtLength(L * STALL);
-    let tt = 0, best = 1e9;
-    for (let i = 0; i <= 2000; i++) {
-      const u = i / 2000, x = (1 - u) ** 2 * x0 + 2 * u * (1 - u) * cx + u * u * x1, y = (1 - u) ** 2 * y0 + 2 * u * (1 - u) * cy + u * u * y1;
-      const d = (x - target.x) ** 2 + (y - target.y) ** 2;
-      if (d < best) { best = d; tt = u; }
-    }
-    const lerp = (a, b) => [a[0] + (b[0] - a[0]) * tt, a[1] + (b[1] - a[1]) * tt];
-    const q0 = lerp(P.nott, P.ctrl), q1 = lerp(P.ctrl, P.tfy), m = lerp(q0, q1);
-    routeDone.setAttribute('d', `M${P.nott} Q${q0} ${m}`);
-    routeLeft.setAttribute('d', `M${m} Q${q1} ${P.tfy}`);
+  const L = path.getTotalLength(), STALL = 0.33;
+  const at = (u) => path.getPointAtLength(L * clamp(u));
+  const depth = (y) => 0.55 + 0.45 * clamp((y - 250) / (840 - 250)); // 1 at the front edge, 0.55 at the far edge
+  (() => { // route split at the stall: flown part vs. the part the banana never reaches; Leicester pin on the route
+    const pts = (a0, a1) => { const r = []; for (let i = 0; i <= 40; i++) { const p = at(a0 + (a1 - a0) * i / 40); r.push(`${p.x.toFixed(1)} ${p.y.toFixed(1)}`); } return 'M' + r.join(' L'); };
+    routeDone.setAttribute('d', pts(0, LEIC_AT)); routeLeft.setAttribute('d', pts(LEIC_AT, 1));
+    const lp = at(LEIC_AT), d = depth(lp.y);
+    $('#a1-leic-pin').setAttribute('transform', `translate(${lp.x.toFixed(1)} ${lp.y.toFixed(1)}) scale(${d.toFixed(3)})`);
+    leicRing.setAttribute('cx', lp.x.toFixed(1)); leicRing.setAttribute('cy', lp.y.toFixed(1));
+    leicLabel.setAttribute('x', (lp.x + 6).toFixed(1)); leicLabel.setAttribute('y', (lp.y + 54).toFixed(1));
   })();
-  const stallPt = path.getPointAtLength(L * STALL);
-  const tangent = (len) => { const a = path.getPointAtLength(Math.max(0, len - 2)), b = path.getPointAtLength(Math.min(L, len + 2)); return Math.atan2(b.y - a.y, b.x - a.x); };
 
   // ---------- State ----------
   let s = null, raf = 0, lastTs = null, onComplete = null;
@@ -283,7 +325,7 @@
       enter('powerdown'); whineStart(s.c0, s.f0, PD); fx.powerDown(s.c0);
       announce('Powering down');
     } else {
-      enter('third'); s.smoke = []; whineStart(s.c0, s.f0, PD); whineCut(T3.wrong); fx.third(s.c0);
+      enter('third'); s.smoke = []; whineStart(s.c0, s.f0, PD); whineCut(T3.wrong); fx.third();
       announce('Powering down… something is wrong');
     }
   }
@@ -425,44 +467,42 @@
   // ---------- Third interruption: familiar, then wrong, then still, then WHUMP ----------
   function runThird(t, wob, floorA) {
     const o = { x: 0, y: 0, r: 0, g: 0, motion: 0, arcOn: 0, flash: 0, bloomOp: 0, hf: 0, hg: 0, hlp: 2600, hSnap: false, ringSpeed: 0, tremor: 0 };
-    const flick = (lo, hi) => { if (s.t > s.gStep) { s.gVal = lo + (hi - lo) * Math.random(); s.gStep = s.t + 40 + 30 * Math.random(); s.hfG = 160 * (Math.random() > 0.5 ? 1.5 : 0.7); } return s.gVal; };
-    if (t < T3.wrong) { // 1. the familiar clean power-down (same curve, same impact)
+    const flick = (lo, hi) => { if (s.t > s.gStep) { s.gVal = lo + (hi - lo) * Math.random(); s.gStep = s.t + 40 + 30 * Math.random(); } return s.gVal; };
+    if (t < T3.wrong) { // 1. the familiar clean power-down (same curve, same impact) on 04
       const p = pCurve(t, s.c0, PD), rel = s.c0 > 0 ? p / s.c0 : 0, imp = t < 90 ? 1 - t / 90 : 0;
       s.c = p; o.g = Math.min(1, (0.15 + 0.85 * p) * rel + 0.3 * imp); o.ringSpeed = -(0.3 + 2.2 * p);
       const w = wob((0.4 + 3.6 * s.c0 * s.c0) * Math.exp(-t / PD.vibTau) + 3 * imp, 14 + 18 * p); o.x = w.x - 2 * imp; o.y = w.y + 1.5 * imp;
       o.hf = 0; // the whine voice
-    } else if (t < T3.shudder) { // 2. something is wrong: the whine stops, pitch glitches, the coil stutters
-      o.g = flick(0.15, 0.85); s.c = 0.2 * s.gVal;
-      const w = wob(0.8, 20); o.x = w.x; o.y = w.y; o.tremor = 1;
-      o.hf = s.hfG; o.hg = 0.05; o.hlp = 1600; o.hSnap = true;
-      if (once('wrong')) announce('Something is wrong');
-    } else if (t < T3.enter07) { // 3. small mechanical shudder (still 04)
-      const k = (t - T3.shudder) / (T3.enter07 - T3.shudder), ph = TAU * 7 * t / 1000;
-      const A = floorA(1.5 + 1.5 * k, 1);
-      o.x = A * Math.sin(ph) * (0.7 + 0.3 * vnoise(t / 60)); o.y = 0.5 * A * Math.sin(ph * 1.3 + 1); o.r = 0.15 * Math.sin(ph);
-      o.g = flick(0.25, 0.6); s.c = 0.25 + 0.1 * k; o.ringSpeed = 0.6; o.tremor = 1.2;
-      o.hf = 120 + 30 * Math.sin(TAU * 7 * t / 1000); o.hg = 0.04; o.hlp = 1200;
-    } else if (t < T3.still) { // 4–7. 07: Valenté fights it; instability grows to a peak
-      if (once('p07')) { setPose('07'); s.prev = null; announce('Valenté shakes the launcher'); }
-      if (t < T3.enter07 + T3.flicker) o.flash = 0.55;
-      const k = (t - T3.enter07) / (T3.still - T3.enter07);
+    } else if (t < T3.anger) { // 2. something feels off: the wind-down stalls and hiccups. The machine does NOT move.
+      const k = (t - T3.wrong) / (T3.anger - T3.wrong);
+      o.g = 0.18 + 0.08 * Math.sin(TAU * 3 * t / 1000); s.c = 0.12 * (1 - k);
+      o.hf = 95 + 18 * Math.sin(TAU * 2.5 * t / 1000); o.hg = 0.03 * (1 - 0.5 * k); o.hlp = 900;
+      if (once('wrong')) announce('The launcher stalls');
+    } else if (t < T3.shake) { // 3–4. 07: his face turns angry — held completely still so it reads first
+      if (once('p07')) { setPose('07'); s.prev = null; announce('Valenté loses his temper'); }
+      o.g = 0.18; s.c = 0.06; o.hf = 90; o.hg = 0.015; o.hlp = 700;
+    } else if (t < T3.dead) { // 5–9. HE shakes it; the machine reacts a beat later and escalates to a peak
+      const k = (t - T3.shake) / (T3.dead - T3.shake), react = clamp((t - T3.react) / (T3.dead - T3.react));
       let A, f;
-      if (t < T3.grow) { const u = (t - T3.enter07) / (T3.grow - T3.enter07); A = 4 + 2.5 * u; f = 9; }               // fighting
-      else if (t < T3.peak) { const u = (t - T3.grow) / (T3.peak - T3.grow); A = 6.5 + 3.5 * u; f = 9 + 2 * u; }    // growing
+      if (t < T3.grow) { const u = (t - T3.shake) / (T3.grow - T3.shake); A = 3 + 3.5 * u; f = 6; }                 // deliberate shoves
+      else if (t < T3.peak) { const u = (t - T3.grow) / (T3.peak - T3.grow); A = 6.5 + 3.5 * u; f = 6 + 4 * u; }     // escalation
       else { A = 10.5; f = 11; o.flash = Math.random() < 0.12 ? 0.3 : 0; }                                           // peak
       A = floorA(A, 1.5);
-      const ph = TAU * f * t / 1000;
-      o.x = A * Math.sin(ph) + (Math.random() - 0.5) * (t >= T3.peak ? 3 : 1.5); o.y = 0.4 * A * Math.sin(ph + 1); o.r = 0.8 * (A / 10) * Math.sin(ph + 0.5);
-      o.g = flick(0.3 + 0.6 * k, 0.6 + 0.4 * k); s.c = Math.min(1, 0.35 + 0.65 * k); o.ringSpeed = 0.3 + 2.2 * s.c;
-      o.arcOn = t < T3.arcsSparse ? 0 : t < T3.grow ? 1 : 3; o.tremor = 1.5 + 1.5 * k;
-      o.hf = 180 + 720 * k + 25 * Math.sin(TAU * 8 * t / 1000); o.hg = 0.05 + 0.05 * k;
-      if (t > T3.grow - 200 && once('smokeA')) { puff(500, 520, 4); puff(500, 605, 4); }
-      if (t > T3.grow + 150 && once('smokeB')) puff(870, 800, 6);
-      if (t > T3.grow + 400 && once('smokeC')) { puff(500, 520, 4); puff(500, 605, 3); }
+      const ph = TAU * f * (t - T3.shake) / 1000;
+      o.x = A * Math.sin(ph) + (Math.random() - 0.5) * (t >= T3.peak ? 3 : 1); o.y = 0.4 * A * Math.sin(ph + 1); o.r = 0.8 * (A / 10) * Math.sin(ph + 0.5);
+      o.g = t < T3.react ? 0.18 : flick(0.2 + 0.6 * react, 0.5 + 0.5 * react);
+      s.c = t < T3.react ? 0.06 : Math.min(1, 0.1 + 0.9 * react); o.ringSpeed = t < T3.react ? 0 : 0.3 + 2.2 * s.c;
+      o.arcOn = t < T3.arcsSparse ? 0 : t < T3.grow ? 1 : 3; o.tremor = 1 + 2 * k;
+      o.hf = t < T3.react ? 90 : 180 + 720 * react + 25 * Math.sin(TAU * 8 * t / 1000); o.hg = t < T3.react ? 0.015 : 0.04 + 0.06 * react;
+      if (once('shaking')) announce('He shakes the launcher');
+      if (t > T3.arcsSparse + 100 && once('smokeA')) { puff(500, 520, 4); puff(500, 605, 4); }
+      if (t > T3.grow + 50 && once('smokeB')) puff(870, 800, 6);
+      if (t > T3.grow + 250 && once('smokeC')) { puff(500, 520, 4); puff(500, 605, 3); }
       if (t > T3.peak && once('smokeD')) { puff(500, 520, 4); puff(870, 800, 4); }
-    } else if (t < T3.whump) { // 8–9. sudden complete stillness and silence, held for a beat
-      o.g = 1; s.c = 1; o.hf = 60; o.hg = 0; o.hSnap = true;
-    } else { // 10. WHUMP — the banana leaves
+    } else if (t < T3.whump) { // 10. DEAD: everything stops; flatline tone (scheduled), then silence
+      o.g = 0; s.c = 0; o.hf = 60; o.hg = 0; o.hSnap = true;
+      if (once('dead')) announce('Dead.');
+    } else { // WHUMP — the banana leaves anyway
       const u = (t - T3.whump) / 1000;
       Object.assign(o, launch(u, t - T3.whump, 10, 6, 0.6, 1));
       if (once('whumpSmoke')) { puff(500, 520, 4); puff(500, 605, 4); puff(870, 800, 5); s.path = 'third'; announce('Whump!'); setLabel('LAUNCHING…'); }
@@ -472,7 +512,7 @@
   }
   function runFull(t, wob, floorA) {
     const o = { x: 0, y: 0, r: 0, g: 1, motion: 1, flash: 0, bloomOp: 0, hf: 520, hg: 0.1, hlp: 3000, ringSpeed: 2.5, tremor: 0 };
-    if (t < FULL.whump) { // 250 ms at maximum glow and buzz
+    if (t < FULL.whump) { // the full-charge plateau: maximum glow, buzz and sound
       s.c = 1;
       const w = wob(floorA(4, 1.5), 32); o.x = w.x; o.y = w.y; o.r = 0.12 * vnoise(s.vph + 11); o.tremor = 2;
     } else {
@@ -585,42 +625,41 @@
     s.smoke = []; drawSmoke(0, false);
     proj.src = choiceImg(); proj.dataset.pick = (window.BX.getChoice() || { key: 'ripe' }).key;
     map.style.visibility = 'visible'; map.style.opacity = '1';
-    placeProjectile(P.nott[0], P.nott[1], tangent(0), 1, 0); proj.style.visibility = 'visible';
+    placeProjectile(P.nott[0], P.nott[1] - 20, -0.4, 1); proj.style.visibility = 'visible';
     enter('flight');
   }
 
-  // ---------- Flight: Nottingham → (stall) → descent onto Leicester ----------
-  function placeProjectile(x, y, ang, sy, dy) {
-    const sc = map.clientWidth / 1000;
-    proj.style.transform = `translate(${(x * sc).toFixed(1)}px, ${(y * sc + dy).toFixed(1)}px) translate(-50%, -50%) rotate(${ang.toFixed(3)}rad) scaleY(${sy.toFixed(3)})`;
+  // ---------- Flight: left → right. Climb, stall, then lose height while still moving right, down onto Leicester ----------
+  function placeProjectile(x, y, ang, d) {
+    const sc = map.clientWidth / 1600;
+    proj.style.transform = `translate(${(x * sc).toFixed(1)}px, ${(y * sc).toFixed(1)}px) translate(-50%, -50%) rotate(${ang.toFixed(3)}rad) scale(${d.toFixed(3)})`;
   }
   function runFlight(ft, rm) {
     const pu = (s.t % 2400) / 2400;
-    tfyPulse.setAttribute('r', (16 + 22 * pu).toFixed(1)); tfyPulse.style.opacity = (rm ? 0.5 : 0.8 * (1 - pu)).toFixed(3);
-    const a0 = tangent(L * STALL);
-    let x, y, ang;
-    if (ft < FLIGHT.A) { // confident: along the intended curve to 32 %
-      const len = L * STALL * easeOut(ft / FLIGHT.A), p = path.getPointAtLength(len);
-      x = p.x; y = p.y; ang = tangent(len);
-    } else if (ft < FLIGHT.B) { // stall
-      const u = (ft - FLIGHT.A) / (FLIGHT.B - FLIGHT.A);
-      x = stallPt.x + Math.cos(a0) * 6 * u; y = stallPt.y + Math.sin(a0) * 6 * u + 3 * u;
-      ang = a0 + (rm ? 0 : 0.18 * Math.sin(u * TAU));
-    } else if (ft < FLIGHT.C) { // descent: gravity wins, onto Leicester
-      const u = (ft - FLIGHT.B) / (FLIGHT.C - FLIGHT.B);
-      if (once('whistle')) { fx.whistle((FLIGHT.C - FLIGHT.B) / 1000); announce('Descending'); }
-      const sx = stallPt.x + Math.cos(a0) * 6, sy0 = stallPt.y + Math.sin(a0) * 6 + 3;
-      x = sx + (P.leic[0] - sx) * u; y = sy0 + (P.leic[1] - sy0) * u * u;
-      ang = rm ? a0 : a0 + Math.PI * 3 * u * u;
+    tfyPulse.setAttribute('rx', (16 + 30 * pu).toFixed(1)); tfyPulse.setAttribute('ry', (7 + 12 * pu).toFixed(1));
+    tfyPulse.style.opacity = (rm ? 0.5 : 0.8 * (1 - pu)).toFixed(3);
+    let u, alt, spin = 0;
+    if (ft < FLIGHT.A) { const k = ft / FLIGHT.A; u = STALL * easeOut(k); alt = ALT * Math.sin(Math.PI / 2 * Math.min(1, k * 1.4)); }      // confident climb, moving right
+    else if (ft < FLIGHT.B) { const k = (ft - FLIGHT.A) / (FLIGHT.B - FLIGHT.A); u = STALL + 0.035 * k; alt = ALT * (1 - 0.12 * k * k); spin = rm ? 0 : 0.2 * Math.sin(k * TAU); } // stall: forward speed dies
+    else if (ft < FLIGHT.C) { // failure: losing altitude, still progressing right, onto Leicester
+      const k = (ft - FLIGHT.B) / (FLIGHT.C - FLIGHT.B);
+      if (once('whistle')) { fx.whistle((FLIGHT.C - FLIGHT.B) / 1000); announce('Losing height'); }
+      u = STALL + 0.035 + (LEIC_AT - STALL - 0.035) * (1 - (1 - k) * (1 - k) * 0.4 - 0.6 * (1 - k)); alt = ALT * 0.88 * (1 - k * k); spin = rm ? 0 : Math.PI * 2.5 * k * k;
     } else {
-      x = P.leic[0]; y = P.leic[1]; ang = a0 + (rm ? 0 : Math.PI * 3);
+      u = LEIC_AT; alt = 0; spin = rm ? 0 : Math.PI * 2.5;
       const e = clamp((ft - FLIGHT.C) / 300);
       leicRing.style.opacity = e.toFixed(3); leicLabel.classList.add('is-hit');
-      routeLeft.style.opacity = (1 - 0.75 * e).toFixed(3);
-      if (once('leic')) announce('Over Leicester');
+      routeLeft.style.opacity = (1 - 0.7 * e).toFixed(3);
+      if (once('leic')) announce('Down at Leicester');
     }
-    placeProjectile(x, y, ang, 1, 0);
-    if (ft < FLIGHT.C) { s.trail.push(`${x.toFixed(1)},${y.toFixed(1)}`); trail.setAttribute('points', s.trail.join(' ')); }
+    const g = at(u), d = depth(g.y), y = g.y - alt * d;
+    const ahead = at(Math.min(1, u + 0.01)), heading = Math.atan2(ahead.y - g.y, ahead.x - g.x);
+    placeProjectile(g.x, y - 26 * d, heading + (ft < FLIGHT.B ? -0.35 : 0) + spin, d);
+    projShadow.setAttribute('cx', g.x.toFixed(1)); projShadow.setAttribute('cy', g.y.toFixed(1));
+    projShadow.setAttribute('rx', (34 * d).toFixed(1)); projShadow.setAttribute('ry', (9 * d).toFixed(1));
+    projShadow.style.opacity = (0.25 + 0.55 * (1 - alt / ALT)).toFixed(3);
+    s.flightX = g.x; s.flightAlt = alt;
+    if (ft < FLIGHT.C) { s.trail.push(`${g.x.toFixed(1)},${(y - 26 * d).toFixed(1)}`); trail.setAttribute('points', s.trail.join(' ')); }
     if (ft >= FLIGHT.cut) cutToForest();
   }
 
@@ -643,14 +682,14 @@
       const u = t / FOREST.fall, W = forest.clientWidth, H = forest.clientHeight, bw = W * 0.13;
       const x = W * 0.55 - bw / 2 + (rm ? 0 : W * 0.03 * u), y = -bw + (H * 0.74 + bw) * u * u;
       fall.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${rm ? 0 : (300 * u).toFixed(1)}deg)`;
-    } else if (once('rustle')) { fall.style.visibility = 'hidden'; beat('rustle', 'RUSTLE…'); fx.rustle(FOREST.rustle); announce('Rustling leaves'); }
+    } else if (once('rustle')) { fall.style.visibility = 'hidden'; beat('rustle', 'RUSTLE…'); fx.canopy(); announce('Leaves thrash in the canopy'); }
     if (t >= FOREST.thud && once('thud')) { beat('thud', 'THUD.'); fx.thud(); announce('Thud'); }
     if (t >= FOREST.pause && once('hold')) beat('hold', '…');
     // 8–11: the fox (art pending; the placeholder shows the player's banana so the carried choice can be checked).
-    if (t >= FOREST.foxIn && once('foxIn')) { beat('fox-up', 'FOX APPEARS — BANANA IN ITS MOUTH'); setFox('up'); fx.rustle(0.25, 0.06); announce('A fox appears with the banana'); }
+    if (t >= FOREST.foxIn && once('foxIn')) { beat('fox-up', 'FOX APPEARS — BANANA IN ITS MOUTH'); setFox('up'); fx.foxIn(); announce('A fox appears with the banana'); }
     if (t >= FOREST.lookL && once('lookL')) { beat('fox-left', 'FOX LOOKS LEFT'); setFox('left'); }
     if (t >= FOREST.lookR && once('lookR')) { beat('fox-right', 'FOX LOOKS RIGHT'); setFox('right'); }
-    if (t >= FOREST.foxOut && once('foxOut')) { beat('fox-gone', 'FOX DISAPPEARS INTO THE FOREST'); setFox(null); fx.rustle(0.25, 0.06); announce('The fox is gone'); }
+    if (t >= FOREST.foxOut && once('foxOut')) { beat('fox-gone', 'FOX DISAPPEARS INTO THE FOREST'); setFox(null); fx.foxOut(); announce('The fox is gone'); }
     const foxRise = t >= FOREST.foxIn && t < FOREST.foxOut ? clamp((t - FOREST.foxIn) / FOREST.foxMove) : t >= FOREST.foxOut ? 1 - clamp((t - FOREST.foxOut) / FOREST.foxMove) : 0;
     pendingBanana.style.opacity = foxRise.toFixed(3);
     fox.style.opacity = foxRise.toFixed(3);
@@ -687,7 +726,7 @@
     flashEl.style.opacity = '0'; bloom.style.opacity = '0'; shot.style.visibility = 'hidden';
     sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, smokeCv.width, smokeCv.height);
     sayLine('');
-    map.style.opacity = '0'; map.style.visibility = 'hidden'; proj.style.visibility = 'hidden'; trail.setAttribute('points', '');
+    map.style.opacity = '0'; map.style.visibility = 'hidden'; proj.style.visibility = 'hidden'; trail.setAttribute('points', ''); projShadow.style.opacity = '0';
     leicRing.style.opacity = '0'; leicLabel.classList.remove('is-hit'); routeLeft.style.opacity = '1';
     forest.style.visibility = 'hidden'; forest.classList.remove('is-verdict'); forest.dataset.beat = '';
     fall.style.visibility = 'hidden'; fox.hidden = true; pendingBanana.style.opacity = '0'; pendingBeat.textContent = '';
@@ -721,6 +760,6 @@
   // Read-only state for development checks.
   window.BX.attempt01State = () => s && {
     phase: s.phase, pose: s.pose, c: s.c, count: s.count, held: s.held, t: s.t, phaseT: s.phaseT, ready: s.ready, armed: s.armed,
-    path: s.path, beat: s.beat, done: s.done, smoke: s.smoke.length, shot: shot.style.visibility === 'visible' ? shot.getAttribute('src') : null,
+    path: s.path, beat: s.beat, done: s.done, flightX: s.flightX, flightAlt: s.flightAlt, smoke: s.smoke.length, shot: shot.style.visibility === 'visible' ? shot.getAttribute('src') : null,
   };
 })();

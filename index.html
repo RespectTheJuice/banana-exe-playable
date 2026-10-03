@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
-  <link rel="stylesheet" href="style.css?v=20261001-1630" />
-  <link rel="stylesheet" href="scene02.css?v=20261004-1500" />
-  <link rel="stylesheet" href="attempt01.css?v=20261004-1200" />
+  <link rel="stylesheet" href="style.css?v=20261005-1000" />
+  <link rel="stylesheet" href="scene02.css?v=20261005-1000" />
+  <link rel="stylesheet" href="attempt01.css?v=20261005-1000" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -228,9 +228,6 @@
   <!-- PART 2 PREVIEW: not linked from the public Part 1 ending yet. Open with ?scene=part2&pick=ripe. -->
   <section class="scene scene-part2" id="p2-intro" aria-hidden="true">
     <div class="p2-grid-bg" aria-hidden="true"></div>
-    <img class="p2-character" src="assets/skeptical_locked.png" width="414" height="767"
-         alt="Valenté considering the delivery problem" />
-
     <div class="p2-copy">
       <p class="p2-kicker">BANANA.EXE // PART 2</p>
       <h2>DELIVERY PROBLEM</h2>
@@ -239,6 +236,7 @@
       <div class="p2-state" aria-label="Part 2 mission state">
         <div><span>PAYLOAD</span><b id="p2-payload">1 × RIPE BANANA</b></div>
         <div><span>BUDGET LEFT</span><b id="p2-budget">£45.00</b></div>
+        <div><span>FROM</span><b>HOME · NOTTINGHAM</b></div>
         <div><span>DESTINATION</span><b>TFY · NORTHAMPTON</b></div>
       </div>
 
@@ -247,14 +245,14 @@
       </button>
     </div>
 
-    <div class="p2-route-card">
-      <div class="p2-route-head"><span>NOTTINGHAM</span><span>TFY · NORTHAMPTON</span></div>
-      <svg viewBox="0 0 700 190" role="img" aria-label="Illustrative delivery route from Nottingham home to TFY in Northampton">
-        <path class="p2-route-halo" d="M88 118 C200 56 265 150 365 105 S522 82 610 116" />
-        <path class="p2-route-line" d="M88 118 C200 56 265 150 365 105 S522 82 610 116" />
+    <!-- Route map: HOME (Valenté is here) → TFY. Locked standalone renders, no frame. -->
+    <div class="p2-route-card" role="img" aria-label="Route from HOME in Nottingham, where Valenté is, to TFY in Northampton">
+      <svg class="p2-route-svg" viewBox="0 0 1000 300" aria-hidden="true">
+        <path class="p2-route-halo" d="M150 228 C360 110 600 300 850 170" />
+        <path class="p2-route-line" d="M150 228 C360 110 600 300 850 170" />
+        <circle class="p2-pin" cx="150" cy="228" r="9" />
+        <circle class="p2-pin p2-pin-tfy" cx="850" cy="170" r="9" />
       </svg>
-      <!-- After SIZE UP THE PROBLEM, Valenté steps back to a small supporting figure beside HOME. -->
-      <img class="p2-mini-valente" src="assets/skeptical_locked.png" width="414" height="767" alt="" />
       <div class="p2-landmark p2-landmark-home">
         <img src="assets/locations/S02_HOME_3D_LOCKED.png" width="1254" height="1254" alt="Approved HOME building" />
         <b>HOME</b><span>NOTTINGHAM</span>
@@ -263,10 +261,14 @@
         <img src="assets/locations/S02_TFY_BUILDING_LOCKED.png" width="1254" height="1254" alt="Approved TFY building" />
         <b>TFY</b><span>NORTHAMPTON</span>
       </div>
+      <div class="p2-avatar" aria-hidden="true"><img src="assets/skeptical_locked.png" width="414" height="767" alt="" /></div>
     </div>
 
     <div class="p2-analysis" id="p2-analysis" aria-live="polite">
-      <article><small>DISTANCE</small><b>NOTTINGHAM → NORTHAMPTON</b><span>Not a local run.</span></article>
+      <article class="p2-distance"><small>DISTANCE</small>
+        <div class="p2-leg"><b>NOTTINGHAM</b><i aria-hidden="true">↓</i><b>NORTHAMPTON</b></div>
+        <span class="p2-warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 23 21.5H1Z" /><path class="p2-warn-mark" d="M12 9v6M12 17.6v.4" /></svg>NOT A LOCAL RUN</span>
+      </article>
       <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
       <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You still only have one budget.</span></article>
       <div class="p2-method-state"><small>DELIVERY METHOD</small><strong>UNDECIDED</strong></div>
@@ -294,6 +296,7 @@
             <!-- Setup beats 01–03: alpha cutouts beside the locked launcher reference on the plate-navy stage. -->
             <div class="a1-setup" id="a1-setup">
               <img class="a1-setup-launcher" data-src="assets/launcher.png" width="1536" height="1024" alt="" />
+              <div class="a1-setup-shadow"></div>
               <img class="a1-setup-pose" data-pose="01" data-src="assets/part2/01_confused_inspecting_LOCKED.png" width="1024" height="1536" alt="" />
               <img class="a1-setup-pose" data-pose="02" data-src="assets/part2/02_shrug_acceptance_LOCKED.png" width="1024" height="1536" alt="" />
               <img class="a1-setup-pose" data-pose="03" data-src="assets/part2/03_goggles_on_ready_LOCKED.png" width="1024" height="1536" alt="" />
@@ -348,23 +351,23 @@
       </div>
       <div class="a1-say" id="a1-say" role="status"><small>VALENTÉ</small><span id="a1-say-text"></span></div>
 
-      <!-- Flight: the Nottingham → Leicester route map. -->
+      <!-- Flight: Nottingham (front left) → TFY (far right), a ground plane receding into depth. -->
       <div class="a1-map" id="a1-map">
-        <svg class="a1-map-svg" id="a1-map-svg" viewBox="0 0 1000 1000" role="img" aria-label="Route map: Nottingham, Leicester and TFY in Northampton">
-          <rect class="a1-map-panel" x="6" y="6" width="988" height="988" rx="34" />
-          <g class="a1-map-grid"><path d="M0 200H1000M0 400H1000M0 600H1000M0 800H1000M200 0V1000M400 0V1000M600 0V1000M800 0V1000" /></g>
-          <g class="a1-north" transform="translate(920 92)"><path d="M0 -40 L16 4 L0 -6 L-16 4 Z" /><text y="40">N</text></g>
+        <svg class="a1-map-svg" id="a1-map-svg" viewBox="0 0 1600 880" role="img" aria-label="Route map: Nottingham, Leicester and TFY in Northampton, left to right">
+          <polygon class="a1-map-ground" points="40,840 1560,840 1300,250 300,250" />
+          <path class="a1-map-grid" d="M71 769H1529M118 663H1482M175 533H1425M238 392H1362M230 840L425 250M420 840L550 250M610 840L675 250M800 840L800 250M990 840L925 250M1180 840L1050 250M1370 840L1175 250" />
           <path class="a1-route a1-route-done" id="a1-route-done" />
           <path class="a1-route a1-route-left" id="a1-route-left" />
+          <ellipse class="a1-proj-shadow" id="a1-proj-shadow" cx="0" cy="0" rx="34" ry="9" />
           <polyline class="a1-trail" id="a1-trail" points="" />
-          <circle class="a1-tfy-pulse" id="a1-tfy-pulse" cx="620" cy="860" r="16" />
-          <circle class="a1-pt a1-pt-tfy" cx="620" cy="860" r="14" />
-          <circle class="a1-leic-ring" id="a1-leic-ring" cx="430" cy="460" r="30" />
-          <circle class="a1-pt a1-pt-leic" cx="430" cy="460" r="11" />
-          <circle class="a1-pt a1-pt-nott" cx="400" cy="140" r="13" />
-          <text class="a1-label" x="428" y="152">NOTTINGHAM</text>
-          <text class="a1-label a1-label-leic" id="a1-leic-label" x="500" y="472">LEICESTER</text>
-          <text class="a1-label a1-label-tfy" x="620" y="934" text-anchor="middle">TFY // NORTHAMPTON</text>
+          <ellipse class="a1-tfy-pulse" id="a1-tfy-pulse" cx="1320" cy="330" rx="16" ry="7" />
+          <ellipse class="a1-pt a1-pt-tfy" cx="1320" cy="330" rx="12" ry="6" /><path class="a1-stem a1-stem-tfy" d="M1320 330V282" /><circle class="a1-pt a1-pt-tfy" cx="1320" cy="276" r="11" />
+          <ellipse class="a1-leic-ring" id="a1-leic-ring" cx="0" cy="0" rx="40" ry="14" />
+          <g id="a1-leic-pin"><ellipse class="a1-pt a1-pt-leic" rx="10" ry="5" /><path class="a1-stem" d="M0 0V-46" /><circle class="a1-pt a1-pt-leic" cy="-52" r="12" /></g>
+          <ellipse class="a1-pt a1-pt-nott" cx="300" cy="720" rx="14" ry="7" /><path class="a1-stem a1-stem-nott" d="M300 720V662" /><circle class="a1-pt a1-pt-nott" cx="300" cy="655" r="14" />
+          <text class="a1-label" x="300" y="790" text-anchor="middle">NOTTINGHAM</text>
+          <text class="a1-label a1-label-leic" id="a1-leic-label" x="0" y="0" text-anchor="middle">LEICESTER</text>
+          <text class="a1-label a1-label-tfy" x="1320" y="236" text-anchor="middle">TFY // NORTHAMPTON</text>
         </svg>
         <img class="a1-proj" id="a1-proj" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" />
       </div>
@@ -410,7 +413,7 @@
   <div class="flash" id="flash"></div>
 </main>
 <script src="game.js?v=20261002-1100"></script>
-<script src="scene02.js?v=20261003-1800"></script>
-<script src="attempt01.js?v=20261004-1200"></script>
+<script src="scene02.js?v=20261005-1000"></script>
+<script src="attempt01.js?v=20261005-1000"></script>
 </body>
 </html>
