@@ -22,6 +22,29 @@ Do not use red as the static BANANA.EXE system tag in the precision-marking sequ
 
 Blue is the resting/system field. Yellow identifies BANANA.EXE and the banana icon family. Red appears when an active energetic event occurs, such as the precision-marking laser. Caramel/brown communicates the completed mark after the energetic event has passed.
 
+## BANANA.EXE title treatment — LOCKED
+
+The user-supplied BANANA.EXE reference is the visual authority for the title treatment.
+
+Preserve:
+
+- large bold uppercase `BANANA.EXE` wordmark;
+- warm yellow/gold letter faces;
+- the period/dot between `BANANA` and `EXE` in bright cyan/aqua;
+- dark blue/navy dimensional shadow/extrusion behind the yellow letters;
+- restrained cool blue atmospheric glow around/behind the title;
+- dark navy background.
+
+Do **not** reinterpret the title as:
+
+- bright cyan outline around every letter;
+- thick neon tubing;
+- a heavily beveled chrome/3D logo;
+- red lettering;
+- a generic yellow title without the cyan dot and blue dimensional shadow.
+
+The reference treatment is already the desired BANANA.EXE identity. Future generated scenes should reproduce its hierarchy rather than redesigning it.
+
 ## Grid usage — LOCKED PRINCIPLE
 
 The grid is a **contextual system language**, not the default background for every BANANA.EXE scene.
@@ -107,15 +130,15 @@ For the marking scene:
 - camera may view the grid in perspective, but the banana must visually belong to the plane rather than standing upright as a product-display crescent;
 - the precision mark is still applied onto this banana object; using the icon does **not** remove the marking process.
 
-Exact Banana Boutique text-vs-symbol application remains under comparison and is not yet locked.
+Exact etched wording and final scale/placement remain open until the current RTJ production-mark direction is approved.
 
 ## System signature
 
 For the precision-marking scene:
 
-- `BANANA.EXE` uses the game's existing **yellow** language;
-- preferred placement remains lower-left unless composition proves otherwise;
-- `AN RTJ PRODUCTION` may appear as a smaller secondary credit in a neutral/off-white or restrained muted tone;
+- the main `BANANA.EXE` title uses the locked title treatment above;
+- title placement should follow the established composition rule rather than defaulting to lower-left;
+- business/production credit belongs in the business/credit position, not in place of the main title;
 - neither signature should compete with the banana or the marking event.
 
 ## Anti-drift rule
@@ -123,7 +146,7 @@ For the precision-marking scene:
 If a generated concept changes any of the following without explicit approval, treat it as a candidate with visual drift rather than new authority:
 
 - blue system/grid field when the scene is in a working/system state;
-- yellow BANANA.EXE label;
+- locked BANANA.EXE title treatment;
 - red active-event role;
 - caramel/brown completed marking role;
 - stylized banana-icon representation for the precision-marking intro;
