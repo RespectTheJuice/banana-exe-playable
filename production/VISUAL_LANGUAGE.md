@@ -143,7 +143,7 @@ After marking:
 
 ## Precision-marking composition — LOCKED DIRECTION
 
-The latest approved precision-marking composition remains authority for title, banana, laser-head relationship and mark placement, but **its visible grid intensity is not authority**. Grid treatment inherits the corrected hierarchy above.
+The latest approved precision-marking composition remains authority for title, banana, laser-head relationship and general mark placement, but **its visible grid intensity and baked mark wording are not authority**. Grid treatment inherits the corrected hierarchy above.
 
 Preserve:
 
@@ -153,7 +153,7 @@ Preserve:
 - restrained cyan/aqua system illumination with only subtle grid structure;
 - a red laser head descending from above and operating near the banana's right-hand tip;
 - light localized smoke/heat wisp only at the active laser contact point;
-- the etched production mark reading **`RTJ Productions`**;
+- the etched production mark reading **`Respect The Juice`**;
 - the etched production mark small, subtle, caramel/brown and positioned close to the banana's right tip;
 - no outer UI frame;
 - no redundant banana icon in the top-right;
@@ -180,7 +180,9 @@ For the precision-marking scene, use the approved middle-ground rendering langua
 - lying flat in the processing environment;
 - no crown;
 - no banana symbol etched onto the banana;
-- the only etched wording is `RTJ Productions` unless Valenté explicitly changes it later.
+- the only etched wording is `Respect The Juice` unless Valenté explicitly changes it later.
+
+`PRECISION_BANANA_MARKED_LOCKED.png` remains useful for the approved banana geometry/rendering and the general caramel etched-mark treatment, but its baked `RTJ Productions` wording is superseded and must not be treated as final authority.
 
 ## System signature
 
@@ -188,7 +190,7 @@ For the precision-marking scene:
 
 - the main `BANANA.EXE` title uses the locked title treatment above;
 - title placement is centered above the banana;
-- `RTJ Productions` is carried by the small etched production mark near the banana tip;
+- `Respect The Juice` is carried by the small etched production mark near the banana tip;
 - do not add a duplicate lower-left or lower-right production credit unless a later scene explicitly requires one.
 
 ## Anti-drift rule
@@ -201,7 +203,7 @@ If a generated concept changes any of the following without explicit approval, t
 - red active-event role;
 - caramel/brown completed marking role;
 - the banana lying flat in the processing environment;
-- `RTJ Productions` as the small etched mark near the right tip;
+- `Respect The Juice` as the small etched mark near the right tip;
 - no outer UI frame;
 - the contextual and subordinate nature of the grid itself.
 
