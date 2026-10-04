@@ -1,9 +1,9 @@
 # BANANA.EXE — Precision Marking Intro Handoff
 
-**Status:** DESIGN AUTHORITY READY / ASSET DROP REQUIRED  
+**Status:** IMPLEMENTATION READY  
 **Production:** AN RTJ PRODUCTION
 
-This handoff is for Claude Design / Claude Code implementation of the Banana.exe precision-marking intro.
+This handoff is for Claude Design / Claude Code implementation of the BANANA.EXE precision-marking intro.
 
 ## Governing documents
 
@@ -16,9 +16,72 @@ Read before implementation:
 
 If any scene-specific implementation conflicts with those authorities, stop and reconcile before coding.
 
+## Locked source authority
+
+The approved source assets are committed on `main` under:
+
+```text
+assets/part2/precision/source/
+```
+
+Required source files:
+
+```text
+assets/part2/precision/source/BANANA_EXE_TITLE_LOCKED.png
+assets/part2/precision/source/PRECISION_BANANA_BASE_LOCKED.png
+assets/part2/precision/source/PRECISION_BANANA_MARKED_LOCKED.png
+assets/part2/precision/source/PRECISION_LASER_HEAD_LOCKED.png
+assets/part2/precision/source/PRECISION_MARKING_COMPOSITION_LOCKED.jpg
+```
+
+These source PNG/JPG files are production authority. Do not overwrite, delete, repaint, or replace them while creating runtime derivatives.
+
+## Runtime asset workflow
+
+Claude may create optimized WebP derivatives in:
+
+```text
+assets/part2/precision/
+```
+
+Recommended runtime names:
+
+```text
+assets/part2/precision/banana_exe_title.webp
+assets/part2/precision/precision_banana_base.webp
+assets/part2/precision/precision_banana_marked.webp
+assets/part2/precision/precision_laser_head.webp
+```
+
+Runtime WebPs are derivatives only. The locked source files remain the visual authority.
+
+## Asset roles
+
+`BANANA_EXE_TITLE_LOCKED.png`
+- exact reusable title treatment;
+- do not redraw or restyle;
+- yellow/gold faces, cyan/aqua period, dark blue dimensional shadow/extrusion.
+
+`PRECISION_BANANA_BASE_LOCKED.png`
+- clean unmarked banana base;
+- used for arrival / pre-marking state.
+
+`PRECISION_BANANA_MARKED_LOCKED.png`
+- approved completed state;
+- contains the small `RTJ Productions` etch near the banana's right tip;
+- use as the end-state authority for placement, size and treatment of the etch.
+
+`PRECISION_LASER_HEAD_LOCKED.png`
+- compact technical laser-head asset/reference;
+- beam itself should be generated live so position/timing can animate.
+
+`PRECISION_MARKING_COMPOSITION_LOCKED.jpg`
+- overall composition target;
+- match layout/proportion/hierarchy rather than using it as a flattened gameplay scene.
+
 ## Locked composition
 
-The precision-marking intro uses the approved composition documented in `production/VISUAL_LANGUAGE.md`:
+Preserve:
 
 - dark navy / blue-black environment;
 - contextual working-state grid;
@@ -35,40 +98,9 @@ The precision-marking intro uses the approved composition documented in `product
 
 The accidental title/banana 'face' read may survive naturally but must not be forced by reshaping the banana.
 
-## Required asset drop
-
-Place the supplied production assets at:
-
-```text
-assets/part2/precision/BANANA_EXE_TITLE_LOCKED.png
-assets/part2/precision/PRECISION_BANANA_BASE_LOCKED.png
-assets/part2/precision/PRECISION_LASER_HEAD_LOCKED.png
-assets/part2/precision/PRECISION_MARKING_COMPOSITION_LOCKED.jpg
-```
-
-### Asset roles
-
-`BANANA_EXE_TITLE_LOCKED.png`
-- exact reusable title treatment;
-- do not redraw or restyle;
-- yellow/gold faces, cyan/aqua period, dark blue dimensional shadow/extrusion.
-
-`PRECISION_BANANA_BASE_LOCKED.png`
-- clean unmarked banana base;
-- used for arrival / pre-marking state;
-- do not bake the final RTJ Productions text into the base.
-
-`PRECISION_LASER_HEAD_LOCKED.png`
-- compact technical laser-head reference/asset;
-- beam itself should be generated live so position/timing can animate.
-
-`PRECISION_MARKING_COMPOSITION_LOCKED.jpg`
-- composition target only;
-- match layout/proportion/hierarchy rather than using it as a flattened gameplay scene.
-
 ## Build live, do not bake
 
-The following should be implemented as code/SVG/CSS/DOM effects rather than permanent baked images where practical:
+Implement live where practical:
 
 - perspective cyan/aqua grid;
 - grid pulse / steady-active state;
@@ -76,21 +108,21 @@ The following should be implemented as code/SVG/CSS/DOM effects rather than perm
 - laser contact glow;
 - light localized smoke/heat wisp;
 - acquisition/registration graphics if used;
-- progressive reveal of `RTJ Productions`;
+- progressive reveal from clean banana to marked banana;
 - camera/presentation timing.
+
+The marked banana asset exists specifically so Claude does not need to guess the final etch placement or redraw it from scratch.
 
 ## Intro motion
 
-Current motion logic:
-
 1. **GRID WAKE** — working-state grid appears/pulses. Rhythm direction: `pulse → pulse → pulse pulse pulse → steady pulse`.
-2. **BANANA ARRIVAL** — banana lands/settles flat on the grid.
+2. **BANANA ARRIVAL** — clean banana lands/settles flat on the grid.
 3. **ACTIVE GRID** — impact resolves the pulsing into a stable energized cyan/aqua glow.
 4. **ACQUIRE / TARGET** — restrained registration may identify the working area.
 5. **LASER POSITION** — laser head moves to the right-side marking area.
-6. **MARK** — red laser progressively reveals `RTJ Productions` near the right tip.
+6. **MARK** — red laser progressively reveals the marked state near the right tip.
 7. **FINISH** — laser stops; tiny localized smoke/heat wisp may remain briefly.
-8. **REVEAL / HOLD** — final composition resolves clearly enough to read the title and production mark.
+8. **REVEAL / HOLD** — final marked banana and centered title resolve clearly.
 
 Exact timing remains open until implemented and reviewed. Do not compress the sequence to the point that the player cannot encode the action/consequence.
 
@@ -100,16 +132,15 @@ Exact timing remains open until implemented and reviewed. Do not compress the se
 - small, subtle, caramel/brown result;
 - position close to the banana's right tip;
 - follow the banana surface/curve;
-- the laser/contact point must spatially correspond to the mark being created;
-- do not place the laser centrally while the mark sits at the tip;
+- laser/contact point must spatially correspond to the mark being created;
 - no heavy smoke, black char, flame or large spark shower;
-- the completed mark should look precision-marked rather than scorched.
+- completed mark should look precision-marked rather than scorched.
 
 ## Color contract
 
 - resting environment: dark navy / blue-black;
 - system/grid energized glow: BANANA.EXE period cyan/aqua (`#97EEEA` guide);
-- title letters: existing locked warm yellow/gold;
+- title letters: locked warm yellow/gold;
 - title period: locked cyan/aqua;
 - laser/action energy: red;
 - completed etch: caramel/brown.
@@ -127,9 +158,10 @@ Do not:
 - add a redundant banana icon;
 - move the title into the lower-left;
 - add duplicate RTJ production credit outside the banana without explicit direction;
-- substitute a photoreal banana or a flat vector sticker banana for the supplied base;
+- substitute unrelated banana art for the supplied source assets;
 - make the laser head toy-like or oversized;
-- turn light heat wisp into obvious burning.
+- turn light heat wisp into obvious burning;
+- overwrite or delete anything in `assets/part2/precision/source/`.
 
 ## Player banana choice
 
@@ -139,11 +171,11 @@ This intro is a presentation/processing sequence. Do not silently alter existing
 
 Implement the intro as a self-contained sequence that:
 
-- uses the supplied locked assets;
+- reads from the locked source authority and creates optimized runtime derivatives where useful;
 - creates the animated grid/laser/marking effects live;
 - preserves current production authority;
 - exposes timings/constants clearly for review;
 - does not modify locked launcher assets 04–08;
 - does not refactor unrelated Part 2 behavior during this pass.
 
-Before implementation, verify the four required asset files exist at the paths above. If any are missing, stop rather than substituting invented assets.
+Before implementation, verify all five locked source files exist at the exact `source/` paths above. If any are missing, stop rather than substituting invented assets.
