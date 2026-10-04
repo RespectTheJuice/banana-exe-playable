@@ -22,21 +22,57 @@ Do not use red as the static BANANA.EXE system tag in the precision-marking sequ
 
 Blue is the resting/system field. Yellow identifies BANANA.EXE and the banana icon family. Red appears when an active energetic event occurs, such as the precision-marking laser. Caramel/brown communicates the completed mark after the energetic event has passed.
 
-## Grid — LOCKED DIRECTION
+## Grid usage — LOCKED PRINCIPLE
 
-The grid should inherit the game's existing blue system language.
+The grid is a **contextual system language**, not the default background for every BANANA.EXE scene.
+
+Use it when the scene is meaningfully about:
+
+- working;
+- processing;
+- calibration;
+- systems/technical operation;
+- problem-solving/analysis;
+- powered interactions where the grid helps communicate mechanism or control.
+
+### Part 1
+
+Part 1 is **not grid-led by default**.
+
+Its dominant activities are browsing, shopping, choosing, traveling and world/location presentation. Retail, map, travel and location-specific visual language should lead where those are the stronger fit.
+
+The grid may appear in Part 1 only when a scene genuinely enters a working/system/processing state.
+
+### Part 2
+
+Part 2 is much more naturally grid-led because the product state is increasingly about:
+
+- analysis;
+- delivery mechanics;
+- launcher operation;
+- system behavior;
+- technical attempts;
+- failure/diagnostic states.
+
+The grid can therefore recur more heavily through Part 2 without becoming a universal product wallpaper.
+
+### Precision-marking intro
+
+The precision-marking intro is an explicit working/processing state, so the grid is strongly appropriate there.
+
+## Grid — PRECISION-MARKING DIRECTION
 
 For the precision-marking sequence:
 
 - dark navy / blue-black ground;
 - blue square grid lines;
 - grid lines should be approximately **2× the apparent thickness** of the current thin reference lines;
-- keep the lines crisp enough to read as a grid, with a controlled glow around the core stroke;
+- keep the lines crisp enough to read as a grid, with a controlled blue glow around the core stroke;
 - do not make them so thick that the grid becomes bars or tiles;
-- pre-arrival energy may pulse through the blue grid;
+- pre-arrival energy pulses through the blue grid;
 - once the banana lands, the grid holds a stable active blue glow.
 
-The grid should feel powered, not decorative.
+The grid should feel powered and functional, not decorative.
 
 ## Precision-marking color behavior
 
@@ -86,9 +122,12 @@ For the precision-marking scene:
 
 If a generated concept changes any of the following without explicit approval, treat it as a candidate with visual drift rather than new authority:
 
-- blue system/grid field;
+- blue system/grid field when the scene is in a working/system state;
 - yellow BANANA.EXE label;
 - red active-event role;
 - caramel/brown completed marking role;
 - stylized banana-icon representation for the precision-marking intro;
-- flat-on-grid staging for that banana object.
+- flat-on-grid staging for that banana object;
+- the contextual nature of the grid itself.
+
+Do not expand the grid into shopping/travel/world scenes merely because it is visually successful in technical scenes.
