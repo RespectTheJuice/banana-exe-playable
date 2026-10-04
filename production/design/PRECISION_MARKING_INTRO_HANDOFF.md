@@ -1,6 +1,6 @@
 # BANANA.EXE — Precision Marking Intro Handoff
 
-**Status:** IMPLEMENTATION READY  
+**Status:** DESIGN REVIEW IN PROGRESS  
 **Production:** AN RTJ PRODUCTION
 
 This handoff is for Claude Design / Claude Code implementation of the BANANA.EXE precision-marking intro.
@@ -76,18 +76,19 @@ Runtime WebPs are derivatives only. The locked source files remain the visual au
 - beam itself should be generated live so position/timing can animate.
 
 `PRECISION_MARKING_COMPOSITION_LOCKED.jpg`
-- overall composition target;
-- match layout/proportion/hierarchy rather than using it as a flattened gameplay scene.
+- overall composition target for title, banana, laser relationship and mark placement;
+- its visible grid intensity is **not** authority;
+- do not use it as a flattened gameplay scene.
 
 ## Locked composition
 
 Preserve:
 
 - dark navy / blue-black environment;
-- contextual working-state grid;
-- grid/system glow uses the cyan/aqua BANANA.EXE period color (guide `#97EEEA` / RGB 151, 238, 234);
+- extremely subtle Part 2-style grid structure only;
+- localized system glow uses the cyan/aqua BANANA.EXE period color (guide `#97EEEA` / RGB 151, 238, 234);
 - large centered BANANA.EXE title using the locked title treatment;
-- banana lies flat across the processing grid;
+- banana lies flat in the processing environment;
 - compact technical laser head descends from above near the banana's right tip;
 - laser event is red;
 - small localized heat/smoke wisp is permitted at contact;
@@ -98,12 +99,32 @@ Preserve:
 
 The accidental title/banana 'face' read may survive naturally but must not be forced by reshaping the banana.
 
+## Grid hierarchy — corrected direction
+
+The grid is **not** the star of this scene.
+
+The precision intro must inherit established Part 2 hierarchy:
+
+- dark navy / blue-black is the dominant field;
+- visible grid geometry is quiet environmental structure;
+- grid lines should be thin, low-opacity and low-contrast;
+- no bright perspective horizon;
+- no full-frame luminous "Tron floor";
+- cyan/aqua energy should be concentrated as localized glow around/beneath the active processing area;
+- localized glow may be substantially more visible than the grid lines;
+- the grid may become slightly more legible during system wake or banana arrival, then settle back;
+- after banana arrival, avoid obvious grid-wide pulsing.
+
+**Hierarchy test:** if the grid is noticed before the banana, BANANA.EXE title, or active laser event, it is too strong.
+
+The **light performs; the grid does not**.
+
 ## Build live, do not bake
 
 Implement live where practical:
 
-- perspective cyan/aqua grid;
-- grid pulse / steady-active state;
+- subtle full-frame Part 2-style grid texture;
+- localized cyan/aqua system glow beneath/around the processing area;
 - red laser beam;
 - laser contact glow;
 - light localized smoke/heat wisp;
@@ -115,9 +136,9 @@ The marked banana asset exists specifically so Claude does not need to guess the
 
 ## Intro motion
 
-1. **GRID WAKE** — working-state grid appears/pulses. Rhythm direction: `pulse → pulse → pulse pulse pulse → steady pulse`.
-2. **BANANA ARRIVAL** — clean banana lands/settles flat on the grid.
-3. **ACTIVE GRID** — impact resolves the pulsing into a stable energized cyan/aqua glow.
+1. **SYSTEM WAKE** — dark field remains dominant; localized cyan/aqua energy begins to wake. The grid may become faintly legible as a secondary consequence, but it does not perform a hero pulse sequence.
+2. **BANANA ARRIVAL** — clean banana lands/settles flat in the processing environment.
+3. **ACTIVE STATE** — localized cyan/aqua glow strengthens around/beneath the banana and then stabilizes; the grid returns to a restrained resting level.
 4. **ACQUIRE / TARGET** — restrained registration may identify the working area.
 5. **LASER POSITION** — laser head moves to the right-side marking area.
 6. **MARK** — red laser progressively reveals the marked state near the right tip.
@@ -139,7 +160,8 @@ Exact timing remains open until implemented and reviewed. Do not compress the se
 ## Color contract
 
 - resting environment: dark navy / blue-black;
-- system/grid energized glow: BANANA.EXE period cyan/aqua (`#97EEEA` guide);
+- system accent/glow: BANANA.EXE period cyan/aqua (`#97EEEA` guide);
+- visible grid geometry: same cyan family but much weaker than localized system glow;
 - title letters: locked warm yellow/gold;
 - title period: locked cyan/aqua;
 - laser/action energy: red;
@@ -152,7 +174,12 @@ Red remains an action color, not a static brand color.
 Do not:
 
 - redesign BANANA.EXE title;
-- revert grid to saturated generic electric blue;
+- make grid a hero element;
+- create a bright full-frame perspective floor;
+- build a luminous horizon band;
+- thicken grid lines to make the processing state more obvious;
+- use grid-wide pulsing as the primary wake effect;
+- revert system cyan to saturated generic electric blue;
 - make grid warm gold/yellow;
 - add outer HUD frame/corner decorations;
 - add a redundant banana icon;
@@ -167,12 +194,25 @@ Do not:
 
 This intro is a presentation/processing sequence. Do not silently alter existing downstream player-choice authority. Part 2 projectile behavior still uses existing `BX.getChoice()` logic unless a later explicit decision changes how this intro connects to the chosen banana.
 
+## Current transition constraint
+
+The clean and marked banana source renders are not geometrically identical. Do not full-crossfade the entire banana if that causes visible shape morphing.
+
+Current design solution under review:
+
+- use the marked banana as the stable base;
+- cover only the etch area with a clean-peel patch derived from the clean banana;
+- remove that patch progressively behind the laser/contact path;
+- verify the patch seam again after runtime WebP conversion.
+
 ## Claude Code deliverable
 
-Implement the intro as a self-contained sequence that:
+Do not begin production implementation until the current Claude Design pass is approved.
+
+When approved, implement the intro as a self-contained sequence that:
 
 - reads from the locked source authority and creates optimized runtime derivatives where useful;
-- creates the animated grid/laser/marking effects live;
+- creates subtle grid texture plus localized system glow, laser and marking effects live;
 - preserves current production authority;
 - exposes timings/constants clearly for review;
 - does not modify locked launcher assets 04–08;
