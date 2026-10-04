@@ -20,17 +20,11 @@ A more specific current scene/system document may add detail, but it must not si
 
 BANANA.EXE is an **RTJ production**.
 
-For title cards, trailers, presentation boards and finished outward-facing material, the preferred credit language is:
+Preferred outward-facing credit language:
 
 **AN RTJ PRODUCTION**
 
-For the Banana Boutique precision-marking shot specifically, use a restrained system signature rather than a large second title:
-
-- `BANANA.EXE` as the primary small system tag in the lower-left area;
-- `AN RTJ PRODUCTION` may sit directly beneath it in smaller neutral text, or appear as a small opposing-corner credit if composition requires;
-- the RTJ credit must remain secondary to the banana and marking event.
-
-`BANANA.EXE` uses the game’s existing **yellow** system-label language. Do not use red as a static BANANA.EXE tag in this sequence. Red is reserved for active energy/action events such as the laser.
+For the precision-marking intro specifically, the production credit is integrated into the banana itself as a small etched **`RTJ Productions`** mark near the right tip. Do not add a duplicate lower-corner production credit unless explicitly approved later.
 
 ## Product premise
 
@@ -85,7 +79,7 @@ Use grid language when BANANA.EXE is in a:
 
 This is why grid language fits Part 2 especially well. Part 2 is more heavily about delivery mechanics, analysis, launcher operation, failure, system behavior and technical attempts.
 
-It is also appropriate for the Banana Boutique precision-marking intro because the banana is actively being processed.
+It is also appropriate for the precision-marking intro because the banana is actively being processed.
 
 Do not interpret this as “BANANA.EXE = grid everywhere.”
 
@@ -121,129 +115,76 @@ Implementation authority:
 
 Locked launcher art should not be casually redesigned to support downstream ideas.
 
-## Banana Boutique — precision marking
+## Precision-marking intro
 
 ### Status
 
-Concept and process logic: **APPROVED DIRECTION**.
+Concept: **LOCKED**.  
+Visual direction: **LOCKED**.  
+Source asset set: **LOCKED ON MAIN**.  
+Motion/timing: **CLAUDE DESIGN REVIEW IN PROGRESS**.  
+Production implementation: **NOT YET STARTED**.
 
-Visual treatment: **OPEN / NOT YET LOCKED**.
+Detailed authority lives in:
 
-The first Claude Design precision-marking canvas is useful as a staging, placement, readability and implementation reference, but its realism level is not final visual authority. It reads too close to a real industrial/product-commercial treatment for the desired BANANA.EXE world.
+- `production/VISUAL_LANGUAGE.md`
+- `production/design/PRECISION_MARKING_INTRO_HANDOFF.md`
 
-Preserve the useful system findings while pushing the final treatment toward stylized, cinematic, premium BANANA.EXE.
+### Locked visual direction
 
-### Core idea
+Preserve:
 
-Banana Boutique does not finish its bananas with a sticker or attached label.
+- dark navy / blue-black environment;
+- active cyan/aqua processing grid;
+- grid/system glow derived from the cyan/aqua period in the BANANA.EXE title, guide `#97EEEA` / RGB 151, 238, 234;
+- large centered `BANANA.EXE` title using the locked title asset;
+- banana lying flat across the processing grid;
+- stylized/CGI middle-ground banana treatment: neither flat-cartoon nor photoreal fruit photography;
+- compact technical laser head descending from above near the banana's right tip;
+- red laser/action energy;
+- small localized heat/smoke wisp only;
+- completed etched wording **`RTJ Productions`**, small and close to the right tip;
+- caramel/brown completed etch;
+- no outer HUD/UI frame;
+- no redundant banana icon;
+- no duplicate lower-corner production credit.
 
-The brand is applied directly to the peel through an in-world precision laser-marking process performed on an active processing grid.
+The incidental visual read where the centered BANANA.EXE title can feel like sunglasses/eyes and the banana curve like a smile is a bonus only. Do not distort the banana to force that face.
 
-Use the language **precision marked** or **laser marked** rather than **laser burned**.
+### Locked source assets
 
-The finished mark should read as a clean caramel/brown tonal change integrated into the peel/object surface rather than printed on top of it.
+Source authority lives in:
 
-Avoid:
+`assets/part2/precision/source/`
 
-- stickers;
-- printed labels;
-- branding irons;
-- flames;
-- heavy smoke;
-- scorched or damaged-looking fruit;
-- cheap sci-fi spectacle;
-- sterile photoreal food-tech advertising as the final aesthetic.
+Required locked files:
 
-### Precision-marking visual system
+- `BANANA_EXE_TITLE_LOCKED.png`
+- `PRECISION_BANANA_BASE_LOCKED.png`
+- `PRECISION_BANANA_MARKED_LOCKED.png`
+- `PRECISION_LASER_HEAD_LOCKED.png`
+- `PRECISION_MARKING_COMPOSITION_LOCKED.jpg`
 
-Follow `production/VISUAL_LANGUAGE.md`.
+These source files must not be overwritten or deleted. Claude Code may later create optimized runtime WebP derivatives in `assets/part2/precision/`.
 
-The locked hierarchy is:
+### Motion direction under review
 
-- **BLUE** = system / grid / BANANA.EXE world;
-- **YELLOW** = BANANA.EXE label + banana icon family / game consistency;
-- **RED** = laser event / danger-energy / active marking moment;
-- **CARAMEL / BROWN** = completed precision-marking result.
+Current sequence logic:
 
-Red is an **action color**, not a resting-brand color.
+1. **GRID WAKE / PULSE** — contextual working-state grid powers up.
+2. **BANANA ARRIVAL** — clean banana lands/settles flat on the grid.
+3. **ACTIVE GRID** — pulse resolves into a stable energized cyan/aqua glow.
+4. **ACQUIRE / TARGET** — restrained registration only if useful.
+5. **LASER POSITION** — laser head moves to the right-side marking area.
+6. **MARK** — red laser progressively reveals `RTJ Productions` near the right tip.
+7. **FINISH** — beam stops and a tiny localized heat/smoke wisp may remain briefly.
+8. **REVEAL / HOLD** — final marked banana and centered title resolve clearly.
 
-For this sequence:
+Exact timing, title-opacity behavior during the process, laser-head retraction, any design-only mounting column, camera push, tap-to-skip and sound remain review decisions until the current Claude Design pass is approved.
 
-- use a dark navy / blue-black field;
-- use blue square grid lines, visibly thicker than the old thin reference lines;
-- before the banana appears, the grid pulses with a powered rhythm;
-- when the banana lands, the pulse resolves into a stable active blue glow;
-- during marking, the laser/contact event is red;
-- when marking is complete, the red action energy recedes and the completed mark remains caramel/brown;
-- `BANANA.EXE` remains yellow.
+### Transition constraint
 
-### Banana representation
-
-The precision-marking intro should use the established **stylized banana icon language**, not a photoreal banana.
-
-Use the supplied glowing banana icon as the shape/style authority, but the precision-marking scene still needs the marking process itself.
-
-Current direction:
-
-- remove the crown;
-- retain the simplified illustrated banana form and dark outline;
-- do not render photographed/photoreal produce;
-- place the banana object **lying flat on the grid plane**, like a game-world token/sprite being processed;
-- camera may view the grid in perspective, but the banana must visually belong to that plane rather than standing upright as a product-display crescent;
-- the precision mark is applied directly to this stylized banana object.
-
-### Motion sequence
-
-Current sequence direction:
-
-1. **GRID WAKE / PULSE** — blue grid pulses into readiness.
-2. **DROP** — stylized banana object lands flat on the grid plane.
-3. **ACQUIRE** — active grid registers position/orientation with restrained graphics.
-4. **TARGET** — intended marking area is identified.
-5. **MARK** — red laser progressively creates the mark.
-6. **COMPLETE** — laser disengages and temporary targeting/registration graphics clear.
-7. **HERO** — completed precision-marked banana holds on the stable blue grid.
-
-Exact total duration remains open until the revised sequence is tested.
-
-### Mark application comparison
-
-Current comparison remains open between:
-
-- **A — symbol + BANANA BOUTIQUE text**;
-- **B — symbol only**.
-
-The comparison must hold every other variable constant so we can judge whether full Banana Boutique wording causes the Boutique to take too much narrative/visual focus away from BANANA.EXE.
-
-No crown in either version.
-
-### Corner system signature
-
-For the precision-marking frame:
-
-- lower-left preferred;
-- `BANANA.EXE` in the game’s existing yellow;
-- optional `AN RTJ PRODUCTION` directly below in smaller neutral/off-white or restrained muted tone;
-- neither line should compete with the banana or marking event.
-
-### Still-frame rule
-
-The final frame of the animation should also function as the Banana Boutique hero still.
-
-Do not create a visually unrelated static version.
-
-Keep the following separable where practical:
-
-- stylized banana object;
-- finished mark;
-- grid;
-- registration/calibration graphics;
-- red laser/contact effect;
-- progressive marking effect;
-- BANANA.EXE / RTJ system signature;
-- final hero composition.
-
-Any generated hero frame remains a candidate until Valenté explicitly approves the exact image.
+The clean and marked banana source renders are not geometrically identical. Do not full-crossfade the entire banana if that causes visible shape morphing. The current Claude Design solution uses the marked banana as the base and a clean-peel patch over the etch area, then removes that patch behind the laser. This method is under visual review and must be tested again after runtime WebP conversion.
 
 ## Precision-marking explainer / content extension
 
@@ -251,15 +192,9 @@ The precision-marking idea also creates a natural explainer-video question:
 
 > **“So how do we use a laser to brand our bananas and not cook them?”**
 
-This should be treated as genuine engineering curiosity inside the Banana Boutique world, not just marketing copy.
+This is genuine engineering curiosity inside the BANANA.EXE world, not just marketing copy.
 
-### Core explanation
-
-A laser does not need to heat the whole banana in order to mark its surface.
-
-The process is about controlling the amount of energy delivered to a very small surface area for a very short time.
-
-The useful explanatory variables are:
+Useful explanatory variables:
 
 - beam intensity / power;
 - dwell time;
@@ -272,16 +207,7 @@ The communication principle is:
 
 **CONTROL THE DOSE.**
 
-Do not publish exact wattage, speed or hardware settings as if they are proven until the real process has actually been tested on appropriate equipment.
-
-### Explainer-video structure
-
-1. **Problem** — “We want the brand on the banana itself.”
-2. **Complication** — “Laser sounds great. Except lasers make heat.”
-3. **Question** — “So how do we laser-brand a banana without cooking it?”
-4. **Answer** — “Control the dose.”
-5. **Visual explanation** — briefly show intensity, dwell time, scan speed, focus and surface-only marking.
-6. **Reveal** — end on the finished precision-marked banana.
+Do not publish exact wattage, speed or hardware settings as if proven until the real process has actually been tested on appropriate equipment.
 
 Possible public hook/title:
 
@@ -289,12 +215,12 @@ Possible public hook/title:
 
 Possible internal concept title:
 
-**BANANA BOUTIQUE: PRECISION MARKING TEST**
+**BANANA.EXE: PRECISION MARKING TEST**
 
 ## Continuity rule
 
-The Banana Boutique precision-marking system is a separate production element.
+The precision-marking intro is a separate production element.
 
 It must not be used as an excuse to redraw or silently alter locked Part 2 launcher assets.
 
-If visible banana branding is later carried through gameplay, that must be handled as an explicit downstream implementation decision while preserving player banana choice and existing scene authority.
+If visible banana marking is later carried through gameplay, that must be handled as an explicit downstream implementation decision while preserving player banana choice and existing scene authority.
