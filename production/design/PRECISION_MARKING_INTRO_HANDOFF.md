@@ -1,6 +1,6 @@
 # BANANA.EXE — Precision Marking Intro Handoff
 
-**Status:** DESIGN REVIEW IN PROGRESS  
+**Status:** DESIGN APPROVED / READY FOR SPEC ALIGNMENT  
 **Production:** AN RTJ PRODUCTION
 
 This handoff is for Claude Design / Claude Code implementation of the BANANA.EXE precision-marking intro.
@@ -99,21 +99,29 @@ Preserve:
 
 The accidental title/banana 'face' read may survive naturally but must not be forced by reshaping the banana.
 
-## Grid hierarchy — corrected direction
+## Grid hierarchy — locked corrected direction
 
 The grid is **not** the star of this scene.
 
-The precision intro must inherit established Part 2 hierarchy:
+The precision intro inherits established Part 2 hierarchy:
 
 - dark navy / blue-black is the dominant field;
 - visible grid geometry is quiet environmental structure;
-- grid lines should be thin, low-opacity and low-contrast;
+- grid lines are thin, low-opacity and low-contrast;
 - no bright perspective horizon;
 - no full-frame luminous "Tron floor";
-- cyan/aqua energy should be concentrated as localized glow around/beneath the active processing area;
-- localized glow may be substantially more visible than the grid lines;
+- cyan/aqua energy is concentrated as localized glow around/beneath the active processing area;
+- localized glow is substantially more visible than the grid lines;
 - the grid may become slightly more legible during system wake or banana arrival, then settle back;
 - after banana arrival, avoid obvious grid-wide pulsing.
+
+Current approved design target from Claude Design:
+
+- grid 5% at rest;
+- grid rises to approximately 9% during wake/landing, then settles back;
+- no grid bloom, horizon band, haze, waves or pulses;
+- localized cyan pool carries the active-system light behavior;
+- localized cyan reduces during marking so the red laser remains the strongest active color.
 
 **Hierarchy test:** if the grid is noticed before the banana, BANANA.EXE title, or active laser event, it is too strong.
 
@@ -134,18 +142,18 @@ Implement live where practical:
 
 The marked banana asset exists specifically so Claude does not need to guess the final etch placement or redraw it from scratch.
 
-## Intro motion
+## Intro motion — approved design direction
 
-1. **SYSTEM WAKE** — dark field remains dominant; localized cyan/aqua energy begins to wake. The grid may become faintly legible as a secondary consequence, but it does not perform a hero pulse sequence.
+1. **SYSTEM WAKE** — dark field remains dominant; localized cyan/aqua energy begins to wake. The grid becomes faintly more legible only as a secondary consequence.
 2. **BANANA ARRIVAL** — clean banana lands/settles flat in the processing environment.
 3. **ACTIVE STATE** — localized cyan/aqua glow strengthens around/beneath the banana and then stabilizes; the grid returns to a restrained resting level.
-4. **ACQUIRE / TARGET** — restrained registration may identify the working area.
+4. **ACQUIRE / TARGET** — restrained registration identifies the working area.
 5. **LASER POSITION** — laser head moves to the right-side marking area.
 6. **MARK** — red laser progressively reveals the marked state near the right tip.
-7. **FINISH** — laser stops; tiny localized smoke/heat wisp may remain briefly.
+7. **FINISH** — laser stops; tiny localized smoke/heat wisp may remain briefly; head retracts from the final composition.
 8. **REVEAL / HOLD** — final marked banana and centered title resolve clearly.
 
-Exact timing remains open until implemented and reviewed. Do not compress the sequence to the point that the player cannot encode the action/consequence.
+Current Claude Design prototype length is approximately 13.55 s. Treat implementation timing constants as reviewable, but preserve the approved event order and readable holds.
 
 ## Marking implementation
 
@@ -156,6 +164,28 @@ Exact timing remains open until implemented and reviewed. Do not compress the se
 - laser/contact point must spatially correspond to the mark being created;
 - no heavy smoke, black char, flame or large spark shower;
 - completed mark should look precision-marked rather than scorched.
+
+## Sound choreography — LOCKED DIRECTION
+
+The laser sound must be tied to **actual etching**, not merely to laser-head movement.
+
+During `MARK`:
+
+1. Laser begins etching **`RTJ`** → precision-etch sound runs while the letters are being written.
+2. At the gap between `RTJ` and `Productions`, the etching sound **stops** while the head repositions across the blank space.
+3. When the laser begins writing **`Productions`**, the etching sound resumes and continues only while the mark is actively being created.
+4. When the final letter completes, the etching sound stops cleanly.
+5. After the finish/reveal resolves, play one short **completion / move-on cue** to signal that the process is complete and the sequence is advancing.
+
+Sound character:
+
+- precision tool / laser etching texture rather than arcade zap;
+- controlled, tight, slightly mechanical/electrical;
+- may include a restrained high-frequency engraving/sizzle component;
+- should not sound like welding, fire, an alarm, or a continuous sci-fi beam;
+- the reposition gap between `RTJ` and `Productions` should be audibly silent from the etching layer so the sound reinforces the physical writing action.
+
+The completion cue should be short, clean and confident. It should read as **process complete / continue**, not success fanfare.
 
 ## Color contract
 
@@ -188,6 +218,7 @@ Do not:
 - substitute unrelated banana art for the supplied source assets;
 - make the laser head toy-like or oversized;
 - turn light heat wisp into obvious burning;
+- run the etching sound continuously while the head is repositioning between words;
 - overwrite or delete anything in `assets/part2/precision/source/`.
 
 ## Player banana choice
@@ -198,7 +229,7 @@ This intro is a presentation/processing sequence. Do not silently alter existing
 
 The clean and marked banana source renders are not geometrically identical. Do not full-crossfade the entire banana if that causes visible shape morphing.
 
-Current design solution under review:
+Approved design solution:
 
 - use the marked banana as the stable base;
 - cover only the etch area with a clean-peel patch derived from the clean banana;
@@ -207,14 +238,16 @@ Current design solution under review:
 
 ## Claude Code deliverable
 
-Do not begin production implementation until the current Claude Design pass is approved.
+Before production implementation, bring the Claude Design storyboard/spec boards into line with the approved main prototype and this handoff.
 
-When approved, implement the intro as a self-contained sequence that:
+Then implement the intro as a self-contained sequence that:
 
 - reads from the locked source authority and creates optimized runtime derivatives where useful;
 - creates subtle grid texture plus localized system glow, laser and marking effects live;
+- synchronizes etching audio to the actual `RTJ` and `Productions` writing intervals with silence during repositioning;
+- plays one short completion/move-on cue after the process resolves;
 - preserves current production authority;
-- exposes timings/constants clearly for review;
+- exposes timings/constants and audio cue boundaries clearly for review;
 - does not modify locked launcher assets 04–08;
 - does not refactor unrelated Part 2 behavior during this pass.
 
