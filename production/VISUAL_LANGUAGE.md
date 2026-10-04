@@ -18,7 +18,7 @@ The BANANA.EXE visual hierarchy is:
 
 The correct grid/system glow color is the **cyan/aqua period between `BANANA` and `EXE` in the locked BANANA.EXE title reference**.
 
-That period is the color authority for active grid glow and related system-light accents.
+That period is the color authority for active system-light accents and restrained grid language.
 
 Reference sampling from the supplied title image is approximately:
 
@@ -27,7 +27,7 @@ Reference sampling from the supplied title image is approximately:
 
 Treat this as a practical visual guide, not permission to drift into generic saturated electric blue.
 
-The dark navy/blue-black environment remains the resting field. The cyan/aqua period color is the energized system glow layered over it.
+The dark navy/blue-black environment remains the resting field. The cyan/aqua period color is the energized system accent layered over it.
 
 ### Behavioral rule
 
@@ -62,7 +62,7 @@ The reference treatment is already the desired BANANA.EXE identity. Future gener
 
 ## Grid usage — LOCKED PRINCIPLE
 
-The grid is a **contextual system language**, not the default background for every BANANA.EXE scene.
+The grid is a **contextual system language**, not the default background for every BANANA.EXE scene and not a hero element in its own right.
 
 Use it when the scene is meaningfully about:
 
@@ -72,6 +72,8 @@ Use it when the scene is meaningfully about:
 - systems/technical operation;
 - problem-solving/analysis;
 - powered interactions where the grid helps communicate mechanism or control.
+
+Where it appears, the grid is normally **subordinate environmental structure**. It should support the active object or system rather than compete with it.
 
 ### Part 1
 
@@ -83,7 +85,7 @@ The grid may appear in Part 1 only when a scene genuinely enters a working/syste
 
 ### Part 2
 
-Part 2 is much more naturally grid-led because the product state is increasingly about:
+Part 2 uses grid language more often because the product state increasingly involves:
 
 - analysis;
 - delivery mechanics;
@@ -92,53 +94,63 @@ Part 2 is much more naturally grid-led because the product state is increasingly
 - technical attempts;
 - failure/diagnostic states.
 
-The grid can therefore recur more heavily through Part 2 without becoming a universal product wallpaper.
+However, established Part 2 usage is **subtle**: grid geometry behaves as quiet structure while stronger cyan energy is concentrated around active systems, controls, routes, targets and powered events.
+
+Part 2 being more grid-compatible does not mean the grid should become a dominant full-frame subject.
 
 ### Precision-marking intro
 
-The precision-marking intro is an explicit working/processing state, so the grid is strongly appropriate there.
+The precision-marking intro is a working/processing state, so subtle grid language remains appropriate. The processing state is communicated primarily through **localized cyan/aqua light behavior and the active laser event**, not by increasing grid prominence.
 
 ## Grid — PRECISION-MARKING DIRECTION
 
 For the precision-marking sequence:
 
-- dark navy / blue-black ground;
-- square grid lines glowing in the locked **system cyan-blue** derived from the BANANA.EXE period;
-- grid lines should be approximately **2× the apparent thickness** of the old thin reference lines;
-- keep the lines crisp enough to read as a grid, with a controlled cyan/aqua glow around the core stroke;
-- do not make them so thick that the grid becomes bars or tiles;
-- pre-arrival energy pulses through this cyan-blue grid;
-- once the banana lands, the grid holds a stable active cyan-blue glow.
+- dark navy / blue-black environment is the dominant field;
+- visible grid geometry should remain extremely subtle, comparable in perceived hierarchy to established Part 2 usage;
+- grid lines should be thin, low-contrast and low-opacity rather than thicker than the rest of the product language;
+- do not build a bright perspective horizon or a luminous full-frame "Tron floor";
+- do not use the grid as the primary light source;
+- localized cyan/aqua system glow may wake beneath/around the processing area and may be significantly more visible than the grid lines themselves;
+- the grid may become slightly more legible during system wake or banana arrival, then return to a restrained resting level;
+- after arrival, active energy should stabilize around the processing area rather than continuing obvious grid-wide pulsing.
 
-The grid should feel powered and functional, not decorative.
+**Hierarchy test:** if the viewer notices the grid before the banana, BANANA.EXE title, or active laser event, the grid is too strong.
+
+The grid should feel functional and almost incidental. The **light performs; the grid does not**.
 
 ## Precision-marking color behavior
 
 Before banana arrival:
-- system cyan-blue grid pulses in the established system language.
+- dark navy / blue-black remains dominant;
+- soft cyan/aqua energy begins to wake in the processing area;
+- grid geometry may become faintly legible as a secondary consequence of that wake.
 
 At banana arrival:
-- the grid resolves into a stable active cyan-blue glow.
+- localized cyan/aqua system glow strengthens around/beneath the banana;
+- the grid remains restrained rather than becoming a hero effect.
 
 During marking:
 - the **laser is red**;
 - red is concentrated at the active laser/contact event rather than washing the whole frame;
-- a short red contact glow may travel with the marking head.
+- a short red contact glow may travel with the marking head;
+- the cyan system field supports the event without competing with it.
 
 After marking:
 - active red recedes;
 - the finished mark remains caramel/brown;
-- the environment returns to the stable navy + system-cyan + yellow BANANA.EXE family.
+- the environment returns to the stable navy + subtle system-cyan + yellow BANANA.EXE family.
 
 ## Precision-marking composition — LOCKED DIRECTION
 
-The latest approved precision-marking composition is now the authority for this scene.
+The latest approved precision-marking composition remains authority for title, banana, laser-head relationship and mark placement, but **its visible grid intensity is not authority**. Grid treatment inherits the corrected hierarchy above.
 
 Preserve:
 
-- the banana lying flat across the processing grid;
+- the banana lying flat in the processing environment;
 - the large centered `BANANA.EXE` title above it using the locked title treatment;
-- a clean dark-navy environment with the cyan-blue grid as the main system light;
+- a clean dark-navy environment;
+- restrained cyan/aqua system illumination with only subtle grid structure;
 - a red laser head descending from above and operating near the banana's right-hand tip;
 - light localized smoke/heat wisp only at the active laser contact point;
 - the etched production mark reading **`RTJ Productions`**;
@@ -165,7 +177,7 @@ For the precision-marking scene, use the approved middle-ground rendering langua
 - stylized/CGI banana rather than flat vector icon or photoreal produce photography;
 - clear yellow banana form with controlled dimensional shading;
 - dark edging/outline sufficient to keep it in the BANANA.EXE visual world;
-- lying flat on the grid plane;
+- lying flat in the processing environment;
 - no crown;
 - no banana symbol etched onto the banana;
 - the only etched wording is `RTJ Productions` unless Valenté explicitly changes it later.
@@ -183,14 +195,14 @@ For the precision-marking scene:
 
 If a generated concept changes any of the following without explicit approval, treat it as a candidate with visual drift rather than new authority:
 
-- dark navy resting field plus the locked system cyan-blue glow;
+- dark navy resting field plus restrained locked system cyan-blue accents;
 - locked BANANA.EXE title treatment;
 - centered title placement in the precision-marking scene;
 - red active-event role;
 - caramel/brown completed marking role;
-- the banana lying flat on the grid;
+- the banana lying flat in the processing environment;
 - `RTJ Productions` as the small etched mark near the right tip;
 - no outer UI frame;
-- the contextual nature of the grid itself.
+- the contextual and subordinate nature of the grid itself.
 
-Do not expand the grid into shopping/travel/world scenes merely because it is visually successful in technical scenes.
+Do not expand the grid into shopping/travel/world scenes merely because it appears in technical scenes. Do not increase grid intensity merely because a scene is a processing scene.
