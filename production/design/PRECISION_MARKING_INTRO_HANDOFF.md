@@ -1,6 +1,6 @@
 # BANANA.EXE — Precision Marking Intro Handoff
 
-**Status:** DESIGN APPROVED / READY FOR SPEC ALIGNMENT  
+**Status:** DESIGN REFINEMENT — MARK WORDING CHANGED / NOT CODE READY  
 **Production:** AN RTJ PRODUCTION
 
 This handoff is for Claude Design / Claude Code implementation of the BANANA.EXE precision-marking intro.
@@ -55,6 +55,27 @@ assets/part2/precision/precision_laser_head.webp
 
 Runtime WebPs are derivatives only. The locked source files remain the visual authority.
 
+## Important source-asset supersession
+
+`PRECISION_BANANA_MARKED_LOCKED.png` contains the old baked wording `RTJ Productions`.
+
+That wording is **superseded**.
+
+The file remains useful for:
+
+- approved banana geometry/rendering;
+- final banana proportions;
+- general caramel/brown etched-mark treatment;
+- overall right-tip marking zone.
+
+Do **not** use its old text as the final mark and do not reveal that baked wording during the new writing animation.
+
+The current final etched wording is:
+
+**`Respect The Juice`**
+
+The new mark should be built as its own controlled layer/path or other design-approved treatment while preserving the approved banana geometry.
+
 ## Asset roles
 
 `BANANA_EXE_TITLE_LOCKED.png`
@@ -63,21 +84,19 @@ Runtime WebPs are derivatives only. The locked source files remain the visual au
 - yellow/gold faces, cyan/aqua period, dark blue dimensional shadow/extrusion.
 
 `PRECISION_BANANA_BASE_LOCKED.png`
-- clean unmarked banana base;
-- used for arrival / pre-marking state.
+- clean unmarked banana base/reference.
 
 `PRECISION_BANANA_MARKED_LOCKED.png`
-- approved completed state;
-- contains the small `RTJ Productions` etch near the banana's right tip;
-- use as the end-state authority for placement, size and treatment of the etch.
+- banana geometry/rendering and etched-treatment reference only;
+- old wording is superseded.
 
 `PRECISION_LASER_HEAD_LOCKED.png`
 - compact technical laser-head asset/reference;
 - beam itself should be generated live so position/timing can animate.
 
 `PRECISION_MARKING_COMPOSITION_LOCKED.jpg`
-- overall composition target for title, banana, laser relationship and mark placement;
-- its visible grid intensity is **not** authority;
+- overall composition target for title, banana, laser relationship and general marking zone;
+- its visible grid intensity and old mark wording are not authority;
 - do not use it as a flattened gameplay scene.
 
 ## Locked composition
@@ -92,7 +111,7 @@ Preserve:
 - compact technical laser head descends from above near the banana's right tip;
 - laser event is red;
 - small localized heat/smoke wisp is permitted at contact;
-- completed etched wording is `RTJ Productions`, small and near the right tip;
+- completed etched wording is `Respect The Juice`, small and near the right tip;
 - no outer UI frame;
 - no redundant top-right banana icon;
 - no duplicate lower-corner production credit.
@@ -115,7 +134,7 @@ The precision intro inherits established Part 2 hierarchy:
 - the grid may become slightly more legible during system wake or banana arrival, then settle back;
 - after banana arrival, avoid obvious grid-wide pulsing.
 
-Current approved design target from Claude Design:
+Approved design target:
 
 - grid 5% at rest;
 - grid rises to approximately 9% during wake/landing, then settles back;
@@ -137,55 +156,79 @@ Implement live where practical:
 - laser contact glow;
 - light localized smoke/heat wisp;
 - acquisition/registration graphics if used;
-- progressive reveal from clean banana to marked banana;
+- `Respect The Juice` mark and its progressive glyph-by-glyph reveal;
 - camera/presentation timing.
 
-The marked banana asset exists specifically so Claude does not need to guess the final etch placement or redraw it from scratch.
-
-## Intro motion — approved design direction
+## Intro motion
 
 1. **SYSTEM WAKE** — dark field remains dominant; localized cyan/aqua energy begins to wake. The grid becomes faintly more legible only as a secondary consequence.
 2. **BANANA ARRIVAL** — clean banana lands/settles flat in the processing environment.
 3. **ACTIVE STATE** — localized cyan/aqua glow strengthens around/beneath the banana and then stabilizes; the grid returns to a restrained resting level.
 4. **ACQUIRE / TARGET** — restrained registration identifies the working area.
 5. **LASER POSITION** — laser head moves to the right-side marking area.
-6. **MARK** — red laser progressively reveals the marked state near the right tip.
+6. **MARK** — red laser visibly engraves `Respect The Juice` word by word and glyph by glyph.
 7. **FINISH** — laser stops; tiny localized smoke/heat wisp may remain briefly; head retracts from the final composition.
 8. **REVEAL / HOLD** — final marked banana and centered title resolve clearly.
 
-Current Claude Design prototype length is approximately 13.55 s. Treat implementation timing constants as reviewable, but preserve the approved event order and readable holds.
+Overall timing may extend slightly if required for legible writing. Preserve the approved event order and readable holds rather than forcing the old 13.55 s total.
 
-## Marking implementation
+## Marking choreography — CURRENT DESIGN TASK
 
-- etched wording: **RTJ Productions**;
-- small, subtle, caramel/brown result;
-- position close to the banana's right tip;
-- follow the banana surface/curve;
-- laser/contact point must spatially correspond to the mark being created;
-- no heavy smoke, black char, flame or large spark shower;
-- completed mark should look precision-marked rather than scorched.
+The mark must read as the laser physically **writing / engraving** the phrase, not as a continuous linear mask reveal.
 
-## Sound choreography — LOCKED DIRECTION
+Word sequence:
 
-The laser sound must be tied to **actual etching**, not merely to laser-head movement.
+1. **Respect**
+2. brief visual disengage / reposition
+3. **The**
+4. brief visual disengage / reposition
+5. **Juice**
+
+Requirements:
+
+- follow believable glyph/stroke structure;
+- completed strokes remain behind as caramel/brown etch;
+- use tiny natural breaks between letters where useful;
+- do not drag the active contact continuously through blank spaces;
+- do not let the contact outrun the visible etched stroke;
+- word gaps must read as intentional repositioning, not as accidental holes in a continuous sweep;
+- preserve the mark near the banana's right tip and follow the peel/curve;
+- rebalance text size/spacing only as much as needed for `Respect The Juice` to fit cleanly and remain subtle.
+
+## Sound choreography — CURRENT LOCKED INTENT
+
+Audio must reinforce the physical writing action.
 
 During `MARK`:
 
-1. Laser begins etching **`RTJ`** → precision-etch sound runs while the letters are being written.
-2. At the gap between `RTJ` and `Productions`, the etching sound **stops** while the head repositions across the blank space.
-3. When the laser begins writing **`Productions`**, the etching sound resumes and continues only while the mark is actively being created.
-4. When the final letter completes, the etching sound stops cleanly.
-5. After the finish/reveal resolves, play one short **completion / move-on cue** to signal that the process is complete and the sequence is advancing.
+1. etch sound ON while `Respect` is actively engraved;
+2. etch sound OFF during reposition to `The`;
+3. etch sound ON while `The` is actively engraved;
+4. etch sound OFF during reposition to `Juice`;
+5. etch sound ON while `Juice` is actively engraved;
+6. etch sound stops cleanly on the final glyph;
+7. after finish/reveal resolves, play one short completion / move-on cue.
+
+Small letter-to-letter microbreaks in the etch layer are acceptable if they strengthen the sense of actual writing.
 
 Sound character:
 
-- precision tool / laser etching texture rather than arcade zap;
+- precision tool / laser-marking / engraving texture rather than arcade zap;
 - controlled, tight, slightly mechanical/electrical;
-- may include a restrained high-frequency engraving/sizzle component;
-- should not sound like welding, fire, an alarm, or a continuous sci-fi beam;
-- the reposition gap between `RTJ` and `Productions` should be audibly silent from the etching layer so the sound reinforces the physical writing action.
+- restrained high-frequency engraving/sizzle component is acceptable;
+- do not sound like welding, fire, alarm, or a continuous sci-fi beam;
+- there is no requirement for a constant beam tone;
+- silence during word repositioning is part of the choreography.
 
-The completion cue should be short, clean and confident. It should read as **process complete / continue**, not success fanfare.
+Completion cue:
+
+- short;
+- clean;
+- confident;
+- means **process complete → continue**;
+- not a victory fanfare.
+
+Prototype audio is not yet verified. Do not claim audio is implemented merely because the spec contains cue timing.
 
 ## Color contract
 
@@ -214,41 +257,56 @@ Do not:
 - add outer HUD frame/corner decorations;
 - add a redundant banana icon;
 - move the title into the lower-left;
-- add duplicate RTJ production credit outside the banana without explicit direction;
+- add duplicate production credit outside the banana without explicit direction;
 - substitute unrelated banana art for the supplied source assets;
 - make the laser head toy-like or oversized;
 - turn light heat wisp into obvious burning;
-- run the etching sound continuously while the head is repositioning between words;
+- reveal the superseded `RTJ Productions` wording;
+- treat the new phrase as one continuous horizontal wipe;
+- run the etching sound continuously through word gaps;
 - overwrite or delete anything in `assets/part2/precision/source/`.
 
 ## Player banana choice
 
 This intro is a presentation/processing sequence. Do not silently alter existing downstream player-choice authority. Part 2 projectile behavior still uses existing `BX.getChoice()` logic unless a later explicit decision changes how this intro connects to the chosen banana.
 
-## Current transition constraint
+## Deferred RTJ drink-pouring ident — FUTURE ONLY
 
-The clean and marked banana source renders are not geometrically identical. Do not full-crossfade the entire banana if that causes visible shape morphing.
+A previously created Respect The Juice drink-pouring ident has been uploaded/reintroduced for consideration.
 
-Approved design solution:
+Possible future BANANA.EXE uses include:
 
-- use the marked banana as the stable base;
-- cover only the etch area with a clean-peel patch derived from the clean banana;
-- remove that patch progressively behind the laser/contact path;
-- verify the patch seam again after runtime WebP conversion.
+- a production bumper;
+- a scene/chapter transition;
+- a later banana-specific ident variant;
+- peel banana → blender → banana smoothie → RTJ ident.
 
-## Claude Code deliverable
+This is a **future branch of work**, not part of the current precision-intro refinement.
 
-Before production implementation, bring the Claude Design storyboard/spec boards into line with the approved main prototype and this handoff.
+For the current pass:
 
-Then implement the intro as a self-contained sequence that:
+- do not insert the ident;
+- do not redesign it;
+- do not add banana peeling;
+- do not add blending;
+- do not add smoothie pouring;
+- do not lengthen the intro to accommodate it;
+- do not let the uploaded ident change current scope.
 
-- reads from the locked source authority and creates optimized runtime derivatives where useful;
-- creates subtle grid texture plus localized system glow, laser and marking effects live;
-- synchronizes etching audio to the actual `RTJ` and `Productions` writing intervals with silence during repositioning;
-- plays one short completion/move-on cue after the process resolves;
-- preserves current production authority;
-- exposes timings/constants and audio cue boundaries clearly for review;
-- does not modify locked launcher assets 04–08;
-- does not refactor unrelated Part 2 behavior during this pass.
+Preserve the idea for a later update once the current BANANA.EXE flow is stable.
 
-Before implementation, verify all five locked source files exist at the exact `source/` paths above. If any are missing, stop rather than substituting invented assets.
+## Claude Design deliverable — NEXT
+
+Do not move to Claude Code yet.
+
+Claude Design should now:
+
+- replace `RTJ Productions` with `Respect The Juice`;
+- prototype actual glyph/stroke writing behavior;
+- show readable word pauses/repositions;
+- update the final marked state without changing the locked banana geometry;
+- update storyboard/spec/sound boundaries accordingly;
+- report revised marking duration and overall intro duration;
+- identify whether any new runtime mark layer/asset is needed.
+
+Only after this pass is visually approved should the handoff move to Claude Code.
