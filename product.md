@@ -24,7 +24,7 @@ Preferred outward-facing credit language:
 
 **AN RTJ PRODUCTION**
 
-For the precision-marking intro specifically, the production credit is integrated into the banana itself as a small etched **`RTJ Productions`** mark near the right tip. Do not add a duplicate lower-corner production credit unless explicitly approved later.
+For the precision-marking intro specifically, the production identity is integrated into the banana itself as a small etched **`Respect The Juice`** mark near the right tip. This supersedes the earlier `RTJ Productions` wording. Do not add a duplicate lower-corner production credit unless explicitly approved later.
 
 ## Product premise
 
@@ -120,9 +120,10 @@ Locked launcher art should not be casually redesigned to support downstream idea
 ### Status
 
 Concept: **LOCKED**.  
-Visual direction: **LOCKED EXCEPT CURRENT GRID/WAKE REFINEMENT**.  
+Visual hierarchy: **LOCKED**.  
 Source asset set: **LOCKED ON MAIN**.  
-Motion/timing: **CLAUDE DESIGN REVIEW IN PROGRESS**.  
+Etched wording: **`Respect The Juice` — LOCKED DIRECTION**.  
+Marking choreography/timing: **CLAUDE DESIGN REFINEMENT IN PROGRESS**.  
 Production implementation: **NOT YET STARTED**.
 
 Detailed authority lives in:
@@ -143,7 +144,7 @@ Preserve:
 - compact technical laser head descending from above near the banana's right tip;
 - red laser/action energy;
 - small localized heat/smoke wisp only;
-- completed etched wording **`RTJ Productions`**, small and close to the right tip;
+- completed etched wording **`Respect The Juice`**, small and close to the right tip;
 - caramel/brown completed etch;
 - no outer HUD/UI frame;
 - no redundant banana icon;
@@ -182,7 +183,9 @@ Required locked files:
 
 These source files must not be overwritten or deleted. Claude Code may later create optimized runtime WebP derivatives in `assets/part2/precision/`.
 
-The composition JPG remains authority for title/banana/laser relationship and mark placement, but its visible grid intensity is **not** authority.
+`PRECISION_BANANA_MARKED_LOCKED.png` now remains authority for the approved banana geometry/rendering and the general etched-mark treatment, but its baked `RTJ Productions` text is **superseded**. It must not be used as final wording. The final mark is `Respect The Juice`.
+
+The composition JPG remains authority for title/banana/laser relationship and mark placement, but its visible grid intensity and old mark wording are **not** authority.
 
 ### Motion direction under review
 
@@ -193,15 +196,27 @@ Current sequence logic:
 3. **ACTIVE STATE** — localized cyan/aqua glow strengthens around/beneath the banana, then stabilizes; grid remains restrained.
 4. **ACQUIRE / TARGET** — restrained registration only if useful.
 5. **LASER POSITION** — laser head moves to the right-side marking area.
-6. **MARK** — red laser progressively reveals `RTJ Productions` near the right tip.
+6. **MARK** — laser visibly engraves `Respect The Juice`, with word-by-word writing behavior rather than a continuous linear reveal.
 7. **FINISH** — beam stops and a tiny localized heat/smoke wisp may remain briefly.
 8. **REVEAL / HOLD** — final marked banana and centered title resolve clearly.
 
-Exact timing, title-opacity behavior during the process, laser-head retraction, any design-only mounting column, camera push, tap-to-skip and sound remain review decisions until the current Claude Design pass is approved.
+The marking should read as **Respect → reposition → The → reposition → Juice**. Etching audio should run only while glyph strokes are actively being engraved and stop during word repositioning.
+
+Exact revised marking timing, glyph paths, word-gap durations, final audio assets/mix, tap-to-skip and any remaining laser-head mount treatment remain review decisions until the Claude Design refinement is approved.
 
 ### Transition constraint
 
-The clean and marked banana source renders are not geometrically identical. Do not full-crossfade the entire banana if that causes visible shape morphing. The current Claude Design solution uses the marked banana as the base and a clean-peel patch over the etch area, then removes that patch behind the laser. This method is under visual review and must be tested again after runtime WebP conversion.
+The clean and marked banana source renders are not geometrically identical. Do not full-crossfade the entire banana if that causes visible shape morphing.
+
+Because the old marked source contains superseded wording, the final implementation must not depend on revealing that old baked text. Preserve the approved banana geometry while building the new `Respect The Juice` mark as its own controlled layer/path or approved replacement treatment.
+
+## Deferred RTJ drink-pouring ident — FUTURE / NOT CURRENT PASS
+
+A previously created Respect The Juice drink-pouring ident has been resurfaced as a possible BANANA.EXE production bumper. A banana-specific variant could eventually add a peel → blender → banana smoothie setup before the ident, or the ident could be used as a scene/chapter transition.
+
+This is **deliberately deferred**. Do not insert, redesign or implement the ident in the current precision-intro pass. Do not lengthen the current intro to accommodate banana peeling, blending, smoothie pouring or an RTJ bumper.
+
+Keep the idea available for a later production/update decision once the current BANANA.EXE flow is stable.
 
 ## Precision-marking explainer / content extension
 
