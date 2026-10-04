@@ -66,7 +66,7 @@ The grid may appear in Part 1 when a scene genuinely enters a working, system, c
 
 ## Grid usage rule
 
-The grid is a **contextual visual language**, not the universal background of BANANA.EXE.
+The grid is a **contextual visual language**, not the universal background of BANANA.EXE and not a hero element.
 
 Use grid language when BANANA.EXE is in a:
 
@@ -77,9 +77,9 @@ Use grid language when BANANA.EXE is in a:
 - problem-solving/analysis state;
 - powered interaction where the grid helps communicate mechanism.
 
-This is why grid language fits Part 2 especially well. Part 2 is more heavily about delivery mechanics, analysis, launcher operation, failure, system behavior and technical attempts.
+Part 2 uses grid language more often because it is more heavily about delivery mechanics, analysis, launcher operation, failure, system behavior and technical attempts. Even there, the established hierarchy is subtle: grid geometry is quiet structure while brighter cyan energy belongs around active systems, controls, routes and events.
 
-It is also appropriate for the precision-marking intro because the banana is actively being processed.
+The precision-marking intro may use the same subtle grid language because the banana is being processed, but the processing state must be communicated primarily through localized system light and the laser event rather than making the grid visually dominant.
 
 Do not interpret this as “BANANA.EXE = grid everywhere.”
 
@@ -120,7 +120,7 @@ Locked launcher art should not be casually redesigned to support downstream idea
 ### Status
 
 Concept: **LOCKED**.  
-Visual direction: **LOCKED**.  
+Visual direction: **LOCKED EXCEPT CURRENT GRID/WAKE REFINEMENT**.  
 Source asset set: **LOCKED ON MAIN**.  
 Motion/timing: **CLAUDE DESIGN REVIEW IN PROGRESS**.  
 Production implementation: **NOT YET STARTED**.
@@ -134,11 +134,11 @@ Detailed authority lives in:
 
 Preserve:
 
-- dark navy / blue-black environment;
-- active cyan/aqua processing grid;
-- grid/system glow derived from the cyan/aqua period in the BANANA.EXE title, guide `#97EEEA` / RGB 151, 238, 234;
+- dark navy / blue-black environment as the dominant field;
+- only extremely subtle Part 2-style grid structure, if visible;
+- localized cyan/aqua system glow derived from the cyan/aqua period in the BANANA.EXE title, guide `#97EEEA` / RGB 151, 238, 234;
 - large centered `BANANA.EXE` title using the locked title asset;
-- banana lying flat across the processing grid;
+- banana lying flat in the processing environment;
 - stylized/CGI middle-ground banana treatment: neither flat-cartoon nor photoreal fruit photography;
 - compact technical laser head descending from above near the banana's right tip;
 - red laser/action energy;
@@ -150,6 +150,21 @@ Preserve:
 - no duplicate lower-corner production credit.
 
 The incidental visual read where the centered BANANA.EXE title can feel like sunglasses/eyes and the banana curve like a smile is a bonus only. Do not distort the banana to force that face.
+
+### Grid hierarchy correction
+
+Earlier precision-intro direction overstated the grid by treating it as an active glowing processing-floor feature. That is no longer authority.
+
+The corrected rule is:
+
+- the grid is subordinate environmental structure;
+- dark navy / blue-black remains visually dominant;
+- visible grid lines stay thin, low-opacity and quiet;
+- no bright perspective horizon or full-frame luminous floor;
+- localized cyan/aqua glow carries the system wake/active-state behavior;
+- the grid may become only slightly more legible during wake/arrival and then settle back;
+- if the grid is noticed before the banana, title or active laser event, it is too strong;
+- **the light performs; the grid does not**.
 
 ### Locked source assets
 
@@ -167,13 +182,15 @@ Required locked files:
 
 These source files must not be overwritten or deleted. Claude Code may later create optimized runtime WebP derivatives in `assets/part2/precision/`.
 
+The composition JPG remains authority for title/banana/laser relationship and mark placement, but its visible grid intensity is **not** authority.
+
 ### Motion direction under review
 
 Current sequence logic:
 
-1. **GRID WAKE / PULSE** — contextual working-state grid powers up.
-2. **BANANA ARRIVAL** — clean banana lands/settles flat on the grid.
-3. **ACTIVE GRID** — pulse resolves into a stable energized cyan/aqua glow.
+1. **SYSTEM WAKE** — dark field remains dominant; localized cyan/aqua energy wakes beneath/around the processing area; grid becomes only faintly more legible as a secondary consequence.
+2. **BANANA ARRIVAL** — clean banana lands/settles flat in the processing environment.
+3. **ACTIVE STATE** — localized cyan/aqua glow strengthens around/beneath the banana, then stabilizes; grid remains restrained.
 4. **ACQUIRE / TARGET** — restrained registration only if useful.
 5. **LASER POSITION** — laser head moves to the right-side marking area.
 6. **MARK** — red laser progressively reveals `RTJ Productions` near the right tip.
