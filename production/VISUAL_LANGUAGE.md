@@ -9,10 +9,25 @@ Purpose: provide a stable visual-language reference that scene and system briefs
 
 The BANANA.EXE visual hierarchy is:
 
-- **BLUE** = system / grid / BANANA.EXE world.
+- **SYSTEM CYAN-BLUE** = system / grid / BANANA.EXE world.
 - **YELLOW** = BANANA.EXE label + banana icon family / game consistency.
 - **RED** = laser event / danger-energy / active marking moment.
 - **CARAMEL / BROWN** = completed precision-marking / etched peel result.
+
+### System cyan-blue authority
+
+The correct grid/system glow color is the **cyan/aqua period between `BANANA` and `EXE` in the locked BANANA.EXE title reference**.
+
+That period is the color authority for active grid glow and related system-light accents.
+
+Reference sampling from the supplied title image is approximately:
+
+- RGB: **151, 238, 234**
+- Hex guide: **#97EEEA**
+
+Treat this as a practical visual guide, not permission to drift into generic saturated electric blue.
+
+The dark navy/blue-black environment remains the resting field. The cyan/aqua period color is the energized system glow layered over it.
 
 ### Behavioral rule
 
@@ -20,7 +35,7 @@ Red is an **action color**, not a resting-brand color.
 
 Do not use red as the static BANANA.EXE system tag in the precision-marking sequence. The static `BANANA.EXE` tag uses the game's existing yellow language.
 
-Blue is the resting/system field. Yellow identifies BANANA.EXE and the banana icon family. Red appears when an active energetic event occurs, such as the precision-marking laser. Caramel/brown communicates the completed mark after the energetic event has passed.
+System cyan-blue is the powered/system accent. Yellow identifies BANANA.EXE and the banana icon family. Red appears when an active energetic event occurs, such as the precision-marking laser. Caramel/brown communicates the completed mark after the energetic event has passed.
 
 ## BANANA.EXE title treatment — LOCKED
 
@@ -88,22 +103,22 @@ The precision-marking intro is an explicit working/processing state, so the grid
 For the precision-marking sequence:
 
 - dark navy / blue-black ground;
-- blue square grid lines;
-- grid lines should be approximately **2× the apparent thickness** of the current thin reference lines;
-- keep the lines crisp enough to read as a grid, with a controlled blue glow around the core stroke;
+- square grid lines glowing in the locked **system cyan-blue** derived from the BANANA.EXE period;
+- grid lines should be approximately **2× the apparent thickness** of the old thin reference lines;
+- keep the lines crisp enough to read as a grid, with a controlled cyan/aqua glow around the core stroke;
 - do not make them so thick that the grid becomes bars or tiles;
-- pre-arrival energy pulses through the blue grid;
-- once the banana lands, the grid holds a stable active blue glow.
+- pre-arrival energy pulses through this cyan-blue grid;
+- once the banana lands, the grid holds a stable active cyan-blue glow.
 
 The grid should feel powered and functional, not decorative.
 
 ## Precision-marking color behavior
 
 Before banana arrival:
-- blue grid pulses in the established system language.
+- system cyan-blue grid pulses in the established system language.
 
 At banana arrival:
-- blue grid resolves into a stable active glow.
+- the grid resolves into a stable active cyan-blue glow.
 
 During marking:
 - the **laser is red**;
@@ -113,7 +128,7 @@ During marking:
 After marking:
 - active red recedes;
 - the finished mark remains caramel/brown;
-- the environment returns to the stable blue/yellow BANANA.EXE visual family.
+- the environment returns to the stable navy + system-cyan + yellow BANANA.EXE family.
 
 ## Precision-marking banana representation — CURRENT DIRECTION
 
@@ -145,7 +160,7 @@ For the precision-marking scene:
 
 If a generated concept changes any of the following without explicit approval, treat it as a candidate with visual drift rather than new authority:
 
-- blue system/grid field when the scene is in a working/system state;
+- dark navy resting field plus the locked system cyan-blue glow;
 - locked BANANA.EXE title treatment;
 - red active-event role;
 - caramel/brown completed marking role;
