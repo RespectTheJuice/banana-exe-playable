@@ -130,31 +130,54 @@ After marking:
 - the finished mark remains caramel/brown;
 - the environment returns to the stable navy + system-cyan + yellow BANANA.EXE family.
 
-## Precision-marking banana representation — CURRENT DIRECTION
+## Precision-marking composition — LOCKED DIRECTION
 
-The precision-marking intro should use the established **stylized banana icon language**, not a photoreal banana.
+The latest approved precision-marking composition is now the authority for this scene.
 
-The supplied glowing banana icon is the shape/style reference.
+Preserve:
 
-For the marking scene:
+- the banana lying flat across the processing grid;
+- the large centered `BANANA.EXE` title above it using the locked title treatment;
+- a clean dark-navy environment with the cyan-blue grid as the main system light;
+- a red laser head descending from above and operating near the banana's right-hand tip;
+- light localized smoke/heat wisp only at the active laser contact point;
+- the etched production mark reading **`RTJ Productions`**;
+- the etched production mark small, subtle, caramel/brown and positioned close to the banana's right tip;
+- no outer UI frame;
+- no redundant banana icon in the top-right;
+- no lower-corner duplicate production credit competing with the etched mark.
 
-- remove the crown;
-- retain the simplified illustrated banana form and dark outline;
-- the banana should read as the game-world icon/object, not photographed produce;
-- place the icon/object **lying flat on the grid plane**, like a game token/sprite laid onto the processing surface;
-- camera may view the grid in perspective, but the banana must visually belong to the plane rather than standing upright as a product-display crescent;
-- the precision mark is still applied onto this banana object; using the icon does **not** remove the marking process.
+### Incidental face read — preserve, do not force
 
-Exact etched wording and final scale/placement remain open until the current RTJ production-mark direction is approved.
+The composition may create a secondary visual read in which:
+
+- the `BANANA.EXE` title feels like sunglasses/eyes;
+- the banana curve feels like a smile.
+
+This is an **incidental bonus**, not the primary design brief.
+
+Do not deliberately reshape the banana into a symmetrical smile or raise the right tip merely to complete the face. Preserve the natural/asymmetric banana shape. If the face read survives naturally, keep it; if later scene needs weaken it, do not distort the scene solely to preserve the joke.
+
+## Precision-marking banana representation — LOCKED FOR THIS SCENE
+
+For the precision-marking scene, use the approved middle-ground rendering language established by the latest composition:
+
+- stylized/CGI banana rather than flat vector icon or photoreal produce photography;
+- clear yellow banana form with controlled dimensional shading;
+- dark edging/outline sufficient to keep it in the BANANA.EXE visual world;
+- lying flat on the grid plane;
+- no crown;
+- no banana symbol etched onto the banana;
+- the only etched wording is `RTJ Productions` unless Valenté explicitly changes it later.
 
 ## System signature
 
 For the precision-marking scene:
 
 - the main `BANANA.EXE` title uses the locked title treatment above;
-- title placement should follow the established composition rule rather than defaulting to lower-left;
-- business/production credit belongs in the business/credit position, not in place of the main title;
-- neither signature should compete with the banana or the marking event.
+- title placement is centered above the banana;
+- `RTJ Productions` is carried by the small etched production mark near the banana tip;
+- do not add a duplicate lower-left or lower-right production credit unless a later scene explicitly requires one.
 
 ## Anti-drift rule
 
@@ -162,10 +185,12 @@ If a generated concept changes any of the following without explicit approval, t
 
 - dark navy resting field plus the locked system cyan-blue glow;
 - locked BANANA.EXE title treatment;
+- centered title placement in the precision-marking scene;
 - red active-event role;
 - caramel/brown completed marking role;
-- stylized banana-icon representation for the precision-marking intro;
-- flat-on-grid staging for that banana object;
+- the banana lying flat on the grid;
+- `RTJ Productions` as the small etched mark near the right tip;
+- no outer UI frame;
 - the contextual nature of the grid itself.
 
 Do not expand the grid into shopping/travel/world scenes merely because it is visually successful in technical scenes.
