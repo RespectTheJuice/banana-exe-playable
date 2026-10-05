@@ -57,8 +57,9 @@ Runtime authority:
 ### HOME / Nottingham
 
 LOCKED building authority:
+- Runtime authority: `assets/locations/S02_HOME_3D_LOCKED.png` (original standalone render; use as-is, do not convert to WebP or crop)
 - Library source: `/BANANA.EXE/05 Maps/S02_HOME_3D_LOCKED.png`
-- Runtime derivative: `assets/home_canon.webp`
+- Superseded: `assets/home_canon.webp` (old low-resolution runtime derivative; do not use)
 
 Rule:
 - When a map represents the delivery problem from home, HOME is a building, not merely a generic dot.
@@ -67,8 +68,9 @@ Rule:
 ### TFY / Northampton
 
 LOCKED visual authority:
-- Library source: `/BANANA.EXE/07 Future Northampton/S02_MAP_02B_NORTHAMPTON_FULFILLMENT_LOCKED.png`
-- Runtime crop: `assets/tfy_canon.webp`
+- Runtime authority: `assets/locations/S02_TFY_BUILDING_LOCKED.png` (original standalone render; use as-is, do not convert to WebP or crop)
+- Superseded: `assets/tfy_canon.webp` (old runtime crop with baked-in compression damage; do not use or revert to it)
+- The Northampton fulfilment map (`/BANANA.EXE/07 Future Northampton/S02_MAP_02B_NORTHAMPTON_FULFILLMENT_LOCKED.png`) remains the map authority for the later local-partner reveal, not the building's runtime source.
 
 Rule:
 - Blue facade / blue door surround.
@@ -78,12 +80,12 @@ Rule:
 
 ### TFY rooftop receiving basket
 
-LOCKED runtime authority:
-- `assets/part2/TFY_ROOFTOP_RECEIVING_BASKET_LOCKED.png`
+STATUS: PENDING REPLACEMENT — do not implement.
+- `assets/part2/TFY_ROOFTOP_RECEIVING_BASKET_LOCKED.png` was marked locked prematurely; it is too detailed for the map scale and will be replaced by a simpler, chunkier map-scale version before implementation.
 
-Rule:
+Rule (for the replacement):
 - This is the receiving target for the explanatory HOME → TFY banana micro-animation.
-- Composite it onto the canonical TFY building; do not redraw or replace the TFY building.
+- Composite it onto the canonical TFY building (`assets/locations/S02_TFY_BUILDING_LOCKED.png`); do not redraw or replace the TFY building.
 - The banana should visibly drop inside the basket.
 
 ### Leicester

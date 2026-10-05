@@ -20,11 +20,8 @@ The transition now earns the trebuchet narratively and mechanically.
 4. It slows and stops on **TREBUCHET**.
 5. TREBUCHET locks in with a small settle/bounce and **glow pulse**.
 6. Cut to a map-based delivery beat.
-7. A rental/delivery truck travels toward **HOME** carrying the trebuchet.
-8. The truck should make the cargo readable. Preferred treatment:
-   - visible trebuchet on/in the vehicle; and/or
-   - a trebuchet graphic/silhouette on the side of the vehicle;
-   - optional simple `TREBUCHET RENTAL` branding.
+7. The locked **Trebutech** delivery truck (`assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`) travels toward **HOME**.
+8. The truck itself communicates the delivery through its TREBUTECH brand and launcher-derived logo. **Do not add visible trebuchet cargo.** (Supersedes the earlier preference for visible cargo.)
 9. The rental origin does not need a detailed building or geographically accurate depot. It only needs to communicate that the machine is being delivered from somewhere else.
 10. Truck arrives at HOME.
 11. HOME receives a small arrival settle/bounce and **glow pulse**.
@@ -51,7 +48,7 @@ The three-option selector should feel playful and game-like without introducing 
 
 ### Behavior
 
-- Rapid cycle through all three options.
+- Rapid cycle through all three options. Only **TREBUCHET** is named; the other two slots stay unlabelled until decided.
 - Short repeated selector/tick sound.
 - Slow-down phase before selection.
 - Deterministic landing on **TREBUCHET**.

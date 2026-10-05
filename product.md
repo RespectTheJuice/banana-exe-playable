@@ -95,10 +95,10 @@ This is the current product-level sequence. Detailed staging authority lives in:
 
 1. End on the three delivery-method options.
 2. Rapid selector cycles through all three with sound.
-3. Selector looks random but deterministically slows and lands on **TREBUCHET** for this build.
+3. Selector looks random but deterministically slows and lands on **TREBUCHET** for this build. TREBUCHET is the only named option; the other two slots stay unlabelled (shown as unknown) until their names are decided.
 4. TREBUCHET settles/bounces and receives one restrained confirmation glow pulse.
 5. Cut to a compact map delivery beat.
-6. A rental/delivery truck carrying the trebuchet travels toward **HOME**.
+6. The locked **Trebutech** delivery truck travels toward **HOME** (its branding communicates the rented trebuchet; no visible cargo).
 7. Truck arrives at HOME; HOME receives a small arrival settle/bounce and glow pulse.
 8. Show the transaction clearly:
    - **TREBUCHET RENTAL**
@@ -190,17 +190,17 @@ Do not redesign locked launcher plates or hard-code a different projectile banan
 
 Do not regenerate assets that already exist as authority.
 
-Existing location authority:
-- `assets/home_canon.webp`
-- `assets/tfy_canon.webp`
+Existing location authority (original standalone renders; the old `home_canon.webp` / `tfy_canon.webp` runtime files are superseded):
+- `assets/locations/S02_HOME_3D_LOCKED.png`
+- `assets/locations/S02_TFY_BUILDING_LOCKED.png`
 
 Existing launcher authority:
 - locked launcher/rig assets already recorded in Part 2 production docs.
 
 Next missing dependencies should be handled in this order:
 
-1. TFY rooftop receiving basket overlay / basket-ready TFY treatment while preserving `tfy_canon.webp`.
-2. Trebuchet rental/delivery truck base suitable for map scale, with locked launcher composited rather than reinvented if possible.
+1. TFY rooftop receiving basket overlay / basket-ready TFY treatment while preserving `assets/locations/S02_TFY_BUILDING_LOCKED.png`. The first basket file was locked prematurely and is pending a simpler map-scale replacement.
+2. Trebuchet rental/delivery truck — **LOCKED**: `assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`. The truck's TREBUTECH branding communicates the delivery; no visible trebuchet cargo.
 3. Neutral Delivery Method icon, preferably live SVG/CSS rather than a rendered bitmap.
 4. Valenté HOME marker derived from locked Valenté identity rather than generating a replacement face.
 5. Forest/canopy and fox payoff assets after the transition/problem dependencies are stable.
