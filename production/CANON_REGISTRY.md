@@ -76,6 +76,16 @@ Rule:
 - When the delivery map represents the destination, TFY is a recognizable building, not merely a generic dot.
 - Label clearly as TFY / NORTHAMPTON.
 
+### TFY rooftop receiving basket
+
+LOCKED runtime authority:
+- `assets/part2/TFY_ROOFTOP_RECEIVING_BASKET_LOCKED.png`
+
+Rule:
+- This is the receiving target for the explanatory HOME → TFY banana micro-animation.
+- Composite it onto the canonical TFY building; do not redraw or replace the TFY building.
+- The banana should visibly drop inside the basket.
+
 ### Leicester
 
 Current role:
@@ -93,6 +103,48 @@ LOCKED future map:
 - Exotic Fruits is a distinct local partner near TFY.
 - Deep green + rose-gold visual language.
 - This local-partner reveal belongs later in the delivery story, not at the opening of Part 2.
+
+## Vehicles and delivery props
+
+### Valenté yellow car
+
+LOCKED runtime authority:
+- `assets/VALENTE_YELLOW_CAR_LOCKED.png`
+
+Rule:
+- This is the canonical vehicle Valenté drives.
+- Preserve the simplified cubed/boxy 3D asset language used by the buildings and map objects.
+- Do not substitute a more realistic or more detailed vehicle.
+
+### Trebutech delivery truck
+
+LOCKED runtime authority:
+- `assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`
+
+LOCKED brand treatment:
+- Brand name: **TREBUTECH**.
+- Tagline: **Your Medieval Needs Modernized**.
+- Trebuchet outline/logo is derived from the locked launcher silhouette.
+- Highly silver/chrome body with restrained blue/cyan accents.
+- Simplified cubed 3D form consistent with the other world assets.
+
+Rule:
+- This truck communicates the rented trebuchet delivery to HOME.
+- Do not show a newly invented trebuchet on or inside the truck.
+- Do not redraw the truck into a realistic conventional lorry/van.
+
+### DenorD drone-delivery box — Part 3
+
+LOCKED future runtime authority:
+- `assets/part3/DENORD_DRONE_BOX_LOCKED.png`
+
+LOCKED brand treatment:
+- Brand name: **DenorD**.
+- Tagline: **Just Drone it**.
+
+Rule:
+- This is the branded package to be carried/delivered by the Part 3 drone delivery method.
+- Preserve the exact locked box design when Part 3 is built.
 
 ## Dialogue / story facts currently locked
 
