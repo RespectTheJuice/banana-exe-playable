@@ -83,6 +83,128 @@ The precision-marking intro may use the same subtle grid language because the ba
 
 Do not interpret this as “BANANA.EXE = grid everywhere.”
 
+## Current Part 2 flow
+
+This is the current product-level sequence. Detailed staging authority lives in:
+
+- `production/PART2_TRANSITION_ASSET_CHECKPOINT.md`
+- `production/PART2_ACTING_STAGING_BRIEF.md`
+- `production/design/BANANA_PART2_ATTEMPT01_DESIGN_DECISIONS.md`
+
+### A. Delivery-method transition
+
+1. End on the three delivery-method options.
+2. Rapid selector cycles through all three with sound.
+3. Selector looks random but deterministically slows and lands on **TREBUCHET** for this build.
+4. TREBUCHET settles/bounces and receives one restrained confirmation glow pulse.
+5. Cut to a compact map delivery beat.
+6. A rental/delivery truck carrying the trebuchet travels toward **HOME**.
+7. Truck arrives at HOME; HOME receives a small arrival settle/bounce and glow pulse.
+8. Show the transaction clearly:
+   - **TREBUCHET RENTAL**
+   - **− £15.00**
+   - cash/register `ching-ching` sound.
+9. Update remaining budget immediately.
+10. Only then reveal the **DELIVERY PROBLEM** page.
+
+This transition exists to answer why Valenté has a trebuchet and to make the budget consequence visible before analysis begins.
+
+### B. Delivery Problem / comprehension gate
+
+The problem page must not auto-advance.
+
+1. Show `DELIVERY PROBLEM` and the carried state: payload, remaining budget, destination.
+2. Player selects **SIZE UP THE PROBLEM**.
+3. The second state becomes map/goal-centric and reveals the real constraints:
+   - **DISTANCE**;
+   - **CONDITION**;
+   - **BUDGET / REMAINING BUDGET**;
+   - **DELIVERY METHOD**.
+4. Stop and allow the player to read.
+5. Player explicitly selects **CONTINUE** before Attempt 01 begins.
+
+The player should be able to answer: what is the task, where is it going, how far is it, what condition must it arrive in, how much money remains, and what delivery method is being attempted.
+
+### C. Problem-page visual hierarchy
+
+- Use compact journey naming: **HOME → TFY**.
+- Put **NOTTINGHAM** and **NORTHAMPTON** on the map itself rather than repeating both inside a card.
+- Keep the map frameless; do not bury it inside another heavy panel.
+- On SIZE UP, HOME and TFY become more prominent and the map/goal becomes center stage.
+- Valenté supports the information rather than competing with it; preferred treatment is a small circular face/avatar marker at HOME.
+- Distance, condition, budget and delivery method support the map rather than replacing it.
+- Important problem elements may drop into place, settle and glow once, but do not animate every label/decorative object.
+- While Delivery Method is undecided, use a neutral parcel/route/transport icon rather than a trebuchet icon.
+- Grid language remains quiet/subordinate.
+
+### D. Explanatory HOME → TFY micro-animation
+
+The problem explanation has a physical receiving target:
+
+1. Valenté avatar sits at HOME.
+2. A banana icon appears at/beside HOME.
+3. Banana follows the route toward TFY.
+4. A receiving basket is already visible on the roof of the TFY building.
+5. Banana drops into the rooftop basket.
+6. Play a short satisfying **swish**.
+7. Basket/TFY gives a small receive reaction / glow pulse.
+8. HOME/Valenté gives a small acknowledgement bounce/pulse.
+
+This is a short explanatory micro-animation showing the goal. It is **not** the actual Attempt 01 result.
+
+### E. Attempt 01 setup and launcher interaction
+
+After CONTINUE:
+
+1. Reveal the rented trebuchet.
+2. Valenté inspects it: **“How do I use this thing?”**
+3. Small shrug/acceptance beat: try it anyway.
+4. Goggles on / ready.
+5. Hard cut into the operator/bracing state.
+6. Player's selected banana is loaded/used via existing `BX.getChoice()` authority.
+7. Charge interaction:
+   - uninterrupted hold to 100% → normal launch;
+   - early release #1 → first interruption reaction;
+   - early release #2 → one-hand shrug reaction;
+   - early release #3 → Valenté loses patience, shakes launcher, malfunction, accidental **WHUMP** launch.
+8. Both launch branches still miss and go to Leicester.
+
+Do not redesign locked launcher plates or hard-code a different projectile banana.
+
+### F. Leicester failure payoff
+
+1. Banana descends toward Leicester.
+2. Forest canopy appears below.
+3. Banana disappears through trees.
+4. Rustling leaves.
+5. Clear **thud**.
+6. Brief readable hold, approximately 2 seconds.
+7. Fox appears with banana in mouth.
+8. Fox looks left.
+9. Fox looks right.
+10. Fox disappears back into trees.
+11. Show **FAILED ATTEMPT** and **RESULT: LEICESTER**.
+12. Carry forward using locked determined/goggles pose rather than a long disappointed beat.
+
+### G. Immediate asset dependency order
+
+Do not regenerate assets that already exist as authority.
+
+Existing location authority:
+- `assets/home_canon.webp`
+- `assets/tfy_canon.webp`
+
+Existing launcher authority:
+- locked launcher/rig assets already recorded in Part 2 production docs.
+
+Next missing dependencies should be handled in this order:
+
+1. TFY rooftop receiving basket overlay / basket-ready TFY treatment while preserving `tfy_canon.webp`.
+2. Trebuchet rental/delivery truck base suitable for map scale, with locked launcher composited rather than reinvented if possible.
+3. Neutral Delivery Method icon, preferably live SVG/CSS rather than a rendered bitmap.
+4. Valenté HOME marker derived from locked Valenté identity rather than generating a replacement face.
+5. Forest/canopy and fox payoff assets after the transition/problem dependencies are stable.
+
 ## Current Part 2 authority
 
 The launcher / interruption / Leicester failure sequence is currently locked as follows:
