@@ -31,12 +31,9 @@
 .waypoint.is-reached { opacity: 1; stroke: var(--cyan); stroke-width: 7; animation: reached .6s ease-out both; }
 @keyframes waypoint { 0% { opacity: .9; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.6); } }
 @keyframes reached { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-/* Vehicle marker: compact UI icon with a thin cyan ring. */
+/* Vehicle marker: Valenté's locked yellow car on a black badge (matches the render's own black field) with a thin cyan ring. */
 #marker-inner { filter: drop-shadow(0 3px 4px rgba(0,0,0,.6)); }
-.car-ring { fill: rgba(9,15,27,.88); stroke: var(--cyan); stroke-width: 4; }
-.car-body { fill: var(--gold); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
-.car-glass { fill: #c9fbf8; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
-.car-wheel { fill: #16171b; stroke: #5b6470; stroke-width: 3; }
+.car-ring { fill: #000; stroke: var(--cyan); stroke-width: 4; }
 .marker-banana { opacity: 0; transition: opacity .3s; }
 .marker-banana.is-on { opacity: 1; }
 #marker.is-driving #car { animation: rumble .18s ease-in-out infinite alternate; }

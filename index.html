@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
   <link rel="stylesheet" href="style.css?v=20261005-1000" />
-  <link rel="stylesheet" href="scene02.css?v=20261005-1000" />
+  <link rel="stylesheet" href="scene02.css?v=20261005-1700" />
   <link rel="stylesheet" href="attempt01.css?v=20261005-1000" />
 </head>
 <body>
@@ -117,12 +117,12 @@
             <circle class="waypoint" id="wp-store" cx="1163" cy="386" r="32" />
             <g id="marker" transform="translate(210 483)">
               <g id="marker-inner">
-                <!-- Compact UI vehicle marker (SVG icon, not character art). -->
+                <!-- Valenté's car: the locked render, unaltered, on a black badge so its black field disappears into it.
+                     Clipped inside the cyan ring; the car itself is never cropped. -->
                 <circle class="car-ring" r="46" />
-                <g id="car" class="car">
-                  <path class="car-body" d="M-34 6 L-34 -4 Q-34 -10 -27 -11 L-17 -12 L-9 -23 Q-6 -27 0 -27 L13 -27 Q19 -27 22 -22 L28 -12 L31 -11 Q36 -10 36 -4 L36 6 Q36 10 32 10 L-30 10 Q-34 10 -34 6 Z" />
-                  <path class="car-glass" d="M-12 -12 L-5 -22 L3 -22 L3 -12 Z M7 -12 L7 -22 L13 -22 Q16 -22 17 -19 L21 -12 Z" />
-                  <circle class="car-wheel" cx="-19" cy="10" r="7.5" /><circle class="car-wheel" cx="21" cy="10" r="7.5" />
+                <clipPath id="car-clip"><circle r="44" /></clipPath>
+                <g id="car" class="car" clip-path="url(#car-clip)">
+                  <image class="car-img" href="assets/VALENTE_YELLOW_CAR_LOCKED.png" x="-37.4" y="-38.5" width="74" height="74" />
                 </g>
                 <!-- Return leg: the approved banana for the chosen ripeness rides on the roof (src set by scene02.js). -->
                 <image id="marker-banana" class="marker-banana" href="assets/banana_ripe_v1.png" x="-40" y="-82" width="80" height="60" />
