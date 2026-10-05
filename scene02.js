@@ -386,6 +386,8 @@
     $('#p2-payload').textContent = `1 ${choice.name} BANANA`;
     $('#p2-budget').textContent = money(budget);
     $('#p2-analysis-budget').textContent = money(budget);
+    // The method chosen by the delivery selector (TREBUCHET for Attempt 01); UNDECIDED only if the page is reached without it.
+    $('#p2-method').textContent = window.BX.getDeliveryMethod?.() || 'UNDECIDED';
     p2.classList.remove('is-analyzed');
     p2Analyze.disabled = false;
     p2Continue.disabled = true;
@@ -436,6 +438,7 @@
   function resetPart() {
     clearTimers(); clearGuide();
     window.BX.resetAttempt01?.();
+    window.BX.resetDeliveryTransition?.();
     driving = false; marker.classList.remove('is-driving'); engineStop(0.1);
     budget = STARTING_BUDGET; renderBudget();
     setChoice(null);
@@ -463,7 +466,7 @@
     guide($('#start'), 'Click PRESS START to begin');
   });
 
-  // Debug/test hooks: ?scene=route|exterior|boutique|return|home|teaser (&pick=green|ripe|extra)
+  // Debug/test hooks: ?scene=route|exterior|boutique|return|home|teaser|part2|problem|attempt01 (&pick=green|ripe|extra)
   const params = new URLSearchParams(location.search), jump = params.get('scene');
   if (BANANAS[params.get('pick')]) { setChoice(params.get('pick')); inv.classList.add('is-on'); }
   if (jump === 'route') startRoute('out');
@@ -472,22 +475,22 @@
   if (jump === 'return') startRoute('back');
   if (jump === 'home') startHome();
   if (jump === 'teaser') startTeaser();
-  if (jump === 'attempt01') {
+  // Part 2 entries. Budget carries the Part 1 purchase; jumps past the delivery selector also carry its £15 rental.
+  const RENTAL_COST = 15;
+  function part2State(afterRental) {
     if (!choice) setChoice('ripe');
-    budget = STARTING_BUDGET - parseFloat(choice.price.replace('£',''));
+    budget = STARTING_BUDGET - parseFloat(choice.price.replace('£', '')) - (afterRental ? RENTAL_COST : 0);
     renderBudget();
     budgetEl.classList.add('is-unlocked');
     inv.classList.add('is-on');
-    // attempt01.js loads after this file: start once every script has run.
-    if (document.readyState === 'loading') addEventListener('DOMContentLoaded', startAttempt01, { once: true });
-    else startAttempt01();
   }
-  if (jump === 'part2') {
-    if (!choice) setChoice('ripe');
-    budget = STARTING_BUDGET - parseFloat(choice.price.replace('£',''));
-    renderBudget();
-    budgetEl.classList.add('is-unlocked');
-    inv.classList.add('is-on');
-    startPart2Preview();
+  // Later scripts (transition.js, attempt01.js) must have run before these start.
+  const whenReady = (fn) => (document.readyState === 'loading' ? addEventListener('DOMContentLoaded', fn, { once: true }) : fn());
+  function startPart2() { // selector → Trebutech truck → rental charge → Delivery Problem
+    window.BX.startDeliveryTransition({ onDone: () => startPart2Preview() });
   }
+  window.BX.startPart2 = startPart2;
+  if (jump === 'attempt01') { part2State(true); whenReady(() => { window.BX.setDeliveryMethod('TREBUCHET'); startAttempt01(); }); }
+  if (jump === 'part2') { part2State(false); whenReady(startPart2); }
+  if (jump === 'problem') { part2State(true); whenReady(() => { window.BX.setDeliveryMethod('TREBUCHET'); startPart2Preview(); }); }
 })();

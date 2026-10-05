@@ -6,6 +6,7 @@
   <title>BANANA.EXE — Part 1</title>
   <link rel="stylesheet" href="style.css?v=20261005-1000" />
   <link rel="stylesheet" href="scene02.css?v=20261005-1700" />
+  <link rel="stylesheet" href="transition.css?v=20261005-2000" />
   <link rel="stylesheet" href="attempt01.css?v=20261005-1000" />
 </head>
 <body>
@@ -226,6 +227,37 @@
   </section>
 
   <!-- PART 2 PREVIEW: not linked from the public Part 1 ending yet. Open with ?scene=part2&pick=ripe. -->
+  <!-- PART 2 OPENING: delivery-method selector → Trebutech truck to HOME → rental charge → Delivery Problem (transition.js).
+       Only TREBUCHET is a named option; the other two slots are unlabelled until decided. -->
+  <section class="scene scene-delivery" id="p2-delivery" aria-hidden="true">
+    <div class="dl-head">
+      <p class="dl-kicker">PART 2 // DELIVERY METHOD</p>
+      <p class="dl-status" id="dl-status" aria-live="polite">SELECTING…</p>
+    </div>
+    <div class="dl-select" id="dl-select">
+      <div class="dl-options" id="dl-options"></div>
+    </div>
+    <!-- Map beat: black field so the locked truck render (black background) composites cleanly. -->
+    <div class="dl-map" id="dl-map">
+      <div class="dl-field" aria-hidden="true">
+        <svg class="dl-map-svg" viewBox="0 0 1600 900">
+          <path class="dl-road" id="dl-road" d="M-320 520 L790 700" />
+          <path class="dl-route" id="dl-route" d="M-320 520 L790 700" />
+        </svg>
+        <div class="dl-home-glow" id="dl-home-glow"></div>
+        <img class="dl-home" id="dl-home" src="assets/locations/S02_HOME_3D_LOCKED.png" width="1254" height="1254" alt="" />
+        <p class="dl-home-label"><b>HOME</b><span>NOTTINGHAM</span></p>
+        <img class="dl-truck" id="dl-truck" src="assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+      </div>
+      <div class="dl-receipt" id="dl-receipt" role="status">
+        <small>TREBUCHET RENTAL</small>
+        <strong>− £15.00</strong>
+        <span id="dl-remaining"></span>
+      </div>
+    </div>
+    <p class="a1-live" id="dl-live" aria-live="polite" role="status"></p>
+  </section>
+
   <section class="scene scene-part2" id="p2-intro" aria-hidden="true">
     <div class="p2-grid-bg" aria-hidden="true"></div>
     <div class="p2-copy">
@@ -271,7 +303,7 @@
       </article>
       <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
       <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You still only have one budget.</span></article>
-      <div class="p2-method-state"><small>DELIVERY METHOD</small><strong>UNDECIDED</strong></div>
+      <div class="p2-method-state"><small>DELIVERY METHOD</small><strong id="p2-method">UNDECIDED</strong></div>
       <button class="arcade arcade-sm p2-continue" id="p2-continue" type="button">
         <span class="cap">CONTINUE</span>
       </button>
@@ -413,7 +445,8 @@
   <div class="flash" id="flash"></div>
 </main>
 <script src="game.js?v=20261002-1100"></script>
-<script src="scene02.js?v=20261005-1000"></script>
+<script src="scene02.js?v=20261005-1900"></script>
+<script src="transition.js?v=20261005-2000"></script>
 <script src="attempt01.js?v=20261005-1000"></script>
 </body>
 </html>

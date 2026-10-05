@@ -1,0 +1,75 @@
+/* BANANA.EXE — Part 2 opening: delivery-method selector → Trebutech truck → rental charge.
+   Motion is written by transition.js on a pausable game clock; no keyframes here. */
+
+.scene-delivery { overflow: hidden; background: var(--navy-950); }
+.scene-delivery.is-active {
+  display: grid; grid-template-rows: auto minmax(0, 1fr); row-gap: 12px;
+  padding: 58px 24px max(18px, env(safe-area-inset-bottom));
+}
+.dl-head { position: relative; z-index: 3; display: flex; justify-content: center; align-items: baseline; gap: 18px; flex-wrap: wrap; text-align: center; }
+.dl-kicker { margin: 0; color: var(--cyan); font-weight: 900; letter-spacing: .2em; font-size: 12px; }
+.dl-status { margin: 0; font-family: var(--display); font-size: clamp(22px, 3vw, 34px); letter-spacing: .06em; color: var(--gold); min-width: 8ch; }
+
+/* ---------- Selector: three slots; only named options show a label ---------- */
+.dl-select { position: relative; display: grid; place-items: center; opacity: 0; }
+.dl-options { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: clamp(10px, 2vw, 24px); width: min(760px, 100%); justify-content: center; }
+.dl-card {
+  --pulse: 0;
+  position: relative; display: grid; justify-items: center; align-content: center; gap: 10px; aspect-ratio: 4 / 5; padding: 14px;
+  border-radius: 18px; background: linear-gradient(180deg, rgba(19,40,58,.96), rgba(9,15,27,.96));
+  border: 2px solid rgba(121, 242, 238, .25); color: var(--muted);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .4), 0 0 calc(var(--pulse) * 46px) calc(var(--pulse) * 8px) rgba(255, 214, 83, calc(var(--pulse) * .75));
+}
+.dl-card b { font-family: var(--display); font-size: clamp(14px, 1.8vw, 22px); letter-spacing: .06em; text-align: center; }
+.dl-icon { display: grid; place-items: center; width: 78%; aspect-ratio: 3 / 2; }
+.dl-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .5)); }
+.dl-icon-unknown { font-family: var(--display); font-size: clamp(42px, 6vw, 72px); color: rgba(169, 198, 211, .35); }
+.dl-card.is-unknown { border-style: dashed; }
+.dl-card.is-unknown b { color: rgba(169, 198, 211, .45); letter-spacing: .2em; }
+/* The cycling highlight (a step, not a slide). */
+.dl-card.is-hi { border-color: var(--cyan); color: var(--white); box-shadow: 0 0 0 4px rgba(121, 242, 238, .18), 0 14px 30px rgba(0, 0, 0, .4); }
+.dl-card.is-locked { border-color: var(--gold); color: var(--gold); }
+.dl-card.is-locked b { color: var(--gold); }
+.dl-card.is-out { opacity: .38; }
+
+/* ---------- Map beat: black field (the truck render's own background), HOME on the right ---------- */
+.dl-map {
+  position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
+  width: min(100% - 48px, 1100px, (100svh - 150px) * 16 / 9); aspect-ratio: 16 / 9;
+  visibility: hidden;
+}
+.dl-field { position: absolute; inset: 0; background: #000; border-radius: 14px; overflow: hidden; }
+.dl-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.dl-road { fill: none; stroke: rgba(121, 242, 238, .10); stroke-width: 56; stroke-linecap: round; }
+.dl-route { fill: none; stroke: var(--cyan); stroke-width: 6; stroke-linecap: round; opacity: .7; }
+.dl-home { position: absolute; left: 62.5%; top: 27.1%; width: 30%; height: auto; transform-origin: 50% 95%; }  /* base on y 700 */
+.dl-home-glow {
+  position: absolute; left: 60%; top: 30%; width: 35%; height: 60%; border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 214, 83, .55), rgba(255, 214, 83, 0));
+}
+.dl-home-label { position: absolute; left: 77.5%; top: 80%; transform: translateX(-50%); margin: 0; display: grid; justify-items: center; }
+.dl-home-label b { font-family: var(--display); font-size: clamp(12px, 1.4vw, 17px); letter-spacing: .1em; color: var(--white); }
+.dl-home-label span { font-size: clamp(8px, .9vw, 11px); font-weight: 900; letter-spacing: .14em; color: var(--muted); }
+/* `lighten` leaves the locked render pixel-identical over the black field, so its black background disappears. */
+.dl-truck { position: absolute; left: 0; top: 0; height: auto; visibility: hidden; mix-blend-mode: lighten; will-change: transform; }
+
+/* ---------- Rental charge ---------- */
+.dl-receipt {
+  position: absolute; z-index: 4; left: 40%; top: 7%; transform: translateX(-50%); /* the map's empty upper area */
+  display: grid; justify-items: center; gap: 2px; padding: 12px 26px; border-radius: 16px; width: max-content; max-width: calc(100vw - 24px); white-space: nowrap;
+  background: rgba(9, 15, 27, .96); border: 2px solid var(--gold); box-shadow: 0 0 0 4px rgba(255, 214, 83, .12), 0 18px 40px rgba(0, 0, 0, .5);
+  visibility: hidden; opacity: 0;
+}
+.dl-receipt small { font-size: 12px; font-weight: 900; letter-spacing: .18em; color: var(--cyan); }
+.dl-receipt strong { font-family: var(--display); font-size: clamp(30px, 4vw, 46px); color: #ff6b6b; letter-spacing: .03em; }
+.dl-receipt span { font-size: 13px; font-weight: 900; letter-spacing: .08em; color: var(--white); min-height: 1.2em; }
+
+@media (orientation: portrait), (max-width: 700px) {
+  .scene-delivery.is-active { padding: 54px 12px max(16px, env(safe-area-inset-bottom)); }
+  .dl-head { flex-direction: column; align-items: center; gap: 4px; }
+  .dl-options { gap: 8px; }
+  .dl-card { padding: 10px 6px; border-radius: 14px; }
+  .dl-map { width: 100%; top: 40%; }
+  .dl-field { border-radius: 10px; }
+  .dl-receipt { left: 50%; top: calc(100% + 16px); padding: 10px 20px; } /* below the map on phones */
+}
