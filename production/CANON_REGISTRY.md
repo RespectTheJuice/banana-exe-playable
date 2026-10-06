@@ -111,7 +111,7 @@ LOCKED future map:
 ### Valenté yellow car
 
 LOCKED runtime authority:
-- `assets/part2/vehicles/source/VALENTE_YELLOW_CAR_LOCKED.png`
+- `assets/vehicles/source/VALENTE_YELLOW_CAR_LOCKED.png`
 
 Rule:
 - This is the canonical vehicle Valenté drives.
@@ -134,6 +134,21 @@ Rule:
 - This truck communicates the rented trebuchet delivery to HOME.
 - Do not show a newly invented trebuchet on or inside the truck.
 - Do not redraw the truck into a realistic conventional lorry/van.
+
+### Banana Boutique delivery truck
+
+LOCKED runtime authority:
+- `assets/vehicles/source/BANANA_BOUTIQUE_DELIVERY_TRUCK_LOCKED.png`
+
+Role:
+- Shared world / brand logistics asset for Banana Boutique.
+- Black, gold and restrained olive luxury treatment.
+- May appear in travel, map and world-building beats where Banana Boutique logistics are appropriate.
+
+Rule:
+- Not a player delivery-method option.
+- Must not replace the Trebutech truck in the Part 2 rental/delivery sequence.
+- Use the exact locked asset; do not redraw or restyle it.
 
 ### DenorD drone-delivery box — Part 3
 
