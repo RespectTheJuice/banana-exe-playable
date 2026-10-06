@@ -109,7 +109,7 @@
 /* ---------- Rental charge: beside the stopped truck, above HOME (never over either) ---------- */
 .dl-receipt {
   --ry: 0px; --rk: 1;
-  position: absolute; z-index: 4; left: 29.6%; top: 9.8%; width: 299px; height: 116px; box-sizing: border-box;
+  position: absolute; z-index: 4; left: 31.6%; top: 35%; width: 299px; height: 116px; box-sizing: border-box; /* right of HOME, clear of the truck */
   transform-origin: 0 0; transform: translateY(var(--ry)) scale(var(--rk));
   display: grid; align-content: center; justify-items: center; gap: 4px; white-space: nowrap;
   background: rgba(9, 15, 27, .96); border: 2px solid var(--gold); border-radius: 12px; box-shadow: 0 0 22px rgba(255, 214, 83, .22);

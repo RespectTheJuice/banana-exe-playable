@@ -107,6 +107,43 @@
     src.buffer = buf; g.gain.value = vol;
     src.connect(f).connect(g).connect(sfxOut()); src.start(a.currentTime + start);
   }
+  // ---------- Vehicle base portal: system sound (reusable by every BANANA.EXE base portal) ----------
+  // Engineered infrastructure, not magic: filtered-noise air movement + a low sine body, shaped to the visual
+  // small → full (open), a short shimmer as the vehicle passes the threshold (cross), full → small → gone (close).
+  // Synthesised on the shared SFX bus like every other BANANA.EXE sound, so SOUND OFF and pause apply.
+  function shaped({ start = 0, dur, kind = 'noise', type = 'sine', f0, f1, filter = 'lowpass', fq0, fq1, q = 0.8, peak, attack }) {
+    const a = audio(); if (!a || muted) return;
+    const t = a.currentTime + start, g = a.createGain(), fl = a.createBiquadFilter();
+    fl.type = filter; fl.Q.value = q;
+    fl.frequency.setValueAtTime(fq0, t); fl.frequency.exponentialRampToValueAtTime(fq1, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    let src;
+    if (kind === 'noise') {
+      const buf = a.createBuffer(1, Math.ceil(a.sampleRate * dur), a.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      src = a.createBufferSource(); src.buffer = buf;
+    } else {
+      src = a.createOscillator(); src.type = type;
+      src.frequency.setValueAtTime(f0, t); src.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    }
+    src.connect(fl).connect(g).connect(sfxOut()); src.start(t); src.stop(t + dur + 0.02);
+  }
+  const portalSfx = {
+    open: () => { // soft rising system energy: a compressed whoomph that opens up as the aperture grows (~0.8 s)
+      shaped({ dur: 0.8, fq0: 180, fq1: 1500, q: 1.2, peak: 0.16, attack: 0.5 });
+      shaped({ dur: 0.85, kind: 'osc', type: 'sine', f0: 55, f1: 110, fq0: 400, fq1: 400, peak: 0.22, attack: 0.45 });
+      shaped({ start: 0.35, dur: 0.5, kind: 'osc', type: 'triangle', f0: 440, f1: 660, fq0: 2000, fq1: 2000, peak: 0.025, attack: 0.3 });
+    },
+    cross: () => { // brief threshold shimmer as the vehicle passes the plane (~0.4 s)
+      shaped({ dur: 0.42, filter: 'bandpass', fq0: 2200, fq1: 4200, q: 3, peak: 0.07, attack: 0.08 });
+      shaped({ dur: 0.38, kind: 'osc', type: 'sine', f0: 1320, f1: 1480, fq0: 4000, fq1: 4000, peak: 0.02, attack: 0.05 });
+    },
+    close: () => { // short collapsing hush that tucks down into the road (~0.6 s)
+      shaped({ dur: 0.6, fq0: 1600, fq1: 160, q: 1, peak: 0.12, attack: 0.06 });
+      shaped({ dur: 0.55, kind: 'osc', type: 'sine', f0: 150, f1: 55, fq0: 400, fq1: 400, peak: 0.16, attack: 0.05 });
+      shaped({ start: 0.5, dur: 0.08, kind: 'osc', type: 'triangle', f0: 240, f1: 180, fq0: 1200, fq1: 1200, peak: 0.05, attack: 0.005 });
+    },
+  };
   const sfx = {
     click: () => tone(880, 0, 0.05, { vol: 0.06 }),
     nah: () => tone(220, 0, 0.18, { slideTo: 110, vol: 0.08 }),
@@ -647,7 +684,7 @@
   }
 
   // Shared with scene02.js
-  window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, guide, clearGuide, pressVisual, audio,
+  window.BX = { $, show, flash, later, clearTimers, tone, noise, sfx, portalSfx, guide, clearGuide, pressVisual, audio,
                 isMuted: () => muted, isPaused: () => paused, sfxOut, setMusicTheme, startMusic, duckMusic, teaserSting, endSting, touchUI, resetScene01, startDesk };
 
   // Debug/test hooks: ?scene=desk|reveal|react jumps straight to a beat; ?debug=1 shows TEMP/PROVISIONAL art tags.

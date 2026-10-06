@@ -198,7 +198,7 @@ Locked base-exit timing (first use: Trebutech):
 Read: small → full size → vehicle crosses → full size → small → gone. The edge is never drawn on progressively (review correction, 2026-10-06); no particles, no vortex.
 | ≈ 5.6 s | camera pull-back lands on the regional journey |
 
-It is not a scene cut and the vehicle never vanishes. Sound stays a short system shimmer on the SFX bus. Other base applications (HOME, Banana Boutique, Exotic Fruits) reuse the same system and still need their own staging pass before implementation.
+It is not a scene cut and the vehicle never vanishes. Sound (engineered infrastructure, not magic; synthesised on the shared SFX bus, reusable as `BX.portalSfx`): **open** — soft rising system energy / compressed whoomph with the growth; **cross** — brief threshold shimmer as the vehicle meets the plane; **close** — short collapsing hush that tucks into the road. No sparkle, spell or blast. Other base applications (HOME, Banana Boutique, Exotic Fruits) reuse the same system and still need their own staging pass before implementation.
 
 ## Current Part 2 flow
 
@@ -291,7 +291,7 @@ Do not redesign locked launcher plates or hard-code a different projectile banan
 
 Charge UI: `HOLD TO CHARGE` (the glowing button) is the only instruction; there is no separate "Press and hold" prompt. Meter, percentage, cyan active state and the gold `CHARGE · FULL` state stay at their positions.
 
-Flight map (maps orient before they abstract): the Nottingham origin shows the HOME building with the trebuchet and Valenté beside it, and stays populated after the shot so the player can read where it came from; the Northampton end shows the locked TFY building (rooftop basket hook ready for the corrected asset). The banana travels from the trebuchet toward TFY. City pins may stay as support. Leicester is not shown until the banana comes down there.
+Flight map (maps orient before they abstract): the Part 1 map world is the authority — the MAP 02A panel treatment with the locked MAP 02A sheet itself around HOME (Nottingham), extended right to the locked TFY building (Northampton) on the same panel; no abstract grid board. Launch cluster: the trebuchet on HOME's grass (largest, the active method), HOME, and Valenté behind the trebuchet's operating side (never in front of it); it stays populated after the shot. Destination cluster: TFY fully inside the map, rooftop basket hook for the corrected asset, then the supporting marker/label. The banana leaves the trebuchet's cradle toward TFY. The same cluster rule applies to the Delivery Problem map. City pins may stay as support. Leicester is not shown until the banana comes down there.
 
 ### F. Leicester failure payoff
 

@@ -270,14 +270,6 @@
 .p2-landmark span { font-size:clamp(8px, .8vw, 10px); font-weight:900; color:var(--muted); letter-spacing:.12em; }
 .p2-landmark-home { left:6%; top:19%; }  /* base of the render on the HOME pin (150, 228) */
 .p2-landmark-tfy { left:76%; top:2.7%; } /* base of the render on the TFY pin (850, 170) */
-/* Valenté is here: a small avatar pin over HOME (CSS crop of the locked sprite's head). */
-.p2-avatar {
-  position:absolute; left:15%; bottom:76%; width:clamp(38px, 7%, 60px); aspect-ratio:1; transform:translateX(-50%);
-  border-radius:50%; border:3px solid var(--gold); background:var(--navy-700); overflow:hidden;
-  box-shadow:0 6px 14px rgba(0,0,0,.45); pointer-events:none;
-}
-.p2-avatar img { position:absolute; width:109%; height:auto; left:-10%; top:3.9%; max-width:none; } /* hair, whole face and chin inside the ring */
-.p2-avatar::after { content:none; }
 
 .p2-analysis {
   position:relative; z-index:4; display:none; grid-template-columns:repeat(3, minmax(0, 1fr)) minmax(0, 1.15fr); column-gap:14px; row-gap:var(--p2-gap);
@@ -314,7 +306,8 @@
 .scene-part2.is-in .p2-method-state.is-chosen { animation:p2-method-glow .9s ease-out .45s 1 both; }
 @keyframes p2-method-glow { 0%, 100% { box-shadow:0 0 0 4px rgba(255,214,83,.12), 0 14px 30px rgba(0,0,0,.4); } 40% { box-shadow:0 0 0 4px rgba(255,214,83,.3), 0 0 34px rgba(255,214,83,.55); } }
 /* Story objects on the map: the trebuchet beside HOME; the TFY roof keeps an empty hook for the receiving basket. */
-.p2-map-launcher { position:absolute; left:22.5%; top:52%; width:10.5%; height:auto; pointer-events:none; filter:drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
+.p2-map-launcher { position:absolute; left:19%; top:39%; width:17.5%; height:auto; pointer-events:none; filter:drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
+.p2-map-valente { position:absolute; left:14.6%; top:45%; width:5.6%; height:auto; pointer-events:none; filter:drop-shadow(0 6px 8px rgba(0,0,0,.5)); } /* behind the trebuchet's operating side, never in front */
 .p2-basket-slot { position:absolute; left:81.5%; top:3%; width:7%; aspect-ratio:1; pointer-events:none; }
 
 /* One screen: MAP + DISTANCE / CONDITION / BUDGET / DELIVERY METHOD are the hero; one spacing step (--p2-gap) between rows. */
@@ -391,7 +384,6 @@
   .p2-landmark { width:22%; }
   .p2-landmark-home { left:4%; top:5%; }
   .p2-landmark-tfy { left:74%; top:-12%; }
-  .p2-avatar { width:38px; bottom:84%; }
   .p2-analysis { width:100%; grid-template-columns:repeat(2, minmax(0, 1fr)); padding:0; column-gap:10px; row-gap:10px; }
   .p2-analysis article { min-height:0; padding:12px 12px; gap:6px; }
   .p2-analysis article small { font-size:11px; letter-spacing:.14em; }

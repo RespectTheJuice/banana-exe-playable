@@ -70,27 +70,32 @@
 .a1-say::after { content: ""; position: absolute; left: 44%; bottom: -21px; border: 9px solid transparent; border-top-color: var(--ink); }
 .a1-say.is-on { opacity: 1; visibility: visible; }
 
-/* ---------- Flight map: left → right, receding into depth (same window as the launcher scene) ---------- */
-.a1-map { width: var(--vw); height: var(--vh); opacity: 0; visibility: hidden; overflow: hidden; border-radius: 10px; background: #071420; box-shadow: 0 0 0 2px rgba(255, 214, 83, .35); }
+/* ---------- Flight map: the Part 1 map world (MAP 02A panel treatment), left → right (same window as the launcher scene) ---------- */
+.a1-map { width: var(--vw); height: var(--vh); opacity: 0; visibility: hidden; overflow: hidden; border-radius: 14px; background: #060d18; }
 .a1-map-svg { width: 100%; height: 100%; display: block; }
-.a1-map-ground { fill: rgba(19, 40, 58, .55); stroke: rgba(255, 214, 83, .35); stroke-width: 3; }
-.a1-map-grid { fill: none; stroke: rgba(121, 242, 238, .12); stroke-width: 2; }
-.a1-route { fill: none; stroke: var(--gold); stroke-width: 6; stroke-dasharray: 18 16; stroke-linecap: round; opacity: .85; }
-.a1-trail { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .4; stroke-dasharray: 2 10; }
+.a1-panel { fill: #0b1a2b; stroke: rgba(121, 242, 238, .55); stroke-width: 3; }
+.a1-inner { fill: #08131f; stroke: rgba(121, 242, 238, .3); stroke-width: 2; }
+.a1-head { fill: var(--white); font-family: var(--display); font-size: 30px; letter-spacing: 3px; }
+.a1-recess { fill: none; stroke: #3b4855; stroke-width: 17; stroke-linejoin: round; stroke-linecap: round; filter: url(#a1-rdim); mix-blend-mode: multiply; }
+.a1-head-right { fill: var(--muted); font-size: 20px; font-weight: 900; letter-spacing: 3px; }
+.a1-city { fill: var(--cyan); font-size: 20px; font-weight: 900; letter-spacing: 4px; paint-order: stroke; stroke: #08131f; stroke-width: 6px; }
+.a1-route { fill: none; stroke: var(--cyan); stroke-width: 6; stroke-dasharray: 14 12; stroke-linecap: round; opacity: .85; filter: drop-shadow(0 0 6px rgba(121, 242, 238, .6)); }
+.a1-trail { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .5; stroke-dasharray: 2 10; }
 .a1-proj-shadow { fill: rgba(0, 0, 0, .45); opacity: 0; }
-.a1-stem { stroke: var(--white); stroke-width: 4; opacity: .7; }
-.a1-pt-nott { fill: var(--white); stroke: var(--ink); stroke-width: 4; }
-.a1-pt-leic { fill: var(--muted); stroke: var(--ink); stroke-width: 3; }
-.a1-pt-tfy { fill: #3b7dff; stroke: var(--white); stroke-width: 4; } /* TFY canon: blue, neutral lettering */
+.a1-map-launcher { filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .55)); }
+.a1-launch-glow { fill: rgba(121, 242, 238, .16); filter: blur(10px); } /* the active delivery method leads the launch cluster */
+/* Map markers in the MAP 02A style: cyan ring, dark fill, bright centre */
+.a1-marker { fill: #0b1a2b; stroke: var(--cyan); stroke-width: 6; }
+.a1-marker-dot { fill: #3b7dff; stroke: var(--white); stroke-width: 3; } /* TFY canon: blue, neutral lettering */
+.a1-marker-dot-leic { fill: var(--gold); stroke: var(--ink); }
 .a1-tfy-pulse { fill: none; stroke: #9cc0ff; stroke-width: 4; opacity: 0; }
 .a1-leic-ring { fill: none; stroke: var(--gold); stroke-width: 5; opacity: 0; }
-.a1-label { fill: var(--white); font-family: var(--display); font-size: 40px; letter-spacing: 2px; paint-order: stroke; stroke: #071420; stroke-width: 8px; }
+.a1-label { fill: var(--white); font-family: var(--display); font-size: 34px; letter-spacing: 4px; paint-order: stroke; stroke: #08131f; stroke-width: 8px; }
 .a1-label-leic { fill: var(--muted); }
 .a1-label-leic.is-hit { fill: var(--gold); }
 /* No Leicester before Attempt 01 fails there: pin and label appear on landing. */
 #a1-leic-pin, .a1-label-leic { opacity: 0; transition: opacity .3s; }
 .a1-map-svg.is-leic #a1-leic-pin, .a1-map-svg.is-leic .a1-label-leic { opacity: 1; }
-.a1-label-tfy { font-size: 34px; }
 .a1-proj {
   position: absolute; left: 0; top: 0; width: 64px; height: auto; visibility: hidden;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .55)); will-change: transform; pointer-events: none;

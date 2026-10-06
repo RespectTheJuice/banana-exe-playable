@@ -225,16 +225,20 @@
   const JV = J.L / (TR.RDRIVE - TR.ACC / 2 - 450);
   const jDist = (t) => (t <= 0 ? 0 : t < TR.ACC ? JV * t * t / (2 * TR.ACC) : Math.min(J.L, JV * (t - TR.ACC / 2)));
   // MAP 02A (sheet px): the existing diagonal street past HOME's block; the truck enters at the map frame's left edge
-  // MAP 02A street to the ACTUAL HOME (sheet px): down the existing street from the map frame's left edge, across the
-  // junction, onto the road that runs past HOME's block, stopping beside HOME's lot (not the neighbouring block).
-  const MPATH = [[70, 240.69], [245, 317.25], [296, 350.6]], SPR = 86, CXF = 0.45, CYF = 0.86;
+  // HOME_DELIVERY_STOP — the canonical delivery stop for HOME on MAP 02A (sheet px, truck wheel-contact point): the road
+  // along HOME's lit side, immediately beside the HOME building and its HOME marker (CANON_REGISTRY → MAP 02A). Every
+  // delivery to HOME reuses it. The truck enters from the map frame's left edge along that road; its heading
+  // (atan 0.4375 ≈ 23.6°) matches the locked render's own, so no rotation or mirroring is needed.
+  const HOME_DELIVERY_STOP = { x: 120, y: 480 };
+  const MPATH = [[0, HOME_DELIVERY_STOP.y - HOME_DELIVERY_STOP.x * 0.4375], [HOME_DELIVERY_STOP.x, HOME_DELIVERY_STOP.y]], SPR = 86, CXF = 0.45, CYF = 0.86;
   const MSEG = MPATH.slice(1).map((p, i) => Math.hypot(p[0] - MPATH[i][0], p[1] - MPATH[i][1])), ML = MSEG.reduce((a, b) => a + b, 0);
   function mapAt(d) { // point + heading (deg) at distance d along MPATH (extends past the end along the last segment)
     let i = 0; while (i < MSEG.length - 1 && d > MSEG[i]) { d -= MSEG[i]; i++; }
     const a = MPATH[i], b = MPATH[i + 1], q = d / MSEG[i];
     return { x: a[0] + (b[0] - a[0]) * q, y: a[1] + (b[1] - a[1]) * q, deg: Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI };
   }
-  function mapCam(c) { const k0 = 0.75, k1 = 1.35, k = k0 * Math.pow(k1 / k0, c), w = (k - k0) / (k1 - k0); return { k, tx: 253 + (216 - 253) * w - 200 * k, ty: 317.5 + (263.25 - 317.5) * w - 330 * k }; }
+  // camera: opens wide on MAP 02A at the street entry, then pushes to a HOME framing (HOME, the stop and the HOME marker)
+  function mapCam(c) { const k0 = 0.75, k1 = 1.35, k = k0 * Math.pow(k1 / k0, c), w = (k - k0) / (k1 - k0); return { k, tx: 253 + (216 - 253) * w - 200 * k, ty: 317.5 + (230 - 317.5) * w - 330 * k }; }
   const uAtMap = (t) => outCubic((t - TR.M0) / (TR.M1 - TR.M0)), camAt = (t) => sine((t - TR.C0) / (TR.C1 - TR.C0)), zAt = (t) => sine((t - TR.PUSH0) / (TR.PUSH1 - TR.PUSH0));
   function mapPose(t) { const { k, tx, ty } = mapCam(camAt(t)); const m = mapAt(ML * uAtMap(t)); return { x: (m.x - CXF * SPR) * k + tx, y: (m.y - CYF * SPR) * k + ty, s: SPR * k }; }
   const TGT = (t) => { const m = mapPose(t); return { x: m.x + m.s / 2, y: m.y + m.s / 2 }; }; // the push delivers the truck onto the map truck
@@ -249,9 +253,7 @@
   const fx = {
     tick: (i) => tone(1500 + (i % 2) * 180, 0, 0.03, { type: 'square', vol: 0.05 }),
     lock: () => { tone(660, 0, 0.12, { type: 'triangle', vol: 0.1 }); tone(990, 0.09, 0.28, { type: 'triangle', vol: 0.1 }); },
-    portalOpen: () => { tone(520, 0, 0.55, { type: 'sine', slideTo: 1040, vol: 0.035 }); tone(1560, 0.12, 0.5, { type: 'sine', slideTo: 2080, vol: 0.018 }); },
     push: () => { noise(0, 0.6, 0.05); tone(180, 0, 0.7, { type: 'sine', slideTo: 320, vol: 0.05 }); },
-    portalClose: () => { tone(1040, 0, 0.42, { type: 'sine', slideTo: 420, vol: 0.03 }); },
     brake: () => { noise(0, 0.25, 0.12); tone(110, 0, 0.18, { type: 'sine', slideTo: 60, vol: 0.18 }); },
     kaching: () => { noise(0, 0.06, 0.3); [1319, 1568, 2093].forEach((f, i) => tone(f, 0.05 + i * 0.07, 0.3, { type: 'triangle', vol: 0.1 })); tone(2637, 0.32, 0.35, { type: 'triangle', vol: 0.08 }); },
   };
@@ -469,8 +471,10 @@
       departFrame(u01);
       if (u01 >= DT.go && once('engine')) { engineStart(); announce('The Trebutech truck pulls out of Rental and Dispatch'); }
       engineSet(u01 < DT.through ? 0.3 + 0.7 * ramp(u01, DT.go, DT.through) : 1);
-      if (u01 >= DT.seed0 && once('portal-open')) fx.portalOpen();
-      if (u01 >= DT.close0 && once('portal-close')) fx.portalClose();
+      // base-portal system sound (shared BX.portalSfx): open with the growth, shimmer as the cab meets the plane, close with the shrink
+      if (u01 >= DT.seed0 && once('portal-open')) window.BX.portalSfx.open();
+      if (-uAtDep(u01) - G.TL < G.AP && once('portal-cross')) window.BX.portalSfx.cross();
+      if (u01 >= DT.close0 && once('portal-close')) window.BX.portalSfx.close();
       if (pt >= DEP) startTravel();
     } else if (s.phase === 'travel') {
       setK();

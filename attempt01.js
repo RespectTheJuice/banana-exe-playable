@@ -38,8 +38,9 @@
   // Until then a labelled review placeholder carries the timing. No forest or fox art is drawn in code.
   const FOREST_ART = { forest: null, fox: { up: null, left: null, right: null }, mouth: null };
 
-  // Map flight: left → right on a ground plane receding into depth (map space 1600 × 880; front edge y 840, far edge y 250).
-  const P = { nott: [405, 722], tfy: [1320, 330], ctrl: [760, 600] }; // the shot leaves from the trebuchet beside HOME
+  // Map flight in the Part 1 map world (map space 1600 × 880): the shot leaves the trebuchet's cradle on HOME's grass and heads
+  // for TFY's roof (where the receiving basket will sit).
+  const P = { nott: [607, 481], tfy: [1350, 345], ctrl: [950, 600] }; // cradle = launcher x + 0.905 w, y + 0.127 h
   const ROUTE = `M${P.nott} Q${P.ctrl} ${P.tfy}`;
   const LEIC_AT = 0.45, ALT = 190; // Leicester's place along the route; cruise altitude in map units (at the front)
 
@@ -275,7 +276,7 @@
   path.setAttribute('d', ROUTE); mapSvg.appendChild(path); path.style.visibility = 'hidden';
   const L = path.getTotalLength(), STALL = 0.33;
   const at = (u) => path.getPointAtLength(L * clamp(u));
-  const depth = (y) => 0.55 + 0.45 * clamp((y - 250) / (840 - 250)); // 1 at the front edge, 0.55 at the far edge
+  const depth = () => 0.9; // a flat map (Part 1 map world): no ground-plane recession
   (() => { // route split at the stall: flown part vs. the part the banana never reaches; Leicester pin on the route
     const pts = (a0, a1) => { const r = []; for (let i = 0; i <= 40; i++) { const p = at(a0 + (a1 - a0) * i / 40); r.push(`${p.x.toFixed(1)} ${p.y.toFixed(1)}`); } return 'M' + r.join(' L'); };
     routeDone.setAttribute('d', pts(0, LEIC_AT)); routeLeft.setAttribute('d', pts(LEIC_AT, 1));
