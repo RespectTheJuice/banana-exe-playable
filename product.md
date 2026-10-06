@@ -200,7 +200,7 @@ Existing launcher authority:
 Next missing dependencies should be handled in this order:
 
 1. TFY rooftop receiving basket overlay / basket-ready TFY treatment while preserving `assets/locations/S02_TFY_BUILDING_LOCKED.png`. The first basket file was locked prematurely and is pending a simpler map-scale replacement.
-2. Trebuchet rental/delivery truck — **LOCKED**: `assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`. The truck's TREBUTECH branding communicates the delivery; no visible trebuchet cargo.
+2. Trebuchet rental/delivery truck — **LOCKED**: `assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`. The truck's TREBUTECH branding communicates the delivery; no visible trebuchet cargo.
 3. Neutral Delivery Method icon, preferably live SVG/CSS rather than a rendered bitmap.
 4. Valenté HOME marker derived from locked Valenté identity rather than generating a replacement face.
 5. Forest/canopy and fox payoff assets after the transition/problem dependencies are stable.

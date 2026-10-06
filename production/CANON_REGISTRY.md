@@ -111,7 +111,7 @@ LOCKED future map:
 ### Valenté yellow car
 
 LOCKED runtime authority:
-- `assets/VALENTE_YELLOW_CAR_LOCKED.png`
+- `assets/part2/vehicles/source/VALENTE_YELLOW_CAR_LOCKED.png`
 
 Rule:
 - This is the canonical vehicle Valenté drives.
@@ -121,7 +121,7 @@ Rule:
 ### Trebutech delivery truck
 
 LOCKED runtime authority:
-- `assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`
+- `assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`
 
 LOCKED brand treatment:
 - Brand name: **TREBUTECH**.

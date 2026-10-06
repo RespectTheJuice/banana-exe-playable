@@ -20,7 +20,7 @@ The transition now earns the trebuchet narratively and mechanically.
 4. It slows and stops on **TREBUCHET**.
 5. TREBUCHET locks in with a small settle/bounce and **glow pulse**.
 6. Cut to a map-based delivery beat.
-7. The locked **Trebutech** delivery truck (`assets/part2/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`) travels toward **HOME**.
+7. The locked **Trebutech** delivery truck (`assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`) travels toward **HOME**.
 8. The truck itself communicates the delivery through its TREBUTECH brand and launcher-derived logo. **Do not add visible trebuchet cargo.** (Supersedes the earlier preference for visible cargo.)
 9. The rental origin does not need a detailed building or geographically accurate depot. It only needs to communicate that the machine is being delivered from somewhere else.
 10. Truck arrives at HOME.
