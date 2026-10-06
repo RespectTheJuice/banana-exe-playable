@@ -83,6 +83,97 @@ The precision-marking intro may use the same subtle grid language because the ba
 
 Do not interpret this as “BANANA.EXE = grid everywhere.”
 
+## Vehicle portal system
+
+Vehicle portals are a recurring BANANA.EXE world-system behavior.
+
+They are **base-entry / base-exit transitions**, not destination teleportation and not generic scene transitions.
+
+### Core rule
+
+**Portals belong to places, not vehicles.**
+
+A portal appears only when a vehicle crosses the boundary of its own home/origin base.
+
+Outbound:
+
+1. vehicle is present at its home/origin base;
+2. the base portal opens at the established road/driveway/dispatch boundary;
+3. the vehicle physically passes through the portal;
+4. the portal closes;
+5. the vehicle continues its journey normally and remains visible wherever the story requires.
+
+Destination arrival:
+
+- no portal opens;
+- the vehicle arrives normally;
+- the vehicle may remain visibly present at the destination.
+
+Return to base:
+
+1. the vehicle visibly returns to its own home/origin base;
+2. the same base portal opens;
+3. the vehicle physically passes through it;
+4. the vehicle is removed from the visible world only after crossing the threshold;
+5. the portal closes.
+
+A portal does **not** imply that the vehicle teleported directly from its base to its destination. The journey between locations remains real and may be shown.
+
+### Visual language
+
+Portals use a **standardized BANANA.EXE system color**, not the branding color of the building or vehicle.
+
+Current direction:
+
+- system cyan / aqua;
+- near-white energy/highlight at the active edge where useful;
+- restrained dark/navy interior depth;
+- controlled light spill onto the immediate environment;
+- premium, engineered aperture rather than a magical/explosive effect.
+
+The surrounding building, road or vehicle may naturally reflect the emitted cyan light, but the portal itself does not become brand-colored.
+
+This preserves one readable meaning across the world:
+
+**cyan portal = a vehicle is crossing its home-base boundary.**
+
+Do not use red, gold, green or other brand-specific portal colors merely to match the originating building.
+
+### Portal restraint
+
+Portals should remain meaningful and relatively rare.
+
+Use them only for true vehicle base departure/return events.
+
+Do not use a portal:
+
+- when a vehicle arrives at a customer/destination;
+- for ordinary mid-route movement;
+- merely to hide a scene transition;
+- every time the camera changes maps;
+- as a generic spawn/despawn effect unrelated to a vehicle's own base.
+
+The vehicle must visibly cross the portal threshold. Do not simply flash the portal and cut the vehicle away.
+
+### Current story applications
+
+Established applications include:
+
+- **HOME** — Valenté's yellow car uses the HOME portal when leaving its base and when returning to HOME. Ordinary arrival at another location uses no portal.
+- **Banana Boutique** — a Banana Boutique vehicle/person leaving the Boutique base to bring Valenté a replacement banana in Part 2 exits through the Boutique portal. Arrival at HOME uses no portal.
+- **Trebutech Rental & Dispatch** — the locked Trebutech delivery truck exits its regional origin through the Trebutech base portal before continuing the visible journey to HOME. Arrival at HOME uses no portal. A later return to Trebutech would use the same origin portal.
+- **Exotic Fruits** — in Part 4, the delivery vehicle/courier leaving Exotic Fruits while Valenté follows the delivery through the app exits the Exotic Fruits base through its portal. The destination arrival uses no portal.
+
+Other locations may gain a portal only when the story establishes them as the home/base of a vehicle.
+
+### Production status
+
+The **portal behavior, semantic rule and standardized cyan/aqua system-color direction are locked product rules**.
+
+The exact portal geometry, animation timing, edge treatment, distortion, sound and final rendered/implemented visual are **not yet locked** and require a dedicated design/review pass before implementation.
+
+Do not invent a final portal asset or effect directly in code before that visual pass is reviewed and locked.
+
 ## Current Part 2 flow
 
 This is the current product-level sequence. Detailed staging authority lives in:
@@ -97,15 +188,17 @@ This is the current product-level sequence. Detailed staging authority lives in:
 2. Rapid selector cycles through all three with sound.
 3. Selector looks random but deterministically slows and lands on **TREBUCHET** for this build. TREBUCHET is the only named option; the other two slots stay unlabelled (shown as unknown) until their names are decided.
 4. TREBUCHET settles/bounces and receives one restrained confirmation glow pulse.
-5. Cut to a compact map delivery beat.
-6. The locked **Trebutech** delivery truck travels toward **HOME** (its branding communicates the rented trebuchet; no visible cargo).
-7. Truck arrives at HOME; HOME receives a small arrival settle/bounce and glow pulse.
-8. Show the transaction clearly:
+5. Reveal the Trebutech regional origin / Rental & Dispatch facility.
+6. The locked **Trebutech** delivery truck departs its own base through the standardized BANANA.EXE vehicle portal.
+7. The portal closes after the truck crosses it.
+8. Continue into the visible regional journey toward **HOME / Nottingham**; the truck's branding communicates the rented trebuchet and there is no visible cargo.
+9. The truck arrives at HOME normally — **no destination portal** — and HOME receives the approved restrained arrival response.
+10. Show the transaction clearly:
    - **TREBUCHET RENTAL**
    - **− £15.00**
    - cash/register `ching-ching` sound.
-9. Update remaining budget immediately.
-10. Only then reveal the **DELIVERY PROBLEM** page.
+11. Update remaining budget immediately.
+12. Only then reveal the **DELIVERY PROBLEM** page.
 
 This transition exists to answer why Valenté has a trebuchet and to make the budget consequence visible before analysis begins.
 
