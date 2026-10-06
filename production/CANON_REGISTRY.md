@@ -80,7 +80,7 @@ Rule:
 
 ### TFY rooftop receiving basket
 
-STATUS: PENDING REPLACEMENT — do not implement.
+STATUS: PENDING REPLACEMENT — do not implement. Runtime keeps empty basket hooks on the TFY roof (Delivery Problem map and Attempt 01 flight map) ready for the corrected asset.
 - `assets/part2/TFY_ROOFTOP_RECEIVING_BASKET_LOCKED.png` was marked locked prematurely; it is too detailed for the map scale and will be replaced by a simpler, chunkier map-scale version before implementation.
 
 Rule (for the replacement):
@@ -97,12 +97,13 @@ World rule:
 - MAP 02A is canonical local Nottingham. Never redraw, rebuild, recolour or re-route it; HOME and Banana Boutique never move and the roads are never redrawn.
 - The Part 2 Nottingham world is HOME, Banana Boutique, the Royal Snail post office and the Royal Snail drop box.
 - New services are added only as overlays at approved positions, sharing the map's dimming.
+- The Trebutech truck reaches the actual HOME: down the existing street past the junction onto the road beside HOME's block (sheet ≈ x 282, y 342), not the neighbouring block.
 - The baked Part 1 cyan route may be recessed in Part 2 by a non-destructive overlay; the file stays untouched.
 - Trebutech is **not** on MAP 02A and not in Nottingham.
 
 ### Royal Snail (postal service) — Nottingham
 
-LOCKED runtime authority:
+Runtime assets:
 - `assets/locations/ROYAL_SNAIL_POST_OFFICE_LOCKED.png` — SHA-256 `a5c36c9baf7426e94f69f3aa8fe1f17313eb10a6b88bc26712773eb4418cc55f`
 - `assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png` — SHA-256 `d02d22bd23c269931430123a709b82dad3ea33ff97d9d5a470258f917e92e21e`
 
@@ -111,7 +112,9 @@ LOCKED brand treatment:
 
 Approved MAP 02A placement (sheet pixels):
 - Post office: `x 529.93, y 118.27, 138.55 × 138.55` — fully covers the map's generic corner building.
-- Drop box: `x 298.86, y 294.92, 33.36 × 33.36` — at the junction.
+- Drop box: `x 298.86, y 294.92, 33.36 × 33.36` — at the junction. **INTERIM ONLY** (review decision 2026-10-06): the simple drop box is not strong enough as Royal Snail's neighbourhood presence and is not the final world treatment.
+
+PENDING DESIGN — neighbourhood presence: a small **self-serve postal kiosk / micro-depot** — more than a box, self-service, suitable for small/basic postal requests, still obviously not where you would confidently put a banana you care about, compact enough to stay a neighbourhood service. Optional later cues: a tiny postal bike or a tiny Royal Snail vehicle. Same brand rules (deep red, navy, restrained gold, crowned snail). Do not invent it in code; runtime keeps one swappable slot (`ROYAL_SNAIL_NEIGHBOURHOOD` in `transition.js`) that takes the locked kiosk file and its MAP 02A placement when it exists. The post office/store remains valid.
 - Secondary during the Trebutech arrival; may be modestly dimmed with the map.
 
 Selector card: `ROYAL SNAIL` / `UNAVAILABLE` stamp / `TOO SLOW` (greyed; never the result).

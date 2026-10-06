@@ -64,6 +64,12 @@ Part 1 is also **not grid-led by default**. Its dominant activities include brow
 
 The grid may appear in Part 1 when a scene genuinely enters a working, system, calibration or processing state, but it should not be forced into shopping/travel scenes simply for consistency.
 
+## Map orientation rule
+
+**Maps orient before they abstract.** A map is story orientation, not decoration: establish where the player is in the world before zooming into a place or abstracting to a route.
+
+Where an authoritative story asset exists, show it rather than reducing the scene to pins and labels: HOME building, TFY building, the trebuchet, Valenté, the delivery vehicle, and (once locked) the TFY receiving basket. Pins support the geography; they are not the geography.
+
 ## Grid usage rule
 
 The grid is a **contextual visual language**, not the universal background of BANANA.EXE and not a hero element.
@@ -182,12 +188,14 @@ Locked base-exit timing (first use: Trebutech):
 | Time | Beat |
 | --- | --- |
 | 0–0.5 s | vehicle pulls away; portal invisible |
-| ≈ 0.7 s | near-white seed line forms across the road |
-| ≈ 1.0 s | edges rise from both anchors and meet at the top |
+| ≈ 0.6–0.7 s | the closed portal appears as a small, compressed aperture at road level on the near-white seed line |
+| ≈ 0.7–1.4 s | it grows upward and outward as one shape (edge, collar, membrane together) into the full gateway |
 | ≈ 1.4 s | fully open (membrane, collar, spill) |
 | ≈ 2.4–3.4 s | vehicle crosses: the part already through is in front of the plane, the rest behind the membrane; a separate cyan/white threshold-light band may cross the body (light only — vehicle pixels unchanged) |
-| ≈ 3.9 s | contracts toward the threshold centre |
+| ≈ 3.6–4.3 s | closes as the exact mirror of the opening: full gateway shrinks downward and inward into the road line |
 | ≈ 4.4 s | invisible; the vehicle keeps driving |
+
+Read: small → full size → vehicle crosses → full size → small → gone. The edge is never drawn on progressively (review correction, 2026-10-06); no particles, no vortex.
 | ≈ 5.6 s | camera pull-back lands on the regional journey |
 
 It is not a scene cut and the vehicle never vanishes. Sound stays a short system shimmer on the SFX bus. Other base applications (HOME, Banana Boutique, Exotic Fruits) reuse the same system and still need their own staging pass before implementation.
@@ -202,15 +210,15 @@ This is the current product-level sequence. Detailed staging authority lives in:
 
 ### A. Delivery-method transition
 
-1. End on the three delivery-method options.
+1. End on the three delivery-method options. Part 1's ending already shows the same three slots (ROYAL SNAIL · TREBUCHET · `? ? ?`, same card language, nothing selected) so it hands straight into this selector.
 2. Rapid selector cycles through all three with sound.
 3. Selector slots, left to right: **ROYAL SNAIL** (`UNAVAILABLE` stamp, `TOO SLOW`), **TREBUCHET**, and an unrevealed `? ? ?` slot (no drone, no DenorD, no hint). It looks random but runs a deterministic 17-step cycle through all three and always lands on **TREBUCHET**, then holds ≈ 1.4 s.
 4. TREBUCHET locks: gold frame, restrained bounce, one glow pulse and a `LOCKED IN` chip; the other two dim.
-5. Reveal the Trebutech Rental & Dispatch facility (regional origin, no named city, never on MAP 02A).
+5. **Orient first:** open on the wider regional map — Trebutech Rental & Dispatch at its edge of the world, the route and HOME / Nottingham — and hold long enough to read where Trebutech is relative to the journey. **Then** push into the facility, which emerges out of that map (world → facility), never starting already tight on it. The facility is a regional origin with no named city and never sits on MAP 02A.
 6. The locked **Trebutech** delivery truck departs its own base through the standardized BANANA.EXE vehicle portal.
 7. The portal closes after the truck crosses it.
 8. Camera pulls back onto the visible regional journey (edge label `TREBUTECH` / `RENTAL & DISPATCH` → `HOME` / `Nottingham`); the truck's branding communicates the rented trebuchet and there is no visible cargo. No Leicester, Northampton, TFY or DenorD on this journey.
-9. Push into Nottingham: the same truck continues onto **MAP 02A** (no teleport, no reverse), shrinks to house scale and drives the existing street to HOME. The old Part 1 route is recessed by a non-destructive overlay.
+9. Push into Nottingham: the same truck continues onto **MAP 02A** (no teleport, no reverse), shrinks to house scale and drives the existing street (the road that runs down past HOME's block from the junction) and stops right beside HOME's lot — never at a neighbouring block. The old Part 1 route is recessed by a non-destructive overlay.
 10. The truck arrives at HOME normally — **no destination portal** — HOME gets one gold ring pulse and a restrained glow (the map never bounces).
 11. Show the transaction clearly, beside the stopped truck without covering it or HOME:
    - **TREBUCHET RENTAL**
@@ -223,17 +231,13 @@ This transition exists to answer why Valenté has a trebuchet and to make the bu
 
 ### B. Delivery Problem / comprehension gate
 
-The problem page must not auto-advance.
+The problem page must not auto-advance. It is **one** comprehension screen (review correction, 2026-10-06: the earlier summary state that repeated the same information before SIZE UP THE PROBLEM is removed):
 
-1. Show `DELIVERY PROBLEM` and the carried state: payload, remaining budget, destination.
-2. Player selects **SIZE UP THE PROBLEM**.
-3. The second state becomes map/goal-centric and reveals the real constraints:
-   - **DISTANCE**;
-   - **CONDITION**;
-   - **BUDGET / REMAINING BUDGET**;
-   - **DELIVERY METHOD**.
+1. `DELIVERY PROBLEM` / `GET THE BANANA TO TFY.`
+2. The map, central, with the actual story objects: HOME building, Valenté and the trebuchet at HOME (Nottingham); the locked TFY building (Northampton), with a hook for the rooftop receiving basket once that asset is locked.
+3. The constraints, enlarged: **DISTANCE** (HOME → TFY), **CONDITION**, **BUDGET** (live remaining budget), and **DELIVERY METHOD** shown as a large trebuchet visual with real weight (not a thin bar or a tiny icon).
 4. Stop and allow the player to read.
-5. Player explicitly selects **CONTINUE** before Attempt 01 begins.
+5. Player explicitly selects **CONTINUE** before Attempt 01 begins. The button itself is the instruction; no helper text may collide with it.
 
 The player should be able to answer: what is the task, where is it going, how far is it, what condition must it arrive in, how much money remains, and what delivery method is being attempted.
 
@@ -285,6 +289,10 @@ After CONTINUE:
 
 Do not redesign locked launcher plates or hard-code a different projectile banana.
 
+Charge UI: `HOLD TO CHARGE` (the glowing button) is the only instruction; there is no separate "Press and hold" prompt. Meter, percentage, cyan active state and the gold `CHARGE · FULL` state stay at their positions.
+
+Flight map (maps orient before they abstract): the Nottingham origin shows the HOME building with the trebuchet and Valenté beside it, and stays populated after the shot so the player can read where it came from; the Northampton end shows the locked TFY building (rooftop basket hook ready for the corrected asset). The banana travels from the trebuchet toward TFY. City pins may stay as support. Leicester is not shown until the banana comes down there.
+
 ### F. Leicester failure payoff
 
 1. Banana descends toward Leicester.
@@ -299,6 +307,13 @@ Do not redesign locked launcher plates or hard-code a different projectile banan
 10. Fox disappears back into trees.
 11. Show **FAILED ATTEMPT** and **RESULT: LEICESTER**.
 12. Carry forward using locked determined/goggles pose rather than a long disappointed beat.
+
+### Open design dependencies (not complete; do not invent in code)
+
+1. Royal Snail self-serve postal kiosk / micro-depot (replaces the interim drop box on MAP 02A).
+2. Corrected simple TFY rooftop receiving basket (map scale) — needed for the problem-page explanation and the flight map.
+3. Forest / canopy for the Leicester payoff.
+4. Fox payoff assets (fox with banana, looks left, looks right, disappears).
 
 ### G. Immediate asset dependency order
 
