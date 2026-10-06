@@ -87,6 +87,9 @@
 .a1-label { fill: var(--white); font-family: var(--display); font-size: 40px; letter-spacing: 2px; paint-order: stroke; stroke: #071420; stroke-width: 8px; }
 .a1-label-leic { fill: var(--muted); }
 .a1-label-leic.is-hit { fill: var(--gold); }
+/* No Leicester before Attempt 01 fails there: pin and label appear on landing. */
+#a1-leic-pin, .a1-label-leic { opacity: 0; transition: opacity .3s; }
+.a1-map-svg.is-leic #a1-leic-pin, .a1-map-svg.is-leic .a1-label-leic { opacity: 1; }
 .a1-label-tfy { font-size: 34px; }
 .a1-proj {
   position: absolute; left: 0; top: 0; width: 64px; height: auto; visibility: hidden;
@@ -125,7 +128,14 @@
 .a1-meter b { font-family: var(--display); font-size: 18px; color: var(--cyan); font-variant-numeric: tabular-nums; }
 .a1-meter-track { position: relative; grid-column: 1 / -1; height: 14px; border-radius: 999px; overflow: hidden; background: var(--navy-700); border: 1px solid var(--navy-500); }
 .a1-meter-track i { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform: scaleX(0); transform-origin: left center; }
-.a1-meter-fill { background: var(--cyan); box-shadow: 0 0 12px rgba(121, 242, 238, .6); }
+.a1-meter-fill { background: linear-gradient(90deg, #3fa9b5 0%, var(--cyan) 88%, #eafffe 100%); box-shadow: 0 0 12px rgba(121, 242, 238, .6); } /* bright leading edge */
+/* Full charge (700 ms sustain): gold bar, percentage and label. */
+.a1-ctrl.is-full .a1-meter-label { color: var(--gold); }
+.a1-ctrl.is-full .a1-meter b { color: var(--gold); }
+.a1-ctrl.is-full .a1-meter-fill { background: linear-gradient(90deg, #d9a521 0%, var(--gold) 70%, #ffe79a 100%); box-shadow: 0 0 14px rgba(255, 214, 83, .7); }
+.a1-ctrl.is-full .a1-btn.is-held { box-shadow: 0 2px 0 var(--gold-shadow), 0 0 0 3px var(--white), 0 0 0 7px var(--gold); }
+/* The guide pill under the HUD: same centre and bottom anchor, trimmed to 22 px so it clears the bar. */
+body:has(.scene-attempt.is-active) .objective { height: 22px; padding: 0 13px; display: flex; align-items: center; box-sizing: border-box; border-color: rgba(121, 242, 238, .6); background: rgba(6, 16, 26, .92); font-weight: 700; letter-spacing: 0; }
 .a1-meter-peak { background: rgba(121, 242, 238, .22); } /* ghost segment: the charge just lost */
 .a1-btn {
   grid-area: btn; min-height: 64px; width: 100%; padding: 12px 16px; border: 3px solid var(--ink); border-radius: 14px;

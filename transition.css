@@ -1,75 +1,139 @@
-/* BANANA.EXE — Part 2 opening: delivery-method selector → Trebutech truck → rental charge.
-   Motion is written by transition.js on a pausable game clock; no keyframes here. */
+/* BANANA.EXE — Part 2 opening: delivery-method selector → Trebutech origin + base-exit portal → regional journey →
+   MAP 02A → HOME → rental charge. Motion is written by transition.js on a pausable game clock; no keyframes here. */
 
-.scene-delivery { overflow: hidden; background: var(--navy-950); }
+.scene-delivery { overflow: hidden; background: radial-gradient(ellipse 70% 60% at 50% 55%, #0c1e30 0%, #060c16 62%, #04070d 100%); }
 .scene-delivery.is-active {
   display: grid; grid-template-rows: auto minmax(0, 1fr); row-gap: 12px;
   padding: 58px 24px max(18px, env(safe-area-inset-bottom));
 }
 .dl-head { position: relative; z-index: 3; display: flex; justify-content: center; align-items: baseline; gap: 18px; flex-wrap: wrap; text-align: center; }
-.dl-kicker { margin: 0; color: var(--cyan); font-weight: 900; letter-spacing: .2em; font-size: 12px; }
-.dl-status { margin: 0; font-family: var(--display); font-size: clamp(22px, 3vw, 34px); letter-spacing: .06em; color: var(--gold); min-width: 8ch; }
+.dl-kicker { margin: 0; color: var(--cyan); font-weight: 900; letter-spacing: .14em; font-size: 12px; }
+.dl-status { margin: 0; font-family: var(--display); font-size: clamp(22px, 3vw, 34px); letter-spacing: .02em; color: var(--gold); min-width: 8ch; }
 
-/* ---------- Selector: three slots; only named options show a label ---------- */
+/* ---------- Selector: ROYAL SNAIL · TREBUCHET · ? ? ? (card internals scale with the card: 1cqw = card width / 100) ---------- */
 .dl-select { position: relative; display: grid; place-items: center; opacity: 0; }
-.dl-options { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: clamp(10px, 2vw, 24px); width: min(760px, 100%); justify-content: center; }
+.dl-options { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: clamp(10px, 2vw, 24px); width: min(760px, 100%); justify-content: center; }
+.dl-pointer { position: absolute; left: 0; top: 0; width: 28px; height: 18px; opacity: 0; pointer-events: none; }
+.dl-pointer path { fill: var(--cyan); }
+.dl-pointer.is-locked path { fill: var(--gold); }
 .dl-card {
   --pulse: 0;
-  position: relative; display: grid; justify-items: center; align-content: center; gap: 10px; aspect-ratio: 4 / 5; padding: 14px;
-  border-radius: 18px; background: linear-gradient(180deg, rgba(19,40,58,.96), rgba(9,15,27,.96));
-  border: 2px solid rgba(121, 242, 238, .25); color: var(--muted);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, .4), 0 0 calc(var(--pulse) * 46px) calc(var(--pulse) * 8px) rgba(255, 214, 83, calc(var(--pulse) * .75));
+  position: relative; container-type: inline-size; aspect-ratio: 4 / 5; border-radius: 14px; box-sizing: border-box;
+  background: linear-gradient(180deg, #102031 0%, #0a1521 100%); border: 2px solid rgba(121, 242, 238, .25); color: #a9c6d3;
 }
-.dl-card b { font-family: var(--display); font-size: clamp(14px, 1.8vw, 22px); letter-spacing: .06em; text-align: center; }
-.dl-icon { display: grid; place-items: center; width: 78%; aspect-ratio: 3 / 2; }
-.dl-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .5)); }
-.dl-icon-unknown { font-family: var(--display); font-size: clamp(42px, 6vw, 72px); color: rgba(169, 198, 211, .35); }
+.dl-card > * { position: absolute; left: 0; right: 0; margin: 0; text-align: center; }
+.dl-card-label { top: 64.7%; font-family: var(--display); font-size: 10cqw; letter-spacing: .02em; white-space: nowrap; }
+.dl-card-icon { left: 16.8%; right: 16.8%; top: 25.5%; height: 35.6%; display: grid; place-items: center; }
+.dl-card-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .5)); }
+/* Royal Snail: greyed, stamped, never the result */
+.dl-card.is-royal { background: #0a1018; border-color: rgba(169, 198, 211, .16); }
+.dl-royal-stripe { top: 0; height: 6px; background: #b8323a; border-radius: 12px 12px 0 0; filter: grayscale(1); opacity: .7; }
+.dl-royal-icon { top: 9.5%; display: flex; justify-content: center; filter: grayscale(1); opacity: .72; }
+.dl-royal-icon svg { width: 68%; height: auto; }
+.dl-card.is-royal .dl-card-label { color: #6f7f8c; }
+.dl-card-sub { top: 76.4%; font-size: 5.45cqw; font-weight: 700; letter-spacing: .14em; color: #7c8b96; }
+.dl-stamp {
+  left: 20%; right: auto; top: 45%; transform: rotate(-7deg); padding: .2em .65em; border: 2px solid #e0626a; border-radius: 5px;
+  color: #ff8a90; background: rgba(40, 8, 12, .85); font-family: var(--display); font-size: 6.8cqw; letter-spacing: .08em; white-space: nowrap;
+}
+/* Unrevealed slot: no hint of what it is */
 .dl-card.is-unknown { border-style: dashed; }
-.dl-card.is-unknown b { color: rgba(169, 198, 211, .45); letter-spacing: .2em; }
+.dl-unknown-mark { top: 23.3%; font-family: var(--display); font-size: 32.7cqw; line-height: 1; color: rgba(169, 198, 211, .32); }
+.dl-card.is-unknown .dl-card-label { letter-spacing: .18em; color: rgba(169, 198, 211, .42); }
 /* The cycling highlight (a step, not a slide). */
-.dl-card.is-hi { border-color: var(--cyan); color: var(--white); box-shadow: 0 0 0 4px rgba(121, 242, 238, .18), 0 14px 30px rgba(0, 0, 0, .4); }
-.dl-card.is-locked { border-color: var(--gold); color: var(--gold); }
-.dl-card.is-locked b { color: var(--gold); }
-.dl-card.is-out { opacity: .38; }
+.dl-card.is-hi { border-color: var(--cyan); box-shadow: 0 0 24px rgba(121, 242, 238, .38); transform: translateY(-4px); }
+.dl-card.is-hi .dl-card-label { color: var(--white); }
+.dl-card.is-royal.is-hi { border-color: rgba(121, 242, 238, .75); box-shadow: 0 0 18px rgba(121, 242, 238, .22); }
+.dl-card.is-royal.is-hi .dl-card-label { color: #6f7f8c; }
+.dl-card.is-unknown.is-hi .dl-card-label { color: rgba(169, 198, 211, .42); }
+.dl-card.is-locked {
+  background: linear-gradient(180deg, #1a2433 0%, #0d1622 100%); border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(255, 214, 83, .25), 0 0 calc(26px + var(--pulse) * 34px) rgba(255, 214, 83, calc(.28 + var(--pulse) * .5));
+}
+.dl-card.is-locked .dl-card-label { color: var(--gold); }
+.dl-card.is-out { opacity: .42; }
+.dl-chip {
+  left: 50%; right: auto; top: 77.8%; transform: translateX(-50%); display: none; align-items: center; gap: 6px; padding: 4px 11px;
+  border: 1.5px solid var(--gold); border-radius: 999px; background: rgba(255, 214, 83, .12); color: var(--gold);
+  font-size: max(9px, 5cqw); font-weight: 800; letter-spacing: .16em; white-space: nowrap;
+}
+.dl-chip svg { width: 12px; height: 12px; fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.dl-card.is-locked .dl-chip { display: flex; }
 
-/* ---------- Map beat: black field (the truck render's own background), HOME on the right ---------- */
-.dl-map {
+/* ---------- Stage: one 1013 × 570 field, scaled to fit (transition.js sets --k) ---------- */
+.dl-stage {
+  --k: 1;
   position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%);
-  width: min(100% - 48px, 1100px, (100svh - 150px) * 16 / 9); aspect-ratio: 16 / 9;
+  width: min(100% - 32px, 1013px, (100svh - 150px) * 1013 / 570); aspect-ratio: 1013 / 570;
   visibility: hidden;
 }
-.dl-field { position: absolute; inset: 0; background: #000; border-radius: 14px; overflow: hidden; }
-.dl-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.dl-road { fill: none; stroke: rgba(121, 242, 238, .10); stroke-width: 56; stroke-linecap: round; }
-.dl-route { fill: none; stroke: var(--cyan); stroke-width: 6; stroke-linecap: round; opacity: .7; }
-.dl-home { position: absolute; left: 62.5%; top: 27.1%; width: 30%; height: auto; transform-origin: 50% 95%; }  /* base on y 700 */
-.dl-home-glow {
-  position: absolute; left: 60%; top: 30%; width: 35%; height: 60%; border-radius: 50%; opacity: 0; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(255, 214, 83, .55), rgba(255, 214, 83, 0));
+.dl-world {
+  position: absolute; left: 0; top: 0; width: 1013px; height: 570px; transform-origin: 0 0; transform: scale(var(--k));
+  overflow: hidden; border-radius: 12px; box-shadow: 0 0 0 1px rgba(121, 242, 238, .10);
+  background: radial-gradient(ellipse 60% 70% at 72% 70%, #08121d 0%, #04070c 70%, #030509 100%);
 }
-.dl-home-label { position: absolute; left: 77.5%; top: 80%; transform: translateX(-50%); margin: 0; display: grid; justify-items: center; }
-.dl-home-label b { font-family: var(--display); font-size: clamp(12px, 1.4vw, 17px); letter-spacing: .1em; color: var(--white); }
-.dl-home-label span { font-size: clamp(8px, .9vw, 11px); font-weight: 900; letter-spacing: .14em; color: var(--muted); }
-/* `lighten` leaves the locked render pixel-identical over the black field, so its black background disappears. */
-.dl-truck { position: absolute; left: 0; top: 0; height: auto; visibility: hidden; mix-blend-mode: lighten; will-change: transform; }
+.dl-world img { max-width: none; }
+.dl-layer, .dl-cam { position: absolute; left: 0; top: 0; width: 1013px; height: 570px; transform-origin: 0 0; }
+.dl-cam-map { width: 1448px; height: 1086px; }
+.dl-svg { position: absolute; left: 0; top: 0; overflow: visible; }
+.dl-reg-home { position: absolute; left: 634px; top: 155px; width: 304px; height: 304px; }
+/* Locked truck render: a runtime silhouette matte under it + `lighten`, so its black field drops out and its pixels are unchanged.
+   Positioned with left/top only (never a transform), so the blend reads the real backdrop. */
+.dl-matte, .dl-truck { position: absolute; left: 0; top: 0; width: 0; height: 0; visibility: hidden; pointer-events: none; }
+.dl-truck { mix-blend-mode: lighten; }
+/* MAP 02A: only its map panel (sheet x 22–1426, y 130–588) is shown */
+.dl-map-panel { position: absolute; left: 22px; top: 130px; width: 1404px; height: 458px; overflow: hidden; border-radius: 16px; }
+.dl-map-plate { position: absolute; left: -22px; top: -130px; width: 1448px; height: 1086px; filter: brightness(.8) saturate(.9); }
+.dl-map-recess { position: absolute; left: -22px; top: -130px; mix-blend-mode: multiply; }
+.dl-map-homeglow { position: absolute; left: 100px; top: 300px; width: 220px; height: 200px; border-radius: 50%; opacity: 0; background: radial-gradient(closest-side, rgba(255, 214, 83, .30), rgba(255, 214, 83, 0) 100%); }
+.dl-rs-office { position: absolute; left: 529.93px; top: 118.27px; width: 138.55px; height: 138.55px; filter: brightness(.82) saturate(.92); }
+.dl-rs-box { position: absolute; left: 298.86px; top: 294.92px; width: 33.36px; height: 33.36px; filter: brightness(.85) saturate(.95); }
+.dl-map-road { position: absolute; left: 52px; top: 140px; width: 1344px; height: 422px; overflow: hidden; }
+.dl-map-road > .dl-svg { left: -52px; top: -140px; }
+/* Origin */
+.dl-facility { position: absolute; left: -30px; top: -58px; width: 560px; height: 560px; }
+.dl-portal { position: absolute; left: 0; top: 0; }
+.dl-portal svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+.dl-band { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; pointer-events: none; background: #dffcff; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
+.dl-band-glow { background: #3fe9ff; mix-blend-mode: screen; }
+.dl-hand-shadow { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 50%; background: rgba(0, 0, 0, .55); filter: blur(4px); visibility: hidden; }
+/* Journey labels: short, secondary to the truck */
+.dl-labels { position: absolute; inset: 0; pointer-events: none; }
+.dl-labels p { position: absolute; margin: 0; display: grid; line-height: 1.1; opacity: 0; }
+.dl-label-origin b { font-family: var(--display); font-size: 12px; letter-spacing: .06em; color: #cfe6ef; }
+.dl-label-origin span { font-size: 9px; font-weight: 700; letter-spacing: .12em; color: var(--cyan); }
+.dl-label-home { width: 140px; justify-items: center; line-height: 1.05 !important; }
+.dl-label-home b { font-family: var(--display); font-size: 13px; color: var(--gold); }
+.dl-label-home span { font-size: 9px; font-weight: 600; letter-spacing: .08em; color: var(--muted); }
 
-/* ---------- Rental charge ---------- */
+/* ---------- Rental charge: beside the stopped truck, above HOME (never over either) ---------- */
 .dl-receipt {
-  position: absolute; z-index: 4; left: 40%; top: 7%; transform: translateX(-50%); /* the map's empty upper area */
-  display: grid; justify-items: center; gap: 2px; padding: 12px 26px; border-radius: 16px; width: max-content; max-width: calc(100vw - 24px); white-space: nowrap;
-  background: rgba(9, 15, 27, .96); border: 2px solid var(--gold); box-shadow: 0 0 0 4px rgba(255, 214, 83, .12), 0 18px 40px rgba(0, 0, 0, .5);
+  --ry: 0px; --rk: 1;
+  position: absolute; z-index: 4; left: 29.6%; top: 9.8%; width: 299px; height: 116px; box-sizing: border-box;
+  transform-origin: 0 0; transform: translateY(var(--ry)) scale(var(--rk));
+  display: grid; align-content: center; justify-items: center; gap: 4px; white-space: nowrap;
+  background: rgba(9, 15, 27, .96); border: 2px solid var(--gold); border-radius: 12px; box-shadow: 0 0 22px rgba(255, 214, 83, .22);
   visibility: hidden; opacity: 0;
 }
-.dl-receipt small { font-size: 12px; font-weight: 900; letter-spacing: .18em; color: var(--cyan); }
-.dl-receipt strong { font-family: var(--display); font-size: clamp(30px, 4vw, 46px); color: #ff6b6b; letter-spacing: .03em; }
-.dl-receipt span { font-size: 13px; font-weight: 900; letter-spacing: .08em; color: var(--white); min-height: 1.2em; }
+.dl-receipt small { font-size: 10px; font-weight: 800; letter-spacing: .18em; color: var(--cyan); }
+.dl-receipt strong { font-family: var(--display); font-size: 36px; line-height: 1; color: #ff6b6b; }
+.dl-receipt span { font-size: 11px; font-weight: 800; letter-spacing: .1em; color: var(--white); min-height: 1.2em; }
 
 @media (orientation: portrait), (max-width: 700px) {
   .scene-delivery.is-active { padding: 54px 12px max(16px, env(safe-area-inset-bottom)); }
   .dl-head { flex-direction: column; align-items: center; gap: 4px; }
   .dl-options { gap: 8px; }
-  .dl-card { padding: 10px 6px; border-radius: 14px; }
-  .dl-map { width: 100%; top: 40%; }
-  .dl-field { border-radius: 10px; }
-  .dl-receipt { left: 50%; top: calc(100% + 16px); padding: 10px 20px; } /* below the map on phones */
+  .dl-stamp { border-width: 1.5px; }
+  .dl-stage { width: calc(100% - 24px); top: 40%; }
+  .dl-world { border-radius: 10px; }
+  /* below the map on phones, at full size */
+  .dl-receipt { left: 50%; top: calc(100% + 16px); transform: translate(-50%, var(--ry)); }
+}
+
+/* Narrow cards (phones): keep the sub line and the LOCKED IN chip legible and inside the card */
+@container (max-width: 150px) {
+  .dl-card-sub { font-size: 8px; letter-spacing: .1em; }
+  .dl-stamp { font-size: 8px; }
+  .dl-chip { gap: 3px; padding: 2px 6px; font-size: 8px; letter-spacing: .06em; }
+  .dl-chip svg { width: 8px; height: 8px; }
 }

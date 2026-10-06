@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
   <link rel="stylesheet" href="style.css?v=20261005-1000" />
-  <link rel="stylesheet" href="scene02.css?v=20261005-1700" />
-  <link rel="stylesheet" href="transition.css?v=20261005-2000" />
-  <link rel="stylesheet" href="attempt01.css?v=20261005-1000" />
+  <link rel="stylesheet" href="scene02.css?v=20261006-2000" />
+  <link rel="stylesheet" href="transition.css?v=20261006-2000" />
+  <link rel="stylesheet" href="attempt01.css?v=20261006-2000" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -235,19 +235,99 @@
       <p class="dl-status" id="dl-status" aria-live="polite">SELECTING…</p>
     </div>
     <div class="dl-select" id="dl-select">
-      <div class="dl-options" id="dl-options"></div>
+      <div class="dl-options" id="dl-options">
+        <svg class="dl-pointer" id="dl-pointer" viewBox="0 0 28 18" aria-hidden="true"><path d="M2 2 L14 15 L26 2 Z" /></svg>
+      </div>
     </div>
-    <!-- Map beat: black field so the locked truck render (black background) composites cleanly. -->
-    <div class="dl-map" id="dl-map">
-      <div class="dl-field" aria-hidden="true">
-        <svg class="dl-map-svg" viewBox="0 0 1600 900">
-          <path class="dl-road" id="dl-road" d="M-320 520 L790 700" />
-          <path class="dl-route" id="dl-route" d="M-320 520 L790 700" />
-        </svg>
-        <div class="dl-home-glow" id="dl-home-glow"></div>
-        <img class="dl-home" id="dl-home" src="assets/locations/S02_HOME_3D_LOCKED.png" width="1254" height="1254" alt="" />
-        <p class="dl-home-label"><b>HOME</b><span>NOTTINGHAM</span></p>
-        <img class="dl-truck" id="dl-truck" src="assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+    <!-- Origin → journey → MAP 02A, one 1013 × 570 field (transition.js scales it to fit). Locked art is only placed, moved,
+         scaled and lit; the truck render's black field is removed at runtime by a matte + `lighten` (pixels unchanged). -->
+    <div class="dl-stage" id="dl-stage">
+      <div class="dl-world" id="dl-world" aria-hidden="true">
+        <!-- Regional journey: TREBUTECH / RENTAL & DISPATCH (map edge) → HOME / Nottingham -->
+        <div class="dl-layer" id="dl-reg">
+          <div class="dl-cam" id="dl-reg-cam">
+            <svg class="dl-svg" width="1013" height="570" viewBox="0 0 1013 570">
+              <defs>
+                <radialGradient id="dl-jfield" gradientUnits="userSpaceOnUse" cx="729" cy="399" r="608" gradientTransform="translate(729 399) scale(1 0.656) translate(-729 -399)">
+                  <stop offset="0" stop-color="#08121d" /><stop offset="0.7" stop-color="#04070c" /><stop offset="1" stop-color="#030509" />
+                </radialGradient>
+                <radialGradient id="dl-jhome" gradientUnits="userSpaceOnUse" cx="786" cy="330" r="300">
+                  <stop offset="0" stop-color="#ffd653" stop-opacity="0.10" /><stop offset="1" stop-color="#ffd653" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <rect x="-4000" y="-3000" width="8000" height="6000" fill="url(#dl-jfield)" />
+              <g id="dl-reg-ctx">
+                <path d="M-1700 -420 L1300 160 M-1500 760 L-300 -560 M-260 980 L240 -560 M-1800 520 L1400 1060 M600 -600 L1300 900" stroke="#0e1924" stroke-width="10" fill="none" />
+                <circle cx="786" cy="330" r="300" fill="url(#dl-jhome)" />
+                <circle cx="-1230" cy="150" r="22" fill="#79f2ee" opacity="0.9" />
+                <circle cx="-1230" cy="150" r="44" fill="none" stroke="#79f2ee" stroke-width="6" opacity="0.35" />
+              </g>
+              <path d="M-1230 150 C-900 150 -560 271 -203 329 L500 443" stroke="#0e1822" stroke-width="58" stroke-linecap="round" fill="none" />
+              <path d="M-1230 150 C-900 150 -560 271 -203 329 L500 443" stroke="#1b2a38" stroke-width="2" stroke-dasharray="18 16" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke" />
+              <path id="dl-reg-trail" d="" stroke="#79f2ee" stroke-opacity="0.6" stroke-width="3" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke" />
+            </svg>
+            <img class="dl-reg-home" id="dl-reg-home" src="assets/locations/S02_HOME_3D_LOCKED.png" width="1254" height="1254" alt="" />
+            <img class="dl-matte" id="dl-reg-matte" alt="" />
+            <img class="dl-truck" id="dl-reg-truck" src="assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+          </div>
+        </div>
+        <!-- MAP 02A (locked, untouched): Royal Snail overlays, recessed Part 1 route, the truck on the existing street -->
+        <div class="dl-layer" id="dl-local">
+          <div class="dl-cam dl-cam-map" id="dl-local-cam">
+            <div class="dl-map-panel">
+              <img class="dl-map-plate" src="assets/MAP_02A_NOTTINGHAM_PROCUREMENT_LOCKED.png" width="1448" height="1086" alt="" />
+              <svg class="dl-map-recess" width="1448" height="1086" viewBox="0 0 1448 1086">
+                <defs><filter id="dl-rdim" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="1.6" /></filter></defs>
+                <path d="M243 483 L268 483 L343 432 L1050 432 L1050 335 L1132 372" fill="none" stroke="#3b4855" stroke-width="17" stroke-linejoin="round" stroke-linecap="round" filter="url(#dl-rdim)" />
+              </svg>
+            </div>
+            <div class="dl-map-homeglow" id="dl-map-homeglow"></div>
+            <svg class="dl-svg" width="1448" height="1086" viewBox="0 0 1448 1086"><circle id="dl-map-ring" cx="210" cy="483" r="32" fill="none" stroke="#ffd653" stroke-width="3" opacity="0" /></svg>
+            <img class="dl-rs-office" src="assets/locations/ROYAL_SNAIL_POST_OFFICE_LOCKED.png" width="1254" height="1254" alt="" />
+            <img class="dl-rs-box" src="assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png" width="1254" height="1254" alt="" />
+            <div class="dl-map-road" id="dl-map-road">
+              <svg class="dl-svg" width="1448" height="1086" viewBox="0 0 1448 1086">
+                <defs><filter id="dl-tsh" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" /></filter></defs>
+                <path id="dl-map-trail" d="" stroke="#79f2ee" stroke-opacity="0.7" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                <g id="dl-map-shadow"><ellipse rx="44" ry="13" fill="#000" opacity="0.5" filter="url(#dl-tsh)" /><ellipse rx="34" ry="7" fill="#000" opacity="0.55" /></g>
+              </svg>
+              <img class="dl-matte" id="dl-map-matte" alt="" />
+              <img class="dl-truck" id="dl-map-truck" src="assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+            </div>
+          </div>
+        </div>
+        <!-- Trebutech Rental & Dispatch origin: site + exit road (camera), base-exit portal (exact locked SVG, two layers:
+             road spill under the truck, aperture between the truck's back and front parts) -->
+        <div class="dl-cam" id="dl-dep-under">
+          <div id="dl-site">
+            <svg class="dl-svg" width="1013" height="570" viewBox="0 0 1013 570">
+              <polygon id="dl-dep-road" points="" fill="#0e1822" />
+              <path id="dl-dep-lane" d="" stroke="#1b2a38" stroke-width="2" stroke-dasharray="18 16" fill="none" />
+            </svg>
+            <img class="dl-facility" src="assets/locations/TREBUTECH_RENTAL_DISPATCH_BUILDING_LOCKED.png" width="1254" height="1254" alt="" />
+          </div>
+          <svg class="dl-svg" width="1013" height="570" viewBox="0 0 1013 570">
+            <defs><filter id="dl-dsh" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" /></filter></defs>
+            <path id="dl-dep-route" d="" stroke="#79f2ee" stroke-opacity="0" stroke-width="3" stroke-linecap="round" fill="none" />
+            <ellipse id="dl-dep-shadow" cx="0" cy="0" rx="0" ry="0" fill="#000" opacity="0.5" filter="url(#dl-dsh)" />
+          </svg>
+          <div class="dl-portal" id="dl-portal-spill"></div>
+        </div>
+        <img class="dl-matte" id="dl-back-matte" alt="" />
+        <img class="dl-truck" id="dl-back-truck" src="assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+        <div class="dl-cam" id="dl-dep-over"><div class="dl-portal" id="dl-portal-main"></div></div>
+        <img class="dl-matte" id="dl-front-matte" alt="" />
+        <img class="dl-truck" id="dl-front-truck" src="assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+        <div class="dl-band" id="dl-band"></div>
+        <div class="dl-band dl-band-glow" id="dl-band-glow"></div>
+        <!-- Regional → MAP 02A handoff: one continuous truck over the dissolve -->
+        <div class="dl-hand-shadow" id="dl-hand-shadow"></div>
+        <img class="dl-matte" id="dl-hand-matte" alt="" />
+        <img class="dl-truck" id="dl-hand-truck" src="assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png" width="1254" height="1254" alt="" />
+        <div class="dl-labels" id="dl-labels">
+          <p class="dl-label-origin" id="dl-label-origin"><b>TREBUTECH</b><span>RENTAL &amp; DISPATCH</span></p>
+          <p class="dl-label-home" id="dl-label-home"><b>HOME</b><span>Nottingham</span></p>
+        </div>
       </div>
       <div class="dl-receipt" id="dl-receipt" role="status">
         <small>TREBUCHET RENTAL</small>
@@ -287,23 +367,29 @@
       </svg>
       <div class="p2-landmark p2-landmark-home">
         <img src="assets/locations/S02_HOME_3D_LOCKED.png" width="1254" height="1254" alt="Approved HOME building" />
-        <b>HOME</b><span>NOTTINGHAM</span>
+        <b>HOME</b><span>Nottingham</span>
       </div>
       <div class="p2-landmark p2-landmark-tfy">
         <img src="assets/locations/S02_TFY_BUILDING_LOCKED.png" width="1254" height="1254" alt="Approved TFY building" />
-        <b>TFY</b><span>NORTHAMPTON</span>
+        <b>TFY</b><span>Northampton</span>
       </div>
       <div class="p2-avatar" aria-hidden="true"><img src="assets/skeptical_locked.png" width="414" height="767" alt="" /></div>
     </div>
 
     <div class="p2-analysis" id="p2-analysis" aria-live="polite">
       <article class="p2-distance"><small>DISTANCE</small>
-        <div class="p2-leg"><b>NOTTINGHAM</b><i aria-hidden="true">↓</i><b>NORTHAMPTON</b></div>
-        <span class="p2-warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 23 21.5H1Z" /><path class="p2-warn-mark" d="M12 9v6M12 17.6v.4" /></svg>NOT A LOCAL RUN</span>
+        <b class="p2-leg">HOME<svg viewBox="0 0 26 18" aria-hidden="true"><path d="M2 9 H22 M15 2 L22 9 L15 16" /></svg><span class="a1-live"> to </span>TFY</b>
       </article>
       <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
-      <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You still only have one budget.</span></article>
-      <div class="p2-method-state"><small>DELIVERY METHOD</small><strong id="p2-method">UNDECIDED</strong></div>
+      <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You have <span id="p2-remaining">£45.00</span> remaining.</span></article>
+      <!-- Method bar: gold + the method's own icon once chosen; neutral parcel + cyan only if reached without the selector. -->
+      <div class="p2-method-state" id="p2-method-state"><small>DELIVERY METHOD</small>
+        <span class="p2-method-value">
+          <img class="p2-method-icon p2-method-icon-chosen" src="assets/launcher.png" width="1536" height="1024" alt="" />
+          <svg class="p2-method-icon p2-method-icon-undecided" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 L26 8.5 V21.5 L15 27 L4 21.5 V8.5 Z M4 8.5 L15 14 L26 8.5 M15 14 V27" /></svg>
+          <strong id="p2-method">UNDECIDED</strong>
+        </span>
+      </div>
       <button class="arcade arcade-sm p2-continue" id="p2-continue" type="button">
         <span class="cap">CONTINUE</span>
       </button>
@@ -385,7 +471,7 @@
 
       <!-- Flight: Nottingham (front left) → TFY (far right), a ground plane receding into depth. -->
       <div class="a1-map" id="a1-map">
-        <svg class="a1-map-svg" id="a1-map-svg" viewBox="0 0 1600 880" role="img" aria-label="Route map: Nottingham, Leicester and TFY in Northampton, left to right">
+        <svg class="a1-map-svg" id="a1-map-svg" viewBox="0 0 1600 880" role="img" aria-label="Route map: Nottingham to TFY in Northampton, left to right">
           <polygon class="a1-map-ground" points="40,840 1560,840 1300,250 300,250" />
           <path class="a1-map-grid" d="M71 769H1529M118 663H1482M175 533H1425M238 392H1362M230 840L425 250M420 840L550 250M610 840L675 250M800 840L800 250M990 840L925 250M1180 840L1050 250M1370 840L1175 250" />
           <path class="a1-route a1-route-done" id="a1-route-done" />
@@ -445,8 +531,8 @@
   <div class="flash" id="flash"></div>
 </main>
 <script src="game.js?v=20261002-1100"></script>
-<script src="scene02.js?v=20261005-1900"></script>
-<script src="transition.js?v=20261005-2000"></script>
-<script src="attempt01.js?v=20261005-1000"></script>
+<script src="scene02.js?v=20261006-2000"></script>
+<script src="transition.js?v=20261006-2000"></script>
+<script src="attempt01.js?v=20261006-2000"></script>
 </body>
 </html>

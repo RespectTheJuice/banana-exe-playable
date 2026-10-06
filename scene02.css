@@ -303,7 +303,7 @@
   border-radius:50%; border:3px solid var(--gold); background:var(--navy-700); overflow:hidden;
   box-shadow:0 6px 14px rgba(0,0,0,.45); pointer-events:none;
 }
-.p2-avatar img { position:absolute; width:121.8%; height:auto; left:-16.2%; top:-4.4%; max-width:none; }
+.p2-avatar img { position:absolute; width:109%; height:auto; left:-10%; top:3.9%; max-width:none; } /* hair, whole face and chin inside the ring */
 .p2-avatar::after { content:none; }
 
 .p2-analysis {
@@ -322,20 +322,26 @@
 .p2-analysis b { color:var(--white); font-family:var(--display); font-size:clamp(19px, 1.9vw, 24px); line-height:1.1; overflow-wrap:anywhere; }
 .p2-analysis article:nth-child(3) b { color:var(--gold); font-size:clamp(28px, 3vw, 38px); }
 .p2-analysis span { color:var(--muted); font-size:13px; line-height:1.3; }
-/* DISTANCE: the route stacked, then a caution. */
-.p2-leg { display:grid; justify-items:start; row-gap:1px; }
-.p2-distance .p2-leg b { font-size:clamp(16px, 1.6vw, 21px); letter-spacing:.02em; }
-.p2-leg i { font-style:normal; font-weight:900; font-size:18px; line-height:1; color:var(--cyan); padding-left:2px; }
-.p2-warn { display:flex; align-items:center; gap:7px; color:var(--gold) !important; font-weight:900; letter-spacing:.1em; font-size:12px !important; }
-.p2-warn svg { width:18px; height:18px; flex-shrink:0; }
-.p2-warn svg path { fill:var(--gold); }
-.p2-warn svg .p2-warn-mark { fill:none; stroke:var(--ink); stroke-width:2.6; stroke-linecap:round; }
-.p2-method-state small { color:var(--cyan); font-size:10px; font-weight:900; letter-spacing:.15em; }
+/* DISTANCE: HOME → TFY only; the map carries the cities. */
+.p2-analysis .p2-leg { display:flex; align-items:center; gap:10px; font-size:clamp(20px, 1.95vw, 25px); line-height:1; white-space:nowrap; overflow-wrap:normal; }
+.p2-leg svg { width:26px; height:18px; flex-shrink:0; fill:none; stroke:var(--cyan); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.p2-analysis article > span { margin-top:auto; }
+/* Method bar: DELIVERY METHOD | value. Chosen = gold frame + the method's own icon, one glow pulse as it lands. */
+.p2-method-state small { color:var(--cyan); font-size:11px; font-weight:700; letter-spacing:.16em; white-space:nowrap; }
 .p2-method-state {
-  grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center;
-  padding:11px 16px; border-radius:12px; background:rgba(255,214,83,.09); border:1px solid rgba(255,214,83,.35);
+  grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; gap:12px; min-height:43px;
+  padding:0 16px 0 18px; border-radius:10px; background:rgba(10,23,36,.8); border:1.5px solid rgba(121,242,238,.35);
 }
-.p2-method-state strong { color:var(--gold); font-family:var(--display); letter-spacing:.08em; }
+.p2-method-value { display:flex; align-items:center; gap:12px; }
+.p2-method-icon { display:none; }
+.p2-method-icon-undecided { width:30px; height:30px; fill:none; stroke:var(--muted); stroke-width:1.8; stroke-linejoin:round; }
+.p2-method-state:not(.is-chosen) .p2-method-icon-undecided { display:block; }
+.p2-method-state strong { color:#c9d6dd; font-family:var(--display); font-size:18px; letter-spacing:.04em; }
+.p2-method-state.is-chosen { border-color:rgba(255,214,83,.75); background:linear-gradient(90deg, rgba(255,214,83,.04), rgba(255,214,83,.13)); box-shadow:0 0 16px rgba(255,214,83,.12); }
+.p2-method-state.is-chosen .p2-method-icon-chosen { display:block; width:48px; height:32px; object-fit:contain; }
+.p2-method-state.is-chosen strong { color:var(--gold); font-size:20px; }
+.scene-part2.is-analyzed .p2-method-state.is-chosen { animation:p2-method-glow .9s ease-out .45s 1 both; }
+@keyframes p2-method-glow { 0%, 100% { box-shadow:0 0 16px rgba(255,214,83,.12); } 40% { box-shadow:0 0 0 3px rgba(255,214,83,.22), 0 0 30px rgba(255,214,83,.5); } }
 
 /* Sized up: MAP + DISTANCE + CONDITION + BUDGET are the hero; one spacing step (--p2-gap) between rows. */
 .scene-part2.is-active.is-analyzed {

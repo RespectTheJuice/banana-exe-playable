@@ -386,8 +386,11 @@
     $('#p2-payload').textContent = `1 ${choice.name} BANANA`;
     $('#p2-budget').textContent = money(budget);
     $('#p2-analysis-budget').textContent = money(budget);
+    $('#p2-remaining').textContent = money(budget); // live: "You have [budget] remaining."
     // The method chosen by the delivery selector (TREBUCHET for Attempt 01); UNDECIDED only if the page is reached without it.
-    $('#p2-method').textContent = window.BX.getDeliveryMethod?.() || 'UNDECIDED';
+    const method = window.BX.getDeliveryMethod?.() || null;
+    $('#p2-method').textContent = method || 'UNDECIDED';
+    $('#p2-method-state').classList.toggle('is-chosen', !!method);
     p2.classList.remove('is-analyzed');
     p2Analyze.disabled = false;
     p2Continue.disabled = true;

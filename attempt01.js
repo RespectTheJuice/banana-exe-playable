@@ -61,7 +61,7 @@
   const pendingBanana = $('#a1-pending-banana'), fall = $('#a1-fall'), fox = $('#a1-fox'), foxArt = $('#a1-fox-art');
   const failedEl = $('#a1-failed'), resultEl = $('#a1-result'), carry = $('#a1-carry');
   const ctrl = $('#a1-ctrl'), btn = $('#a1-btn'), btnCap = btn.querySelector('.a1-btn-cap'), hint = $('#a1-hint');
-  const meter = $('#a1-meter'), meterFill = $('#a1-meter-fill'), meterPeak = $('#a1-meter-peak'), meterPct = $('#a1-meter-pct');
+  const meter = $('#a1-meter'), meterLabel = meter.querySelector('.a1-meter-label'), meterFill = $('#a1-meter-fill'), meterPeak = $('#a1-meter-peak'), meterPct = $('#a1-meter-pct');
   const live = $('#a1-live');
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -404,7 +404,7 @@
         motion = c > 0.6 ? (c - 0.6) / 0.4 : 0;
         hf = 110 + 410 * c; hg = 0.04 + 0.06 * c; hlp = 600 + 2400 * c; ringSpeed = 0.3 + 2.2 * c;
         tremor = A * K * 0.5;
-        if (s.c >= 1) { s.c = 1; s.peak = 1; s.path = 'full'; enter('full'); fx.full(); announce('Full charge'); setLabel('LAUNCHING…'); }
+        if (s.c >= 1) { s.c = 1; s.peak = 1; s.path = 'full'; enter('full'); fx.full(); announce('Full charge'); setLabel('LAUNCHING…'); setFull(true); }
         break;
       }
       case 'powerdown': {
@@ -584,6 +584,8 @@
     }
     return pts.join(' ');
   }
+  // 100 %: bar, percentage and label turn gold (CHARGE · FULL) for the full-charge sustain. Positions never change.
+  function setFull(on) { ctrl.classList.toggle('is-full', on); meterLabel.textContent = on ? 'CHARGE · FULL' : 'CHARGE'; }
   function drawMeter(tremor) {
     meterFill.style.transform = `scaleX(${s.c.toFixed(4)})`;
     meterPeak.style.transform = `scaleX(${(s.phase === 'powerdown' ? s.peak : s.c).toFixed(4)})`;
@@ -648,7 +650,7 @@
     } else {
       u = LEIC_AT; alt = 0; spin = rm ? 0 : Math.PI * 2.5;
       const e = clamp((ft - FLIGHT.C) / 300);
-      leicRing.style.opacity = e.toFixed(3); leicLabel.classList.add('is-hit');
+      leicRing.style.opacity = e.toFixed(3); leicLabel.classList.add('is-hit'); mapSvg.classList.add('is-leic'); // Leicester only appears once the banana lands there
       routeLeft.style.opacity = (1 - 0.7 * e).toFixed(3);
       if (once('leic')) announce('Down at Leicester');
     }
@@ -727,13 +729,14 @@
     sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, smokeCv.width, smokeCv.height);
     sayLine('');
     map.style.opacity = '0'; map.style.visibility = 'hidden'; proj.style.visibility = 'hidden'; trail.setAttribute('points', ''); projShadow.style.opacity = '0';
-    leicRing.style.opacity = '0'; leicLabel.classList.remove('is-hit'); routeLeft.style.opacity = '1';
+    leicRing.style.opacity = '0'; leicLabel.classList.remove('is-hit'); mapSvg.classList.remove('is-leic'); routeLeft.style.opacity = '1';
     forest.style.visibility = 'hidden'; forest.classList.remove('is-verdict'); forest.dataset.beat = '';
     fall.style.visibility = 'hidden'; fox.hidden = true; pendingBanana.style.opacity = '0'; pendingBeat.textContent = '';
     failedEl.classList.remove('is-on'); resultEl.classList.remove('is-on');
     carry.style.visibility = 'hidden'; carry.style.opacity = '0'; carry.style.transform = '';
     ctrl.classList.remove('is-gone'); btn.disabled = true; btn.classList.remove('is-held'); setLabel('HOLD TO CHARGE'); hint.textContent = '';
     meterFill.style.transform = 'scaleX(0)'; meterPeak.style.transform = 'scaleX(0)'; meterPct.textContent = '0%'; meter.style.transform = '';
+    setFull(false);
     live.textContent = '';
   }
   function teardown() {
