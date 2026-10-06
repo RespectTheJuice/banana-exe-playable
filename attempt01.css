@@ -146,6 +146,12 @@ body:has(.scene-attempt.is-active) .objective { height: 22px; padding: 0 13px; d
 }
 .a1-btn.is-held { transform: translateY(3px); box-shadow: 0 2px 0 var(--gold-shadow), 0 0 0 3px var(--white), 0 0 0 7px var(--cyan); }
 .a1-btn:disabled { opacity: .45; }
+/* Armed and waiting: the button itself pulses (no separate "Press and hold" prompt). */
+.a1-btn.is-ready:not(:disabled) { animation: a1-ready 1.4s ease-in-out infinite; }
+@keyframes a1-ready {
+  0%, 100% { box-shadow: 0 5px 0 var(--gold-shadow), 0 0 0 3px var(--white); }
+  50% { box-shadow: 0 5px 0 var(--gold-shadow), 0 0 0 3px var(--white), 0 0 0 7px rgba(121, 242, 238, .85), 0 0 24px 6px rgba(121, 242, 238, .5); }
+}
 .a1-btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 6px; }
 .a1-hint { grid-area: hint; margin: 0; min-height: 1.3em; font-size: 12px; font-weight: 900; letter-spacing: .1em; color: var(--muted); }
 .a1-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }

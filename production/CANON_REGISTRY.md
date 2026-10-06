@@ -97,7 +97,7 @@ World rule:
 - MAP 02A is canonical local Nottingham. Never redraw, rebuild, recolour or re-route it; HOME and Banana Boutique never move and the roads are never redrawn.
 - The Part 2 Nottingham world is HOME, Banana Boutique, the Royal Snail post office and the Royal Snail drop box.
 - New services are added only as overlays at approved positions, sharing the map's dimming.
-- The Trebutech truck reaches the actual HOME: down the existing street past the junction onto the road beside HOME's block (sheet ≈ x 282, y 342), not the neighbouring block.
+- The Trebutech truck reaches the actual HOME: down the existing street past the junction onto the road beside HOME's block (sheet ≈ x 296, y 351), not the neighbouring block.
 - The baked Part 1 cyan route may be recessed in Part 2 by a non-destructive overlay; the file stays untouched.
 - Trebutech is **not** on MAP 02A and not in Nottingham.
 

@@ -375,44 +375,28 @@
 
   // ---------- PART 2 PREVIEW ----------
   // Kept behind ?scene=part2 until the first attempt sequence is locked.
-  const p2 = $('#p2-intro'), p2Analyze = $('#p2-analyze'), p2Analysis = $('#p2-analysis'), p2Continue = $('#p2-continue');
+  const p2 = $('#p2-intro'), p2Continue = $('#p2-continue');
 
+  // One comprehension screen: map + DISTANCE / CONDITION / BUDGET / DELIVERY METHOD drop in, then CONTINUE (never auto-advances).
   function startPart2Preview() {
     if (!choice) setChoice('ripe');
     show('p2-intro', 'PART 2 // DELIVERY PROBLEM');
     clearGuide(); flash();
     window.BX.setMusicTheme('main');
 
-    $('#p2-payload').textContent = `1 ${choice.name} BANANA`;
-    $('#p2-budget').textContent = money(budget);
     $('#p2-analysis-budget').textContent = money(budget);
     $('#p2-remaining').textContent = money(budget); // live: "You have [budget] remaining."
     // The method chosen by the delivery selector (TREBUCHET for Attempt 01); UNDECIDED only if the page is reached without it.
     const method = window.BX.getDeliveryMethod?.() || null;
     $('#p2-method').textContent = method || 'UNDECIDED';
     $('#p2-method-state').classList.toggle('is-chosen', !!method);
-    p2.classList.remove('is-analyzed');
-    p2Analyze.disabled = false;
+    p2.classList.remove('is-in');
     p2Continue.disabled = true;
-    guide(p2Analyze, 'Click SIZE UP THE PROBLEM', 'Tap SIZE UP THE PROBLEM');
-    later(sfx.route, 250);
+    later(() => { p2.classList.add('is-in'); sfx.route(); }, 120);
+    later(() => { sfx.notice(); p2Continue.disabled = false; }, 900); // the pulsing button is the instruction; no helper text
     // Fetch and decode the Attempt 01 plates while the player reads the problem.
     later(() => window.BX.preloadAttempt01?.(), 600);
   }
-
-  p2Analyze.addEventListener('click', () => {
-    if (p2Analyze.disabled) return;
-    p2Analyze.disabled = true;
-    clearGuide();
-    sfx.arcade();
-    window.BX.duckMusic(1100);
-    p2.classList.add('is-analyzed');
-    later(() => {
-      sfx.notice();
-      p2Continue.disabled = false;
-      guide(p2Continue, 'Click CONTINUE when you are ready', 'Tap CONTINUE when you are ready');
-    }, 520);
-  });
 
   p2Continue.addEventListener('click', () => {
     if (p2Continue.disabled) return;

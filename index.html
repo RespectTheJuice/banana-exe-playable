@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>BANANA.EXE — Part 1</title>
-  <link rel="stylesheet" href="style.css?v=20261005-1000" />
-  <link rel="stylesheet" href="scene02.css?v=20261006-2000" />
-  <link rel="stylesheet" href="transition.css?v=20261006-2000" />
-  <link rel="stylesheet" href="attempt01.css?v=20261006-2000" />
+  <link rel="stylesheet" href="style.css?v=20261006-2300" />
+  <link rel="stylesheet" href="scene02.css?v=20261006-2300" />
+  <link rel="stylesheet" href="transition.css?v=20261006-2300" />
+  <link rel="stylesheet" href="attempt01.css?v=20261006-2300" />
 </head>
 <body>
 <main id="stage" aria-live="polite">
@@ -211,8 +211,9 @@
         <text x="600" y="168" class="t-label is-end">TFY · NORTHAMPTON</text>
       </svg>
       <p class="t-next">NEXT PROBLEM: GET IT TO TFY.</p>
-      <p class="t-loading">DELIVERY OPTIONS LOADING…</p>
-      <div class="t-slots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p class="t-loading">DELIVERY OPTIONS</p>
+      <!-- The same three slots the Part 2 selector uses (cards cloned from transition.js; nothing selected here). -->
+      <div class="t-options" id="t-options" role="img" aria-label="Delivery options: Royal Snail, unavailable, too slow; Trebuchet; and one not yet revealed"></div>
     </div>
     <div class="the-end" id="the-end">
       <img class="end-character" src="assets/skeptical_locked.png" width="414" height="767" alt="Valenté with the Part 1 mission complete" />
@@ -284,7 +285,8 @@
             <div class="dl-map-homeglow" id="dl-map-homeglow"></div>
             <svg class="dl-svg" width="1448" height="1086" viewBox="0 0 1448 1086"><circle id="dl-map-ring" cx="210" cy="483" r="32" fill="none" stroke="#ffd653" stroke-width="3" opacity="0" /></svg>
             <img class="dl-rs-office" src="assets/locations/ROYAL_SNAIL_POST_OFFICE_LOCKED.png" width="1254" height="1254" alt="" />
-            <img class="dl-rs-box" src="assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png" width="1254" height="1254" alt="" />
+            <!-- Royal Snail neighbourhood presence: one swappable slot (transition.js ROYAL_SNAIL_NEIGHBOURHOOD); interim drop box until the kiosk is locked -->
+            <img class="dl-rs-local" id="dl-rs-local" alt="" />
             <div class="dl-map-road" id="dl-map-road">
               <svg class="dl-svg" width="1448" height="1086" viewBox="0 0 1448 1086">
                 <defs><filter id="dl-tsh" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" /></filter></defs>
@@ -300,7 +302,7 @@
              road spill under the truck, aperture between the truck's back and front parts) -->
         <div class="dl-cam" id="dl-dep-under">
           <div id="dl-site">
-            <svg class="dl-svg" width="1013" height="570" viewBox="0 0 1013 570">
+            <svg class="dl-svg" id="dl-site-road" width="1013" height="570" viewBox="0 0 1013 570">
               <polygon id="dl-dep-road" points="" fill="#0e1822" />
               <path id="dl-dep-lane" d="" stroke="#1b2a38" stroke-width="2" stroke-dasharray="18 16" fill="none" />
             </svg>
@@ -338,27 +340,17 @@
     <p class="a1-live" id="dl-live" aria-live="polite" role="status"></p>
   </section>
 
-  <section class="scene scene-part2" id="p2-intro" aria-hidden="true">
+  <!-- DELIVERY PROBLEM: one comprehension screen (the earlier summary state that repeated it is gone). The map shows the actual
+       story objects; CONTINUE is the only way on. -->
+  <section class="scene scene-part2 is-analyzed" id="p2-intro" aria-hidden="true">
     <div class="p2-grid-bg" aria-hidden="true"></div>
     <div class="p2-copy">
-      <p class="p2-kicker">BANANA.EXE // PART 2</p>
       <h2>DELIVERY PROBLEM</h2>
       <p class="p2-objective">GET THE BANANA TO TFY.</p>
-
-      <div class="p2-state" aria-label="Part 2 mission state">
-        <div><span>PAYLOAD</span><b id="p2-payload">1 × RIPE BANANA</b></div>
-        <div><span>BUDGET LEFT</span><b id="p2-budget">£45.00</b></div>
-        <div><span>FROM</span><b>HOME · NOTTINGHAM</b></div>
-        <div><span>DESTINATION</span><b>TFY · NORTHAMPTON</b></div>
-      </div>
-
-      <button class="arcade arcade-sm p2-analyze" id="p2-analyze">
-        <span class="cap">SIZE UP THE PROBLEM</span>
-      </button>
     </div>
 
-    <!-- Route map: HOME (Valenté is here) → TFY. Locked standalone renders, no frame. -->
-    <div class="p2-route-card" role="img" aria-label="Route from HOME in Nottingham, where Valenté is, to TFY in Northampton">
+    <!-- Map: HOME with Valenté and the trebuchet (Nottingham) → TFY (Northampton). Locked standalone renders, no frame. -->
+    <div class="p2-route-card" role="img" aria-label="Route from HOME in Nottingham, where Valenté is with the trebuchet, to TFY in Northampton">
       <svg class="p2-route-svg" viewBox="0 0 1000 300" aria-hidden="true">
         <path class="p2-route-halo" d="M150 228 C360 110 600 300 850 170" />
         <path class="p2-route-line" d="M150 228 C360 110 600 300 850 170" />
@@ -369,10 +361,13 @@
         <img src="assets/locations/S02_HOME_3D_LOCKED.png" width="1254" height="1254" alt="Approved HOME building" />
         <b>HOME</b><span>Nottingham</span>
       </div>
+      <img class="p2-map-launcher" src="assets/launcher.png" width="1536" height="1024" alt="The rented trebuchet at HOME" />
       <div class="p2-landmark p2-landmark-tfy">
         <img src="assets/locations/S02_TFY_BUILDING_LOCKED.png" width="1254" height="1254" alt="Approved TFY building" />
         <b>TFY</b><span>Northampton</span>
       </div>
+      <!-- Rooftop receiving basket: hook only. The corrected map-scale basket is a pending design dependency (CANON_REGISTRY). -->
+      <div class="p2-basket-slot" id="p2-basket-slot" data-asset="pending" hidden></div>
       <div class="p2-avatar" aria-hidden="true"><img src="assets/skeptical_locked.png" width="414" height="767" alt="" /></div>
     </div>
 
@@ -382,14 +377,14 @@
       </article>
       <article><small>CONDITION</small><b>ARRIVE UNDAMAGED</b><span>The banana still has to be presentable.</span></article>
       <article><small>BUDGET</small><b id="p2-analysis-budget">£45.00</b><span>You have <span id="p2-remaining">£45.00</span> remaining.</span></article>
-      <!-- Method bar: gold + the method's own icon once chosen; neutral parcel + cyan only if reached without the selector. -->
-      <div class="p2-method-state" id="p2-method-state"><small>DELIVERY METHOD</small>
-        <span class="p2-method-value">
+      <!-- Delivery method: the trebuchet itself, large; neutral parcel only if the page is reached without the selector. -->
+      <article class="p2-method-state" id="p2-method-state"><small>DELIVERY METHOD</small>
+        <span class="p2-method-visual">
           <img class="p2-method-icon p2-method-icon-chosen" src="assets/launcher.png" width="1536" height="1024" alt="" />
           <svg class="p2-method-icon p2-method-icon-undecided" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3 L26 8.5 V21.5 L15 27 L4 21.5 V8.5 Z M4 8.5 L15 14 L26 8.5 M15 14 V27" /></svg>
-          <strong id="p2-method">UNDECIDED</strong>
         </span>
-      </div>
+        <strong id="p2-method">UNDECIDED</strong>
+      </article>
       <button class="arcade arcade-sm p2-continue" id="p2-continue" type="button">
         <span class="cap">CONTINUE</span>
       </button>
@@ -478,6 +473,15 @@
           <path class="a1-route a1-route-left" id="a1-route-left" />
           <ellipse class="a1-proj-shadow" id="a1-proj-shadow" cx="0" cy="0" rx="34" ry="9" />
           <polyline class="a1-trail" id="a1-trail" points="" />
+          <!-- Story objects (maps orient before they abstract): HOME + the trebuchet + Valenté at the Nottingham origin — they stay
+               after the shot, so the launch point stays readable — and the locked TFY building at Northampton. Pins only support. -->
+          <g class="a1-map-objects" id="a1-map-objects">
+            <image href="assets/locations/S02_HOME_3D_LOCKED.png" x="70" y="515" width="200" height="200" />
+            <image href="assets/launcher.png" x="312" y="618" width="186" height="124" />
+            <image class="a1-map-valente" href="assets/part2/03_goggles_on_ready_LOCKED.png" x="488" y="616" width="82" height="123" />
+            <image href="assets/locations/S02_TFY_BUILDING_LOCKED.png" x="1250" y="196" width="140" height="140" />
+            <g id="a1-tfy-basket" data-asset="pending"></g><!-- rooftop receiving basket hook: corrected asset pending -->
+          </g>
           <ellipse class="a1-tfy-pulse" id="a1-tfy-pulse" cx="1320" cy="330" rx="16" ry="7" />
           <ellipse class="a1-pt a1-pt-tfy" cx="1320" cy="330" rx="12" ry="6" /><path class="a1-stem a1-stem-tfy" d="M1320 330V282" /><circle class="a1-pt a1-pt-tfy" cx="1320" cy="276" r="11" />
           <ellipse class="a1-leic-ring" id="a1-leic-ring" cx="0" cy="0" rx="40" ry="14" />
@@ -485,7 +489,7 @@
           <ellipse class="a1-pt a1-pt-nott" cx="300" cy="720" rx="14" ry="7" /><path class="a1-stem a1-stem-nott" d="M300 720V662" /><circle class="a1-pt a1-pt-nott" cx="300" cy="655" r="14" />
           <text class="a1-label" x="300" y="790" text-anchor="middle">NOTTINGHAM</text>
           <text class="a1-label a1-label-leic" id="a1-leic-label" x="0" y="0" text-anchor="middle">LEICESTER</text>
-          <text class="a1-label a1-label-tfy" x="1320" y="236" text-anchor="middle">TFY // NORTHAMPTON</text>
+          <text class="a1-label a1-label-tfy" x="1320" y="178" text-anchor="middle">TFY // NORTHAMPTON</text>
         </svg>
         <img class="a1-proj" id="a1-proj" src="assets/banana_ripe_v1.png" width="1600" height="1200" alt="" />
       </div>
@@ -531,8 +535,8 @@
   <div class="flash" id="flash"></div>
 </main>
 <script src="game.js?v=20261002-1100"></script>
-<script src="scene02.js?v=20261006-2000"></script>
-<script src="transition.js?v=20261006-2000"></script>
-<script src="attempt01.js?v=20261006-2000"></script>
+<script src="scene02.js?v=20261006-2300"></script>
+<script src="transition.js?v=20261006-2300"></script>
+<script src="attempt01.js?v=20261006-2300"></script>
 </body>
 </html>

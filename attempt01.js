@@ -39,9 +39,9 @@
   const FOREST_ART = { forest: null, fox: { up: null, left: null, right: null }, mouth: null };
 
   // Map flight: left → right on a ground plane receding into depth (map space 1600 × 880; front edge y 840, far edge y 250).
-  const P = { nott: [300, 720], tfy: [1320, 330], ctrl: [760, 600] };
+  const P = { nott: [405, 722], tfy: [1320, 330], ctrl: [760, 600] }; // the shot leaves from the trebuchet beside HOME
   const ROUTE = `M${P.nott} Q${P.ctrl} ${P.tfy}`;
-  const LEIC_AT = 0.43, ALT = 190; // Leicester's place along the route; cruise altitude in map units (at the front)
+  const LEIC_AT = 0.45, ALT = 190; // Leicester's place along the route; cruise altitude in map units (at the front)
 
   // ---------- DOM ----------
   const scene = $('#p2-attempt01'), cell = $('#a1-cell'), view = $('#a1-view'), cam = $('#a1-cam');
@@ -303,7 +303,7 @@
   const ACTIVE = new Set(['idle', 'charging', 'powerdown']);
   function press() {
     if (!s || !s.armed || s.held || window.BX.isPaused() || !scene.classList.contains('is-active') || !ACTIVE.has(s.phase)) return;
-    s.held = true; btn.classList.add('is-held'); setLabel('CHARGING…');
+    s.held = true; btn.classList.add('is-held'); btn.classList.remove('is-ready'); setLabel('CHARGING…');
     window.BX.clearGuide();
     if (s.phase === 'powerdown') { whineStop(); schedStop(); }
     if (s.pose !== '04') { setPose('04'); s.jolt = s.t; fx.chirp(); } // snap back with a spin-up jolt
@@ -617,7 +617,7 @@
   // ---------- Hand over to the flight (both paths converge here) ----------
   function arm() {
     s.armed = true; btn.disabled = false; setLabel('HOLD TO CHARGE'); hint.textContent = '';
-    window.BX.guide(btn, 'Press and hold HOLD TO CHARGE', 'Press and hold HOLD TO CHARGE');
+    window.BX.clearGuide(); btn.classList.add('is-ready'); // the glowing button is the instruction (no extra prompt)
     announce('Press and hold to charge the launcher');
   }
   function cutToFlight() {
@@ -734,7 +734,7 @@
     fall.style.visibility = 'hidden'; fox.hidden = true; pendingBanana.style.opacity = '0'; pendingBeat.textContent = '';
     failedEl.classList.remove('is-on'); resultEl.classList.remove('is-on');
     carry.style.visibility = 'hidden'; carry.style.opacity = '0'; carry.style.transform = '';
-    ctrl.classList.remove('is-gone'); btn.disabled = true; btn.classList.remove('is-held'); setLabel('HOLD TO CHARGE'); hint.textContent = '';
+    ctrl.classList.remove('is-gone'); btn.disabled = true; btn.classList.remove('is-held', 'is-ready'); setLabel('HOLD TO CHARGE'); hint.textContent = '';
     meterFill.style.transform = 'scaleX(0)'; meterPeak.style.transform = 'scaleX(0)'; meterPct.textContent = '0%'; meter.style.transform = '';
     setFull(false);
     live.textContent = '';

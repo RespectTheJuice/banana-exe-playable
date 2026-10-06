@@ -89,6 +89,8 @@ body.is-paused .scene-part2 button { pointer-events: none; }
 body.is-paused .objective { visibility: hidden; }
 /* Phones: the gold frame and the ▶ RESUME control say it; no tag over the controls. */
 @media (orientation: portrait), (max-width: 700px) { .pause-card { display: none; } }
+/* The one-screen Delivery Problem fills the height down to CONTINUE: same rule, no tag over the control. */
+body:has(#p2-intro.is-active) .pause-card { display: none; }
 
 /* ---------- Scenes ---------- */
 .scene { position: absolute; inset: 0; display: none; }

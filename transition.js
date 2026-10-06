@@ -26,6 +26,8 @@
   const RESULT = 'trebuchet';
   const RENTAL = { label: 'TREBUCHET RENTAL', cost: 15 };
   const T = { fadeIn: 300, cycleAt: 700, steps: 17, firstGap: 70, lastGap: 470, lockHold: 1400 }; // selector (ms)
+  // orientation beat (review correction): the wider regional map first, then a push from the map into the facility (ms)
+  const OR = { fadeIn: 300, hold: 1900, push: 1700 };
   const DEP = 5600; // origin beat: pull away → portal forms → crossing → portal closes → pull-back (ms)
   // origin beat cues, as fractions of DEP (board 09): 0.7 s seed · 1.0 s edges meet · 1.4 s open · 2.4–3.4 s crossing ·
   // 3.9 s contracting · 4.4 s gone · 5.6 s on the regional journey
@@ -33,6 +35,10 @@
   // journey → MAP 02A → HOME → receipt (ms from the end of the origin beat; board 05)
   const TR = { RDRIVE: 7000, ACC: 500, PUSH0: 2500, PUSH1: 3400, DIS0: 3100, DIS1: 3500, M0: 3000, M1: 5600, C0: 3400, C1: 5600,
     H0: 3000, H1: 3600, ARRIVE: 600, HOLD: 700, chargeIn: 380, budgetAt: 450, CUT: 8900 };
+
+  // Royal Snail's neighbourhood presence on MAP 02A: ONE swappable slot. The drop box is INTERIM; when the locked
+  // self-serve kiosk / micro-depot exists, point `src` at it and give its approved sheet-pixel placement here.
+  const ROYAL_SNAIL_NEIGHBOURHOOD = { status: 'interim', src: 'assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png', x: 298.86, y: 294.92, w: 33.36, h: 33.36 };
 
   // ---------- DOM ----------
   const status = $('#dl-status'), select = $('#dl-select'), options = $('#dl-options'), pointer = $('#dl-pointer');
@@ -67,6 +73,14 @@
     return c;
   });
   const resultIndex = DELIVERY_OPTIONS.findIndex((o) => o.key === RESULT);
+  // Part 1's ending shows the same three slots (nothing selected), so it hands straight into this selector.
+  const teaserOptions = document.getElementById('t-options');
+  if (teaserOptions) cards.forEach((c) => { const t = c.cloneNode(true); t.querySelector('.dl-chip')?.remove(); t.setAttribute('aria-hidden', 'true'); teaserOptions.appendChild(t); });
+  (() => {
+    const rs = document.getElementById('dl-rs-local'), n = ROYAL_SNAIL_NEIGHBOURHOOD;
+    rs.src = n.src; rs.dataset.status = n.status;
+    Object.assign(rs.style, { left: `${n.x}px`, top: `${n.y}px`, width: `${n.w}px`, height: `${n.h}px` });
+  })();
 
   // Deterministic schedule: `steps` highlights with gaps growing fast → slow, ending on the RESULT card.
   const schedule = (() => {
@@ -135,6 +149,7 @@
         const q = (sel) => svg.querySelector(sel);
         return { svg, root: q('#portal'), base: q('#portal').getAttribute('transform'), spill: q('#portal-spill'), seed: q('#portal-threshold'),
           mem: q('#portal-membrane'), rings: q('#portal-rings'), collar: q('#portal-collar'), anchors: q('#portal-anchors'),
+          scaled: ['#portal-membrane', '#portal-rings', '#portal-collar', '#portal-glow', '#portal-edge', '#portal-anchors'].map(q),
           strokes: [...svg.querySelectorAll('#portal-glow path, #portal-edge path')], lips: [...svg.querySelectorAll('#portal-edge path[stroke="#eaffff"]')] };
       };
       portal.spill = mount(el('dl-portal-spill'), 'dls-'); portal.spill.root.style.display = 'none';
@@ -210,10 +225,18 @@
   const JV = J.L / (TR.RDRIVE - TR.ACC / 2 - 450);
   const jDist = (t) => (t <= 0 ? 0 : t < TR.ACC ? JV * t * t / (2 * TR.ACC) : Math.min(J.L, JV * (t - TR.ACC / 2)));
   // MAP 02A (sheet px): the existing diagonal street past HOME's block; the truck enters at the map frame's left edge
-  const ROAD = (x) => 252.5 + (x - 97) * 0.4375, MX0 = 70, MX1 = 180, SPR = 86, CXF = 0.45, CYF = 0.86, DIR = Math.atan(0.4375) * 180 / Math.PI;
+  // MAP 02A street to the ACTUAL HOME (sheet px): down the existing street from the map frame's left edge, across the
+  // junction, onto the road that runs past HOME's block, stopping beside HOME's lot (not the neighbouring block).
+  const MPATH = [[70, 240.69], [245, 317.25], [296, 350.6]], SPR = 86, CXF = 0.45, CYF = 0.86;
+  const MSEG = MPATH.slice(1).map((p, i) => Math.hypot(p[0] - MPATH[i][0], p[1] - MPATH[i][1])), ML = MSEG.reduce((a, b) => a + b, 0);
+  function mapAt(d) { // point + heading (deg) at distance d along MPATH (extends past the end along the last segment)
+    let i = 0; while (i < MSEG.length - 1 && d > MSEG[i]) { d -= MSEG[i]; i++; }
+    const a = MPATH[i], b = MPATH[i + 1], q = d / MSEG[i];
+    return { x: a[0] + (b[0] - a[0]) * q, y: a[1] + (b[1] - a[1]) * q, deg: Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI };
+  }
   function mapCam(c) { const k0 = 0.75, k1 = 1.35, k = k0 * Math.pow(k1 / k0, c), w = (k - k0) / (k1 - k0); return { k, tx: 253 + (216 - 253) * w - 200 * k, ty: 317.5 + (263.25 - 317.5) * w - 330 * k }; }
   const uAtMap = (t) => outCubic((t - TR.M0) / (TR.M1 - TR.M0)), camAt = (t) => sine((t - TR.C0) / (TR.C1 - TR.C0)), zAt = (t) => sine((t - TR.PUSH0) / (TR.PUSH1 - TR.PUSH0));
-  function mapPose(t) { const { k, tx, ty } = mapCam(camAt(t)); const cx = MX0 + (MX1 - MX0) * uAtMap(t), cy = ROAD(cx); return { x: (cx - CXF * SPR) * k + tx, y: (cy - CYF * SPR) * k + ty, s: SPR * k }; }
+  function mapPose(t) { const { k, tx, ty } = mapCam(camAt(t)); const m = mapAt(ML * uAtMap(t)); return { x: (m.x - CXF * SPR) * k + tx, y: (m.y - CYF * SPR) * k + ty, s: SPR * k }; }
   const TGT = (t) => { const m = mapPose(t); return { x: m.x + m.s / 2, y: m.y + m.s / 2 }; }; // the push delivers the truck onto the map truck
   function regCam(t) {
     const z = zAt(t), c = atJ(jDist(t)), k = 0.4 * Math.pow(1.25, z);
@@ -227,6 +250,7 @@
     tick: (i) => tone(1500 + (i % 2) * 180, 0, 0.03, { type: 'square', vol: 0.05 }),
     lock: () => { tone(660, 0, 0.12, { type: 'triangle', vol: 0.1 }); tone(990, 0.09, 0.28, { type: 'triangle', vol: 0.1 }); },
     portalOpen: () => { tone(520, 0, 0.55, { type: 'sine', slideTo: 1040, vol: 0.035 }); tone(1560, 0.12, 0.5, { type: 'sine', slideTo: 2080, vol: 0.018 }); },
+    push: () => { noise(0, 0.6, 0.05); tone(180, 0, 0.7, { type: 'sine', slideTo: 320, vol: 0.05 }); },
     portalClose: () => { tone(1040, 0, 0.42, { type: 'sine', slideTo: 420, vol: 0.03 }); },
     brake: () => { noise(0, 0.25, 0.12); tone(110, 0, 0.18, { type: 'sine', slideTo: 60, vol: 0.18 }); },
     kaching: () => { noise(0, 0.06, 0.3); [1319, 1568, 2093].forEach((f, i) => tone(f, 0.05 + i * 0.07, 0.3, { type: 'triangle', vol: 0.1 })); tone(2637, 0.32, 0.35, { type: 'triangle', vol: 0.08 }); },
@@ -270,19 +294,23 @@
   const setK = () => { const k = stage.clientWidth / 1013 || 1; stage.style.setProperty('--k', k.toFixed(4)); stage.style.setProperty('--rk', Math.max(k, 0.6).toFixed(4)); };
 
   // ---------- Origin beat frame (t = 0–1 over DEP) ----------
-  function departFrame(t) {
+  function departFrame(t, camOv = null) {
     const { F, AP, TL, BN, HT, REAR, TS, J0, J0S } = G;
     const u = uAtDep(t), rear = F(-u, 30.5, 0);
     const tX = rear[0] - REAR[0] * TS / 1254, tY = rear[1] - REAR[1] * TS / 1254, ctr = [tX + TS / 2, tY + TS / 2];
     // pull-back: scale the whole origin about the truck so it lands on the journey's opening truck pose
-    const z = ease(ramp(t, DT.pull0, 1)), f = 1 + (J0S / TS - 1) * z;
+    const z = ease(ramp(t, DT.pull0, 1));
+    let f = 1 + (J0S / TS - 1) * z;
     const goal = [ctr[0] + (J0[0] - ctr[0]) * z, ctr[1] + (J0[1] - ctr[1]) * z];
-    const tx = goal[0] - ctr[0] * f, ty = goal[1] - ctr[1] * f;
+    let tx = goal[0] - ctr[0] * f, ty = goal[1] - ctr[1] * f;
+    if (camOv) ({ f, tx, ty } = camOv); // the orientation push drives the camera instead
     const cam = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${f.toFixed(4)})`;
     el('dl-dep-under').style.transform = cam; el('dl-dep-over').style.transform = cam;
-    el('dl-site').style.opacity = f3(clamp(1 - (z - 0.35) / 0.55));
-    const regOp = clamp((z - 0.3) / 0.6);
-    el('dl-reg').style.opacity = f3(regOp); el('dl-labels').style.opacity = f3(regOp);
+    if (!camOv) {
+      el('dl-site').style.opacity = f3(clamp(1 - (z - 0.35) / 0.55)); el('dl-site-road').style.opacity = '1';
+      const regOp = clamp((z - 0.3) / 0.6);
+      el('dl-reg').style.opacity = f3(regOp); el('dl-labels').style.opacity = f3(regOp);
+    }
     // exit route ahead of the truck + contact shadow
     const front = F(-u - TL, 30.5), far = F(-300, 30.5), sh = F(-u - TL / 2, 30.5);
     const route = el('dl-dep-route');
@@ -290,22 +318,23 @@
     route.setAttribute('stroke-opacity', f3(0.6 * ramp(t, DT.close1, DT.pull0 + 0.04) * (1 - ramp(t, DT.pull0 + 0.06, 0.95))));
     const shadow = el('dl-dep-shadow');
     shadow.setAttribute('transform', `translate(${f1(sh[0])} ${f1(sh[1])}) rotate(23.6)`); shadow.setAttribute('rx', f1(TS * 0.36)); shadow.setAttribute('ry', f1(TS * 0.1));
-    // portal state
-    const seed = ease(ramp(t, DT.seed0, DT.seed1)), edge = ease(ramp(t, DT.edge0, DT.edge1)), mem = ease(ramp(t, DT.mem0, DT.mem1));
-    const c = ease(ramp(t, DT.close0, DT.close1)), liveP = t >= DT.seed0 && t < DT.close1, open = mem * (1 - c);
+    // portal state — opening and closing mirror each other: small compressed aperture at road level → grows up and out
+    // to the full gateway → (crossing) → shrinks down and in to the road line → gone. The whole outline moves as one shape.
+    const seed = ramp(t, DT.seed0, DT.seed0 + 0.025), g = ease(ramp(t, DT.seed0, DT.mem1)), mem = g;
+    const c = ease(ramp(t, DT.close0, DT.close1)), liveP = t >= DT.seed0 && t < DT.close1, open = g * (1 - c);
+    const sx = (0.2 + 0.8 * g) * (1 - 0.8 * c), sy = (0.06 + 0.94 * g) * (1 - c);
     if (portal.main) {
-      const m = portal.main, sx = 1 - 0.8 * c, sy = 1 - c;
-      m.svg.style.opacity = liveP ? f3(1 - c * c) : '0';
-      m.root.setAttribute('transform', `${m.base} translate(32 0) scale(${sx.toFixed(4)} ${sy.toFixed(4)}) translate(-32 0)`);
-      m.seed.setAttribute('transform', `translate(32 0) scale(${seed.toFixed(4)} 1) translate(-32 0)`); m.seed.setAttribute('opacity', f3(seed));
-      m.anchors.setAttribute('opacity', f3(seed));
+      const m = portal.main, sc = (x, y) => `translate(32 0) scale(${x.toFixed(4)} ${y.toFixed(4)}) translate(-32 0)`;
+      m.svg.style.opacity = liveP ? f3(seed * (1 - c * c)) : '0';
+      m.root.setAttribute('transform', m.base);
+      m.scaled.forEach((e) => e.setAttribute('transform', sc(sx, sy)));
+      m.seed.setAttribute('transform', sc(sx, 1)); m.seed.setAttribute('opacity', f3(seed)); // the road line keeps its thickness
       m.mem.setAttribute('opacity', f3(mem)); m.rings.setAttribute('opacity', f3(mem)); m.collar.setAttribute('opacity', f3(mem));
-      const off = (100 * (1 - edge)).toFixed(2);
-      m.strokes.forEach((p) => p.setAttribute('stroke-dashoffset', off));
-      const lip = f3(0.55 + 0.45 * Math.max(edge * (1 - mem), c));
+      m.strokes.forEach((p) => p.setAttribute('stroke-dashoffset', '0'));
+      const lip = f3(0.55 + 0.45 * Math.max(1 - g, c));
       m.lips.forEach((p) => p.setAttribute('opacity', lip));
     }
-    if (portal.spill) portal.spill.svg.style.opacity = liveP ? f3(Math.max(0.35 * edge, open)) : '0';
+    if (portal.spill) portal.spill.svg.style.opacity = liveP ? f3(seed * Math.max(0.35 * g, open)) : '0';
     // threshold plane split: the part of the truck already past the plane is drawn in front of the portal (its projected hull);
     // everything else stays behind the membrane. The light band at the plane is overlay light only.
     const BF = BN + 16, aF = -u - TL, aR = -u, split = liveP && mem > 0, crossing = aF < AP && aR > AP;
@@ -330,6 +359,29 @@
     });
   }
 
+  // ---------- Orientation beat (t = ms): the wider world first, then world → facility ----------
+  // The regional map is framed wide (Trebutech at its edge of the world, the route, HOME / Nottingham). The facility sits at
+  // the Trebutech end at map scale; the push grows it to full size while the map scales with it and falls away.
+  const OK0 = 0.36, OPOS = [150, 236], OF0 = 0.22;
+  const ORIGIN_ANCHOR = (() => { const r = G.F(-1, 30.5, 0); return [r[0] - G.REAR[0] * G.TS / 1254 + G.TS / 2, r[1] - G.REAR[1] * G.TS / 1254 + G.TS / 2]; })();
+  function orientFrame(t) {
+    const p = ease(ramp(t, OR.fadeIn + OR.hold, OR.fadeIn + OR.hold + OR.push));
+    const f = OF0 * Math.pow(1 / OF0, p), A = ORIGIN_ANCHOR;
+    const P = [OPOS[0] + (A[0] - OPOS[0]) * p, OPOS[1] + (A[1] - OPOS[1]) * p];   // where the anchor sits on screen
+    departFrame(0, { f, tx: P[0] - A[0] * f, ty: P[1] - A[1] * f });
+    // the regional map is locked to the same move: its Trebutech end stays under the facility
+    const k = OK0 * f / OF0, rtx = P[0] + 1230 * k, rty = P[1] - 150 * k;
+    el('dl-reg-cam').style.transform = `translate(${rtx.toFixed(2)}px, ${rty.toFixed(2)}px) scale(${k.toFixed(4)})`;
+    const fade = clamp(t / OR.fadeIn);
+    el('dl-reg').style.opacity = f3(fade * (1 - ramp(p, 0.45, 0.9)));
+    el('dl-site').style.opacity = f3(fade); el('dl-site-road').style.opacity = f3(ramp(p, 0.25, 0.75));
+    const h = [786 * k + rtx, 459 * k + rty];
+    Object.assign(el('dl-label-origin').style, { left: `${f1(Math.max(10, P[0] - 62))}px`, top: `${f1(P[1] + 48)}px` });
+    Object.assign(el('dl-label-home').style, { left: `${f1(h[0] - 70)}px`, top: `${f1(h[1] + 2)}px` });
+    el('dl-labels').style.opacity = f3(fade * (1 - ramp(p, 0, 0.35)));
+    return p;
+  }
+
   // ---------- Journey + MAP 02A frame (t = ms after the origin beat) ----------
   function travelFrame(t) {
     // regional layer (the push carries the truck onto the map truck's live screen point)
@@ -348,10 +400,12 @@
     el('dl-reg').style.opacity = f3(1 - aOp); el('dl-local').style.opacity = f3(aOp);
     const mc = mapCam(camAt(t));
     el('dl-local-cam').style.transform = `translate(${mc.tx.toFixed(2)}px, ${mc.ty.toFixed(2)}px) scale(${mc.k.toFixed(4)})`;
-    const u = uAtMap(t), cx = MX0 + (MX1 - MX0) * u, cy = ROAD(cx);
-    const nx = cx + 40 * 0.916, ex = MX1 + 40 * 0.916;
-    el('dl-map-trail').setAttribute('d', u >= 1 ? `M${f1(ex)} ${f1(ROAD(ex))}` : `M${f1(nx)} ${f1(ROAD(nx))} L${f1(ex)} ${f1(ROAD(ex))}`);
-    el('dl-map-shadow').setAttribute('transform', `translate(${f1(cx + 2)} ${f1(cy - 2)}) rotate(${DIR.toFixed(1)})`);
+    const u = uAtMap(t), mp = mapAt(ML * u), cx = mp.x, cy = mp.y;
+    const nose = mapAt(ML * u + 40), end = mapAt(ML + 40);
+    let trail = `M${f1(nose.x)} ${f1(nose.y)}`;
+    if (u < 1) { for (let i = 1; i < MPATH.length; i++) if (MSEG.slice(0, i).reduce((a, b) => a + b, 0) > ML * u + 40) trail += ` L${MPATH[i][0]} ${MPATH[i][1]}`; trail += ` L${f1(end.x)} ${f1(end.y)}`; }
+    el('dl-map-trail').setAttribute('d', trail);
+    el('dl-map-shadow').setAttribute('transform', `translate(${f1(cx + 2)} ${f1(cy - 2)}) rotate(${mp.deg.toFixed(1)})`);
     el('dl-map-shadow').setAttribute('opacity', t >= TR.H1 ? '1' : '0');
     placeTruck('map', cx - CXF * SPR - 52, cy - CYF * SPR - 140, SPR, 'none', t >= TR.H1);
     // handoff: one truck layer carries the regional pose onto the map pose across the dissolve (no teleport, no reverse)
@@ -360,7 +414,7 @@
       const hx = a.x + (b.x - a.x) * q, hy = a.y + (b.y - a.y) * q, hs = a.s + (b.s - a.s) * q;
       placeTruck('hand', hx, hy, hs);
       Object.assign(el('dl-hand-shadow').style, { left: `${f1(hx + hs * 0.12)}px`, top: `${f1(hy + hs * 0.74)}px`, width: `${f1(hs * 0.8)}px`, height: `${f1(hs * 0.22)}px`,
-        transform: `rotate(${DIR.toFixed(1)}deg)`, visibility: 'visible' });
+        transform: `rotate(${mapAt(0).deg.toFixed(1)}deg)`, visibility: 'visible' });
     } else { placeTruck('hand', 0, 0, 0, 'none', false); el('dl-hand-shadow').style.visibility = 'hidden'; }
     // HOME arrival: one gold ring pulse + restrained glow (the map never moves)
     const arrive = t < TR.M1 ? 0 : Math.min(1, (t - TR.M1) / TR.ARRIVE), pulse = arrive > 0 && arrive < 1 ? Math.sin(Math.PI * arrive) : 0;
@@ -404,6 +458,11 @@
         c.style.setProperty('--pulse', (u < 1 ? Math.sin(Math.PI * clamp(u)) : 0).toFixed(3));
         if (t - s.lockT >= T.lockHold) startOrigin();
       }
+    } else if (s.phase === 'orient') {
+      setK();
+      orientFrame(pt);
+      if (pt >= OR.fadeIn + OR.hold && once('push')) { fx.push(); announce('Trebutech Rental and Dispatch'); }
+      if (pt >= OR.fadeIn + OR.hold + OR.push) { enter('depart'); parkRegional(); departFrame(0); }
     } else if (s.phase === 'depart') {
       setK();
       const u01 = clamp(pt / DEP);
@@ -442,18 +501,21 @@
   }
 
   function startOrigin() {
-    enter('depart');
+    enter('orient');
     select.style.visibility = 'hidden';
     stage.style.visibility = 'visible';
     el('dl-local').style.opacity = '0';
-    // the regional layer waits under the origin, parked on the journey's opening frame (no truck); it fades in on the pull-back
-    el('dl-reg-cam').style.transform = 'translate(504px, 184.8px) scale(0.4)';
     el('dl-reg-trail').setAttribute('d', trailFrom(0)); el('dl-reg-ctx').setAttribute('opacity', '1'); el('dl-reg-home').style.opacity = '1';
-    Object.assign(el('dl-label-origin').style, { left: '10px', top: '290.8px' });
-    Object.assign(el('dl-label-home').style, { left: '748.4px', top: '370.4px' });
     placeTruck('reg', 0, 0, 0, 'none', false);
     ['dl-dep-under', 'dl-dep-over'].forEach((id) => { el(id).style.visibility = 'visible'; });
-    setK(); departFrame(0);
+    setK(); orientFrame(0);
+  }
+  // after the push the regional layer waits under the origin, parked on the journey's opening frame (no truck);
+  // it fades back in on the pull-back
+  function parkRegional() {
+    el('dl-reg-cam').style.transform = 'translate(504px, 184.8px) scale(0.4)';
+    Object.assign(el('dl-label-origin').style, { left: '10px', top: '290.8px' });
+    Object.assign(el('dl-label-home').style, { left: '748.4px', top: '370.4px' });
   }
   function startTravel() {
     enter('travel');
@@ -500,8 +562,8 @@
   window.BX.getDeliveryMethod = () => (s && s.method) || method;
   window.BX.setDeliveryMethod = (m) => { method = m; }; // for debug jumps that skip the transition
   window.BX.deliveryOptions = () => DELIVERY_OPTIONS.map((o) => ({ ...o }));
-  window.BX.deliveryTiming = () => ({ select: { ...T, lockAt }, dep: DEP, depCues: { ...DT }, travel: { ...TR } });
+  window.BX.deliveryTiming = () => ({ select: { ...T, lockAt }, orient: { ...OR }, dep: DEP, depCues: { ...DT }, travel: { ...TR } });
   window.BX.deliveryTransitionState = () => s && { phase: s.phase, t: s.t, phaseT: s.phaseT, hi: s.hi, step: s.step, method: s.method, charged: s.charged, done: s.done, lockT: s.lockT, arriveT: s.arriveT, matte: !!matteURL, portal: !!portal.main,
     // world-space progress (origin units out of the bay, journey distance, MAP 02A street fraction): only ever increases
-    progress: s.phase === 'depart' ? { dep: uAtDep(clamp((s.t - s.phaseT) / DEP)) } : s.phase === 'travel' ? { journey: jDist(s.t - s.phaseT), street: uAtMap(s.t - s.phaseT) } : null };
+    progress: s.phase === 'orient' ? { dep: 1 } : s.phase === 'depart' ? { dep: uAtDep(clamp((s.t - s.phaseT) / DEP)) } : s.phase === 'travel' ? { journey: jDist(s.t - s.phaseT), street: uAtMap(s.t - s.phaseT) } : null };
 })();

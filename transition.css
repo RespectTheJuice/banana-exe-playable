@@ -87,7 +87,7 @@
 .dl-map-recess { position: absolute; left: -22px; top: -130px; mix-blend-mode: multiply; }
 .dl-map-homeglow { position: absolute; left: 100px; top: 300px; width: 220px; height: 200px; border-radius: 50%; opacity: 0; background: radial-gradient(closest-side, rgba(255, 214, 83, .30), rgba(255, 214, 83, 0) 100%); }
 .dl-rs-office { position: absolute; left: 529.93px; top: 118.27px; width: 138.55px; height: 138.55px; filter: brightness(.82) saturate(.92); }
-.dl-rs-box { position: absolute; left: 298.86px; top: 294.92px; width: 33.36px; height: 33.36px; filter: brightness(.85) saturate(.95); }
+.dl-rs-local { position: absolute; filter: brightness(.85) saturate(.95); } /* placement comes from ROYAL_SNAIL_NEIGHBOURHOOD */
 .dl-map-road { position: absolute; left: 52px; top: 140px; width: 1344px; height: 422px; overflow: hidden; }
 .dl-map-road > .dl-svg { left: -52px; top: -140px; }
 /* Origin */
@@ -99,7 +99,7 @@
 .dl-hand-shadow { position: absolute; left: 0; top: 0; width: 0; height: 0; border-radius: 50%; background: rgba(0, 0, 0, .55); filter: blur(4px); visibility: hidden; }
 /* Journey labels: short, secondary to the truck */
 .dl-labels { position: absolute; inset: 0; pointer-events: none; }
-.dl-labels p { position: absolute; margin: 0; display: grid; line-height: 1.1; opacity: 0; }
+.dl-labels p { position: absolute; margin: 0; display: grid; line-height: 1.1; }
 .dl-label-origin b { font-family: var(--display); font-size: 12px; letter-spacing: .06em; color: #cfe6ef; }
 .dl-label-origin span { font-size: 9px; font-weight: 700; letter-spacing: .12em; color: var(--cyan); }
 .dl-label-home { width: 140px; justify-items: center; line-height: 1.05 !important; }
