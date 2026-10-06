@@ -88,12 +88,51 @@ Rule (for the replacement):
 - Composite it onto the canonical TFY building (`assets/locations/S02_TFY_BUILDING_LOCKED.png`); do not redraw or replace the TFY building.
 - The banana should visibly drop inside the basket.
 
+### MAP 02A — local Nottingham
+
+LOCKED map authority:
+- `assets/MAP_02A_NOTTINGHAM_PROCUREMENT_LOCKED.png` (1448 × 1086 sheet)
+
+World rule:
+- MAP 02A is canonical local Nottingham. Never redraw, rebuild, recolour or re-route it; HOME and Banana Boutique never move and the roads are never redrawn.
+- The Part 2 Nottingham world is HOME, Banana Boutique, the Royal Snail post office and the Royal Snail drop box.
+- New services are added only as overlays at approved positions, sharing the map's dimming.
+- The baked Part 1 cyan route may be recessed in Part 2 by a non-destructive overlay; the file stays untouched.
+- Trebutech is **not** on MAP 02A and not in Nottingham.
+
+### Royal Snail (postal service) — Nottingham
+
+LOCKED runtime authority:
+- `assets/locations/ROYAL_SNAIL_POST_OFFICE_LOCKED.png` — SHA-256 `a5c36c9baf7426e94f69f3aa8fe1f17313eb10a6b88bc26712773eb4418cc55f`
+- `assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png` — SHA-256 `d02d22bd23c269931430123a709b82dad3ea33ff97d9d5a470258f917e92e21e`
+
+LOCKED brand treatment:
+- Deep red, navy and restrained gold; crowned snail mark.
+
+Approved MAP 02A placement (sheet pixels):
+- Post office: `x 529.93, y 118.27, 138.55 × 138.55` — fully covers the map's generic corner building.
+- Drop box: `x 298.86, y 294.92, 33.36 × 33.36` — at the junction.
+- Secondary during the Trebutech arrival; may be modestly dimmed with the map.
+
+Selector card: `ROYAL SNAIL` / `UNAVAILABLE` stamp / `TOO SLOW` (greyed; never the result).
+
+### Trebutech Rental & Dispatch — regional origin
+
+LOCKED runtime authority:
+- `assets/locations/TREBUTECH_RENTAL_DISPATCH_BUILDING_LOCKED.png` (1254 × 1254 RGBA) — SHA-256 `ad830e9f0385ef4d5b9044d04b2066ec2890a07ec552da24a64dbc4977ca0c09`
+
+Rule:
+- A regional origin somewhere in the wider world; **no named city**; never on MAP 02A or in Nottingham; not placed permanently on the regional map (only the journey edge label `TREBUTECH` / `RENTAL & DISPATCH`).
+- Do not raise the shutter, redraw signage, add cargo, add a trebuchet or add a city name.
+- The base-exit portal is a separate system layer; it is never baked into this render.
+
 ### Leicester
 
 Current role:
 - Attempt 01 failure/landing location.
 
 Rule:
+- Leicester never appears (map label, pin or copy) before Attempt 01 fails there.
 - The environment does not need to be visually unique to Leicester.
 - The UI must make the location unmistakable with a strong **LEICESTER** label when the banana lands.
 - Do not rely on abstract map geometry alone to communicate the location.
@@ -132,7 +171,8 @@ LOCKED brand treatment:
 
 Rule:
 - This truck communicates the rented trebuchet delivery to HOME.
-- Do not show a newly invented trebuchet on or inside the truck.
+- Do not show a newly invented trebuchet on or inside the truck; no cargo.
+- Never mirror or recolour it. Runtime-only matte, mask, contact shadow and a separate threshold-light band are allowed; its pixels are never altered.
 - Do not redraw the truck into a realistic conventional lorry/van.
 
 ### Banana Boutique delivery truck
@@ -149,6 +189,20 @@ Rule:
 - Not a player delivery-method option.
 - Must not replace the Trebutech truck in the Part 2 rental/delivery sequence.
 - Use the exact locked asset; do not redraw or restyle it.
+
+## Systems
+
+### Vehicle base portal
+
+LOCKED system visual (see `product.md` → Vehicle portal system for the rule and timing):
+- `assets/systems/vehicle-portal/VEHICLE_BASE_PORTAL_OPEN_LOCKED.svg` (SHA-256 `0be68b885b0d10034c32ae870a76590c3b1981ade8b2269d71e118a903b6fdd2`) — implementation source, animated through its named groups at runtime.
+- `assets/systems/vehicle-portal/VEHICLE_BASE_PORTAL_OPEN_REFERENCE_LOCKED.png` (SHA-256 `d6000479b74d80a0805bbe84fbed45e76c5fe800397007b5d3f767353a20decf`) — reference only.
+
+Rule:
+- System cyan/aqua only; never brand-coloured, never redrawn in CSS/canvas, never baked into a building render.
+- Base exit/return only. No portal at a destination (no HOME portal on the Trebutech delivery).
+
+## Vehicles and delivery props (Part 3)
 
 ### DenorD drone-delivery box — Part 3
 

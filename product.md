@@ -170,9 +170,27 @@ Other locations may gain a portal only when the story establishes them as the ho
 
 The **portal behavior, semantic rule and standardized cyan/aqua system-color direction are locked product rules**.
 
-The exact portal geometry, animation timing, edge treatment, distortion, sound and final rendered/implemented visual are **not yet locked** and require a dedicated design/review pass before implementation.
+The **open-state portal visual is now LOCKED** after the dedicated design/review pass:
 
-Do not invent a final portal asset or effect directly in code before that visual pass is reviewed and locked.
+- `assets/systems/vehicle-portal/VEHICLE_BASE_PORTAL_OPEN_LOCKED.svg` — the exact implementation source. Runtime code animates its own named groups (`portal-spill`, `portal-threshold`, `portal-membrane`, `portal-rings`, `portal-collar`, `portal-glow`, `portal-edge`, `portal-anchors`); it is never redrawn in CSS or canvas, recoloured or baked into a building render.
+- `assets/systems/vehicle-portal/VEHICLE_BASE_PORTAL_OPEN_REFERENCE_LOCKED.png` — visual reference only.
+
+Locked geometry: an upright aperture across the exit road, square to travel, 32 × 28 building units, flat on the road with rounded top corners; placed at the base boundary just past the apron edge (≈ 23 building units beyond it), never inside the bay.
+
+Locked base-exit timing (first use: Trebutech):
+
+| Time | Beat |
+| --- | --- |
+| 0–0.5 s | vehicle pulls away; portal invisible |
+| ≈ 0.7 s | near-white seed line forms across the road |
+| ≈ 1.0 s | edges rise from both anchors and meet at the top |
+| ≈ 1.4 s | fully open (membrane, collar, spill) |
+| ≈ 2.4–3.4 s | vehicle crosses: the part already through is in front of the plane, the rest behind the membrane; a separate cyan/white threshold-light band may cross the body (light only — vehicle pixels unchanged) |
+| ≈ 3.9 s | contracts toward the threshold centre |
+| ≈ 4.4 s | invisible; the vehicle keeps driving |
+| ≈ 5.6 s | camera pull-back lands on the regional journey |
+
+It is not a scene cut and the vehicle never vanishes. Sound stays a short system shimmer on the SFX bus. Other base applications (HOME, Banana Boutique, Exotic Fruits) reuse the same system and still need their own staging pass before implementation.
 
 ## Current Part 2 flow
 
@@ -186,19 +204,20 @@ This is the current product-level sequence. Detailed staging authority lives in:
 
 1. End on the three delivery-method options.
 2. Rapid selector cycles through all three with sound.
-3. Selector looks random but deterministically slows and lands on **TREBUCHET** for this build. TREBUCHET is the only named option; the other two slots stay unlabelled (shown as unknown) until their names are decided.
-4. TREBUCHET settles/bounces and receives one restrained confirmation glow pulse.
-5. Reveal the Trebutech regional origin / Rental & Dispatch facility.
+3. Selector slots, left to right: **ROYAL SNAIL** (`UNAVAILABLE` stamp, `TOO SLOW`), **TREBUCHET**, and an unrevealed `? ? ?` slot (no drone, no DenorD, no hint). It looks random but runs a deterministic 17-step cycle through all three and always lands on **TREBUCHET**, then holds ≈ 1.4 s.
+4. TREBUCHET locks: gold frame, restrained bounce, one glow pulse and a `LOCKED IN` chip; the other two dim.
+5. Reveal the Trebutech Rental & Dispatch facility (regional origin, no named city, never on MAP 02A).
 6. The locked **Trebutech** delivery truck departs its own base through the standardized BANANA.EXE vehicle portal.
 7. The portal closes after the truck crosses it.
-8. Continue into the visible regional journey toward **HOME / Nottingham**; the truck's branding communicates the rented trebuchet and there is no visible cargo.
-9. The truck arrives at HOME normally — **no destination portal** — and HOME receives the approved restrained arrival response.
-10. Show the transaction clearly:
+8. Camera pulls back onto the visible regional journey (edge label `TREBUTECH` / `RENTAL & DISPATCH` → `HOME` / `Nottingham`); the truck's branding communicates the rented trebuchet and there is no visible cargo. No Leicester, Northampton, TFY or DenorD on this journey.
+9. Push into Nottingham: the same truck continues onto **MAP 02A** (no teleport, no reverse), shrinks to house scale and drives the existing street to HOME. The old Part 1 route is recessed by a non-destructive overlay.
+10. The truck arrives at HOME normally — **no destination portal** — HOME gets one gold ring pulse and a restrained glow (the map never bounces).
+11. Show the transaction clearly, beside the stopped truck without covering it or HOME:
    - **TREBUCHET RENTAL**
    - **− £15.00**
    - cash/register `ching-ching` sound.
-11. Update remaining budget immediately.
-12. Only then reveal the **DELIVERY PROBLEM** page.
+12. Update remaining budget immediately.
+13. Only then reveal the **DELIVERY PROBLEM** page.
 
 This transition exists to answer why Valenté has a trebuchet and to make the budget consequence visible before analysis begins.
 
@@ -220,14 +239,16 @@ The player should be able to answer: what is the task, where is it going, how fa
 
 ### C. Problem-page visual hierarchy
 
-- Use compact journey naming: **HOME → TFY**.
-- Put **NOTTINGHAM** and **NORTHAMPTON** on the map itself rather than repeating both inside a card.
+- Use compact journey naming: **HOME → TFY**. The DISTANCE box reads only `DISTANCE` / `HOME → TFY` (no city names, no `NOT A LOCAL RUN`).
+- Put **Nottingham** and **Northampton** on the map itself rather than repeating both inside a card. No Leicester before Attempt 01 fails there.
+- BUDGET box shows the live value and `You have [live budget] remaining.` — never hard-coded (RIPE £30.00, GREEN £30.50, EXTRA RIPE £32.00 after the rental).
+- Method bar: `DELIVERY METHOD | TREBUCHET` with a gold frame, a small launcher icon and one arrival glow; no extra chip.
 - Keep the map frameless; do not bury it inside another heavy panel.
 - On SIZE UP, HOME and TFY become more prominent and the map/goal becomes center stage.
 - Valenté supports the information rather than competing with it; preferred treatment is a small circular face/avatar marker at HOME.
 - Distance, condition, budget and delivery method support the map rather than replacing it.
 - Important problem elements may drop into place, settle and glow once, but do not animate every label/decorative object.
-- While Delivery Method is undecided, use a neutral parcel/route/transport icon rather than a trebuchet icon.
+- While Delivery Method is undecided (only reachable without the selector), use a neutral parcel icon and a cyan frame rather than a trebuchet icon.
 - Grid language remains quiet/subordinate.
 
 ### D. Explanatory HOME → TFY micro-animation
@@ -286,6 +307,10 @@ Do not regenerate assets that already exist as authority.
 Existing location authority (original standalone renders; the old `home_canon.webp` / `tfy_canon.webp` runtime files are superseded):
 - `assets/locations/S02_HOME_3D_LOCKED.png`
 - `assets/locations/S02_TFY_BUILDING_LOCKED.png`
+- `assets/locations/TREBUTECH_RENTAL_DISPATCH_BUILDING_LOCKED.png` — regional origin, unnamed location
+- `assets/locations/ROYAL_SNAIL_POST_OFFICE_LOCKED.png`, `assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png` — MAP 02A overlays
+
+**MAP 02A world rule.** `assets/MAP_02A_NOTTINGHAM_PROCUREMENT_LOCKED.png` is canonical local Nottingham and is never redrawn or rebuilt. The Part 2 Nottingham world is HOME, Banana Boutique, the Royal Snail post office and the Royal Snail drop box; new services join it only as overlays at approved positions (HOME and Banana Boutique never move). Trebutech is **not** on MAP 02A and not in Nottingham.
 
 Existing launcher authority:
 - locked launcher/rig assets already recorded in Part 2 production docs.

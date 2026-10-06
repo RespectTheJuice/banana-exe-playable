@@ -19,13 +19,13 @@ The transition now earns the trebuchet narratively and mechanically.
 3. The selector should **look random**, but the outcome is deterministic for this build.
 4. It slows and stops on **TREBUCHET**.
 5. TREBUCHET locks in with a small settle/bounce and **glow pulse**.
-6. Cut to a map-based delivery beat.
-7. The locked **Trebutech** delivery truck (`assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`) travels toward **HOME**.
-8. The truck itself communicates the delivery through its TREBUTECH brand and launcher-derived logo. **Do not add visible trebuchet cargo.** (Supersedes the earlier preference for visible cargo.)
-9. The rental origin does not need a detailed building or geographically accurate depot. It only needs to communicate that the machine is being delivered from somewhere else.
-10. Truck arrives at HOME.
-11. HOME receives a small arrival settle/bounce and **glow pulse**.
-12. Show the budget transaction clearly:
+6. Reveal the **Trebutech Rental & Dispatch** facility (`assets/locations/TREBUTECH_RENTAL_DISPATCH_BUILDING_LOCKED.png`) — a regional origin with no named city. Shutter, signage and bay unchanged; no cargo.
+7. The locked **Trebutech** delivery truck (`assets/part2/vehicles/source/TREBUTECH_DELIVERY_TRUCK_LOCKED.png`) pulls out of the bay mouth. The truck itself communicates the delivery through its TREBUTECH brand and launcher-derived logo. **Do not add visible trebuchet cargo**, never mirror or recolour it.
+8. The locked base-exit portal (`assets/systems/vehicle-portal/VEHICLE_BASE_PORTAL_OPEN_LOCKED.svg`) forms ≈ 23 building units beyond the apron edge, the truck crosses it (cab in front of the plane, body behind the membrane), and it closes behind the truck — timing in `product.md` → Vehicle portal system. Not a scene cut; the truck never vanishes.
+9. Camera pulls back onto the regional journey: edge label `TREBUTECH` / `RENTAL & DISPATCH` → `HOME` / `Nottingham`. No Leicester, Northampton, TFY or DenorD.
+10. Push into Nottingham: the same truck continues onto MAP 02A (with the Royal Snail overlays and the recessed Part 1 route), shrinking to house scale on the existing street. No teleport, no reverse.
+11. Truck arrives at HOME — **no portal**. HOME receives one gold ring pulse and a restrained glow; the map never bounces.
+12. Show the budget transaction clearly, adjacent to the stopped truck without covering it or HOME:
     - **TREBUCHET RENTAL**
     - **− £15.00**
     - cash/register `ching-ching` sound.
@@ -48,12 +48,13 @@ The three-option selector should feel playful and game-like without introducing 
 
 ### Behavior
 
-- Rapid cycle through all three options. Only **TREBUCHET** is named; the other two slots stay unlabelled until decided.
+- Slots, left to right: **ROYAL SNAIL** (greyed, `UNAVAILABLE` stamp, `TOO SLOW`), **TREBUCHET**, `? ? ?` (no drone, no DenorD, no hint, no sublines).
+- Rapid deterministic 17-step cycle through all three options.
 - Short repeated selector/tick sound.
 - Slow-down phase before selection.
 - Deterministic landing on **TREBUCHET**.
-- Selected option settles into position.
-- One restrained glow pulse confirms the lock.
+- Selected option settles into position: gold frame, restrained bounce and a `LOCKED IN` chip; the other two dim.
+- One restrained glow pulse confirms the lock; ≈ 1.4 s hold before the facility.
 
 Do not present this as genuine random branching if the game is not supporting all three outcomes yet.
 
@@ -66,7 +67,7 @@ Use a small glow pulse when a major element **lands, locks, or is successfully r
 Approved uses include:
 
 - TREBUCHET selection locking in;
-- rental truck arriving at HOME;
+- rental truck arriving at HOME (gold ring + glow on HOME; no map bounce);
 - important problem-page elements dropping into their final positions;
 - explanatory banana landing in the TFY roof basket;
 - TFY roof basket/receiver confirming the catch.
@@ -87,7 +88,7 @@ Use:
 
 for the compact journey information.
 
-Put **NOTTINGHAM** and **NORTHAMPTON** on the map itself rather than repeating both city names inside the compact info card.
+Put **Nottingham** and **Northampton** on the map itself rather than repeating both city names inside the compact info card. The DISTANCE box reads `DISTANCE` / `HOME → TFY` only — no `NOT A LOCAL RUN`. Leicester never appears before Attempt 01 fails there.
 
 ### Map
 
@@ -137,7 +138,7 @@ Preferred semantic direction:
 
 Do not use a trebuchet icon while the state still says **UNDECIDED**.
 
-Once a method is actually selected later, the icon may evolve to represent that method.
+Once a method is selected (the normal path), the bar reads `DELIVERY METHOD | TREBUCHET` with a gold frame, a small launcher icon and one arrival glow pulse; no extra chip.
 
 ### Budget
 
@@ -145,9 +146,9 @@ Use clear copy such as:
 
 **BUDGET / REMAINING BUDGET**
 
-Do not use explanatory filler such as “You still only have one budget.”
+Do not use explanatory filler such as “You still only have one budget.” The supporting line is `You have [live budget] remaining.`
 
-The visible value must reflect the £15 trebuchet rental hit before the problem screen appears.
+The visible value must reflect the £15 trebuchet rental hit before the problem screen appears, and is always read live (RIPE £30.00, GREEN £30.50, EXTRA RIPE £32.00) — never hard-coded.
 
 ### Information-entry animation
 
