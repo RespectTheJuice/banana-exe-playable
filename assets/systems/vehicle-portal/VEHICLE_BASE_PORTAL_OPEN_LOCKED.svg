@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450">
+  <title>BANANA.EXE vehicle base portal, fully open (LOCKED)</title>
+  <desc>Global BANANA.EXE base-exit portal, fully open state, exported from Board 09 (Part 2 UI Refinement canvas). Portal geometry is authored in the threshold plane in building units (u across the road, v up; aperture u 16-48, v 0-28), projected with the locked building render's isometric camera at 7.2458 px per building unit. The animation (seed line, edge draw via stroke-dashoffset on pathLength 100, membrane fade, contraction) is driven in code; this file is the open state only.</desc>
+  <defs>
+    <filter id="pglow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.1"/></filter>
+    <linearGradient id="pmem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a2236"/><stop offset="0.6" stop-color="#06121f"/><stop offset="1" stop-color="#0b2a3a"/></linearGradient>
+    <radialGradient id="pspill"><stop offset="0" stop-color="#5ff3ff" stop-opacity="0.42"/><stop offset="0.55" stop-color="#3fd8f0" stop-opacity="0.12"/><stop offset="1" stop-color="#3fd8f0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <!-- road light spill: ground plane (a along the road, b across it), both sides of the threshold -->
+  <g id="portal-spill" transform="matrix(-7.2458 -3.17 7.2458 -3.17 68 415)">
+    <ellipse cx="0" cy="32" rx="13" ry="26" fill="url(#pspill)"/>
+  </g>
+  <!-- threshold plane: u across the road, v up (building units) -->
+  <g id="portal" transform="matrix(7.2458 -3.17 0 -7.9013 68 415)">
+    <g id="portal-threshold">
+      <path d="M16 0 L48 0" stroke="#5ff3ff" stroke-width="2.4" opacity="0.35" filter="url(#pglow)"/>
+      <path d="M16 0 L48 0" stroke="#eaffff" stroke-width="0.55"/>
+    </g>
+    <g id="portal-membrane">
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L39 28 A9 9 0 0 0 48 19 L48 0 Z" fill="url(#pmem)" fill-opacity="0.62"/>
+    </g>
+    <g id="portal-rings">
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L39 28 A9 9 0 0 0 48 19 L48 0" transform="translate(32 12) scale(0.8) translate(-32 -12)" fill="#04101c" fill-opacity="0.22" stroke="#5ff3ff" stroke-opacity="0.22" stroke-width="0.35"/>
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L39 28 A9 9 0 0 0 48 19 L48 0" transform="translate(32 12) scale(0.6) translate(-32 -12)" fill="#020a14" fill-opacity="0.25" stroke="#5ff3ff" stroke-opacity="0.13" stroke-width="0.35"/>
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L39 28 A9 9 0 0 0 48 19 L48 0" transform="translate(32 12) scale(0.4) translate(-32 -12)" fill="none" stroke="#5ff3ff" stroke-opacity="0.07" stroke-width="0.35"/>
+      <path d="M17.5 6 L46.5 6 M17.5 12.5 L46.5 12.5 M17.5 19 L46.5 19" stroke="#79f2ee" stroke-opacity="0.05" stroke-width="0.3"/>
+    </g>
+    <g id="portal-collar">
+      <path d="M14.4 0 L14.4 19 A10.6 10.6 0 0 0 25 29.6 L39 29.6 A10.6 10.6 0 0 0 49.6 19 L49.6 0" fill="none" stroke="#79f2ee" stroke-width="0.9" stroke-dasharray="1.3 2.1" opacity="0.65"/>
+    </g>
+    <g id="portal-glow" fill="none" stroke-linecap="round">
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L32 28" pathLength="100" stroke-dasharray="100 104" stroke-dashoffset="0" stroke="#3fe9ff" stroke-width="3" opacity="0.45" filter="url(#pglow)"/>
+      <path d="M48 0 L48 19 A9 9 0 0 1 39 28 L32 28" pathLength="100" stroke-dasharray="100 104" stroke-dashoffset="0" stroke="#3fe9ff" stroke-width="3" opacity="0.45" filter="url(#pglow)"/>
+    </g>
+    <g id="portal-edge" fill="none" stroke-linecap="round">
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L32 28" pathLength="100" stroke-dasharray="100 104" stroke-dashoffset="0" stroke="#5ff3ff" stroke-width="1.1"/>
+      <path d="M48 0 L48 19 A9 9 0 0 1 39 28 L32 28" pathLength="100" stroke-dasharray="100 104" stroke-dashoffset="0" stroke="#5ff3ff" stroke-width="1.1"/>
+      <path d="M16 0 L16 19 A9 9 0 0 0 25 28 L32 28" pathLength="100" stroke-dasharray="100 104" stroke-dashoffset="0" stroke="#eaffff" stroke-width="0.38" opacity="0.55"/>
+      <path d="M48 0 L48 19 A9 9 0 0 1 39 28 L32 28" pathLength="100" stroke-dasharray="100 104" stroke-dashoffset="0" stroke="#eaffff" stroke-width="0.38" opacity="0.55"/>
+    </g>
+    <g id="portal-anchors" fill="#eaffff">
+      <rect x="14.6" y="0" width="2.8" height="0.9"/>
+      <rect x="46.6" y="0" width="2.8" height="0.9"/>
+    </g>
+  </g>
+</svg>
