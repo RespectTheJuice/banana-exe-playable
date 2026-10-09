@@ -29,7 +29,6 @@
   const T3 = { wrong: 600, anger: 1000, shake: 1450, react: 1650, arcsSparse: 2000, grow: 2300, peak: 2650, dead: 2850, flat: 650, whump: 3800, cut: 4050 };
   const FULL = { whump: 700, cut: 950 }; // full-charge plateau: 700 ms at maximum, then launch
   const SETUP = { fadeIn: 300, say1: 500, say1Off: 2900, p02: 3100, p03: 4500, say2: 4700, say2Off: 7000, cut04: 7200, push: 700 };
-  const FLIGHT = { A: 1600, B: 2600, C: 4000, cut: 5200 };
   const FOREST = { fall: 1300, thud: 2700, pause: 3150, foxIn: 5650, foxMove: 350, lookL: 6950, lookR: 8400, foxOut: 9800, failed: 11300, result: 12850, carry: 14850, carryIn: 550, done: 16750 };
   const LINES = { inspect: 'How do I use this thing?', goggles: 'Let me at least put my goggles on.' };
 
@@ -38,11 +37,11 @@
   // Until then a labelled review placeholder carries the timing. No forest or fox art is drawn in code.
   const FOREST_ART = { forest: null, fox: { up: null, left: null, right: null }, mouth: null };
 
-  // Map flight in the Part 1 map world (map space 1600 × 880): the shot leaves the trebuchet's cradle on HOME's grass and heads
-  // for TFY's roof (where the receiving basket will sit).
-  const P = { nott: [607, 481], tfy: [1350, 345], ctrl: [950, 600] }; // cradle = launcher x + 0.905 w, y + 0.127 h
-  const ROUTE = `M${P.nott} Q${P.ctrl} ${P.tfy}`;
-  const LEIC_AT = 0.45, ALT = 190; // Leicester's place along the route; cruise altitude in map units (at the front)
+  // Flight (board 10). Beat ORDER is the rule: HOME close → launch → rise → low aerial → TFY destination read → stall →
+  // falls short into woodland → only then LEICESTER → forest / fox. The milliseconds are REVIEW timing: they come from the
+  // flight-region manifest (sequence_reference_for_review.beats_ms) — tune them there; these are only the fallback.
+  const FLIGHT_FALLBACK = { launch: 300, rise: 1500, cruise: 3000, reveal: 4200, stall: 5000, fall: 6000, end: 6600 };
+  const FIELD = { w: 1232, h: 652 }; // the board's camera field (manifest camera_rule)
 
   // ---------- DOM ----------
   const scene = $('#p2-attempt01'), cell = $('#a1-cell'), view = $('#a1-view'), cam = $('#a1-cam');
@@ -56,8 +55,8 @@
   const smokeCv = $('#a1-smoke'), sctx = smokeCv.getContext('2d');
   const bloom = $('#a1-bloom'), shot = $('#a1-shot'), flashEl = $('#a1-flash');
   const say = $('#a1-say'), sayText = $('#a1-say-text');
-  const map = $('#a1-map'), mapSvg = $('#a1-map-svg'), routeDone = $('#a1-route-done'), routeLeft = $('#a1-route-left');
-  const trail = $('#a1-trail'), proj = $('#a1-proj'), leicRing = $('#a1-leic-ring'), leicLabel = $('#a1-leic-label'), tfyPulse = $('#a1-tfy-pulse'), projShadow = $('#a1-proj-shadow');
+  const map = $('#a1-map'), field = $('#a1-field'), wcam = $('#a1-wcam');
+  const trail = $('#a1-trail'), proj = $('#a1-proj'), leicLabel = $('#a1-leic-label'), projShadow = $('#a1-proj-shadow');
   const forest = $('#a1-forest'), forestArt = $('#a1-forest-art'), pending = $('#a1-forest-pending'), pendingBeat = $('#a1-pending-beat');
   const pendingBanana = $('#a1-pending-banana'), fall = $('#a1-fall'), fox = $('#a1-fox'), foxArt = $('#a1-fox-art');
   const failedEl = $('#a1-failed'), resultEl = $('#a1-result'), carry = $('#a1-carry');
@@ -72,12 +71,23 @@
   // ---------- Preload: every plate is fetched and decoded before HOLD is enabled ----------
   const lazy = [...scene.querySelectorAll('img[data-src]')];
   let preloading = null;
+  // The flight region is rasterised once here too (part2-world.js rasterRegion), so the launch never waits on it.
+  let regionRaster = null;
+  function rasterFlightRegion() {
+    if (!regionRaster) {
+      regionRaster = PW.ready.then(() => {
+        const m = Math.max(innerWidth / FIELD.w, 0.25), need = 0.5 * m * (devicePixelRatio || 1); // px per world unit at the rise (z 0.5)
+        return PW.rasterRegion($('#a1-region'), need >= 0.3 ? 0.5 : 0.25);
+      }).catch(() => false);
+    }
+    return regionRaster;
+  }
   function preload() {
     if (!preloading) {
-      preloading = Promise.all(lazy.map((img) => {
+      preloading = Promise.all([...lazy.map((img) => {
         if (!img.getAttribute('src')) img.src = img.dataset.src;
         return img.decode().catch(() => new Promise((ok) => (img.complete ? ok() : img.addEventListener('load', ok, { once: true }))));
-      }));
+      }), rasterFlightRegion()]);
     }
     return preloading;
   }
@@ -271,20 +281,75 @@
     thud: () => { tn(95, 45, 0, 0.25, 0.26, 'sine'); nz(0, 0.08, 0.16, 'lowpass', 500); },
   };
 
-  // ---------- Map geometry: Nottingham (front left) → TFY (far right) ----------
-  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', ROUTE); mapSvg.appendChild(path); path.style.visibility = 'hidden';
-  const L = path.getTotalLength(), STALL = 0.33;
-  const at = (u) => path.getPointAtLength(L * clamp(u));
-  const depth = () => 0.9; // a flat map (Part 1 map world): no ground-plane recession
-  (() => { // route split at the stall: flown part vs. the part the banana never reaches; Leicester pin on the route
-    const pts = (a0, a1) => { const r = []; for (let i = 0; i <= 40; i++) { const p = at(a0 + (a1 - a0) * i / 40); r.push(`${p.x.toFixed(1)} ${p.y.toFixed(1)}`); } return 'M' + r.join(' L'); };
-    routeDone.setAttribute('d', pts(0, LEIC_AT)); routeLeft.setAttribute('d', pts(LEIC_AT, 1));
-    const lp = at(LEIC_AT), d = depth(lp.y);
-    $('#a1-leic-pin').setAttribute('transform', `translate(${lp.x.toFixed(1)} ${lp.y.toFixed(1)}) scale(${d.toFixed(3)})`);
-    leicRing.setAttribute('cx', lp.x.toFixed(1)); leicRing.setAttribute('cy', lp.y.toFixed(1));
-    leicLabel.setAttribute('x', (lp.x + 6).toFixed(1)); leicLabel.setAttribute('y', (lp.y + 54).toFixed(1));
-  })();
+  // ---------- Flight world geometry (board 10, from the shared Part 2 world + the region manifest) ----------
+  const PW = window.BX.p2World;
+  const sm = (k) => { k = clamp(k); return k * k * (3 - 2 * k); }, eo = (k) => 1 - Math.pow(1 - clamp(k), 3), lerp = (a, b, k) => a + (b - a) * k;
+  let FG = null;
+  function flightGeo() {
+    if (FG && FG.fromManifest) return FG;
+    const m = PW.manifest(), run = m ? m.runtime_assets_above_the_region_not_included : null;
+    const cl = run ? run.find((r) => r.order === 10).placement : { launcher_ground: [314, 427], valente_ground: [271, 432], valente_height: 35 };
+    const tf = run ? run.find((r) => r.order === 11).placement : { tfy_ground_centre: [6102.4, -1810], tfy_box: [5952.4, -2044, 300, 300] };
+    const seq = m ? m.sequence_reference_for_review : null;
+    const C = PW.placeCluster({ launcherGround: cl.launcher_ground, valenteGround: cl.valente_ground, vu: cl.valente_height, pose: 'flight' });
+    const TFYP = tf.tfy_ground_centre, box = { x: tf.tfy_box[0], y: tf.tfy_box[1], s: tf.tfy_box[2] };
+    FG = {
+      T: { ...FLIGHT_FALLBACK, ...(seq ? seq.beats_ms : {}) }, C, LG: cl.launcher_ground,
+      HOMEG: PW.G(cl.launcher_ground[0], cl.launcher_ground[1]), TFYP, TFYG: PW.G(TFYP[0], TFYP[1]), box, hook: PW.tfyHook(box),
+      LANDP: seq ? seq.landing_point_world : [2612.44, -510], keys: seq ? seq.camera_keys : null, fromManifest: !!m,
+    };
+    FG.LAND = PW.G(FG.LANDP[0], FG.LANDP[1]);
+    FG.NOTT = PW.P(380, -140);
+    return FG;
+  }
+  // banana: ground position along HOME → TFY and altitude (world px); the shot leaves the cradle, never the launcher centre
+  function bananaAt(ms) {
+    const { T, C, LG, HOMEG: g0, TFYG, LAND } = flightGeo();
+    const along = (k) => [g0[0] + (TFYG[0] - g0[0]) * k, g0[1] + (TFYG[1] - g0[1]) * k];
+    const dx0 = C.cradle[0] - LG[0], a0 = LG[1] - C.cradle[1];
+    if (ms < T.launch) return { g: g0, alt: a0, pre: true, dx: dx0 };
+    if (ms < T.rise) { const k = (ms - T.launch) / (T.rise - T.launch); return { g: along(0.12 * eo(k)), alt: lerp(a0, 700, eo(k)), dx: dx0 * (1 - eo(k)) }; }
+    if (ms < T.reveal) { const k = (ms - T.rise) / (T.reveal - T.rise); return { g: along(0.12 + 0.26 * k), alt: 700 + 150 * Math.sin(k * Math.PI / 2) }; }
+    if (ms < T.stall) { const k = (ms - T.reveal) / (T.stall - T.reveal); return { g: along(0.38 + 0.025 * eo(k)), alt: 850 - 30 * k * k, wob: Math.sin(k * Math.PI * 3) }; }
+    const k = clamp((ms - T.stall) / (T.fall - T.stall)), a = along(0.405);
+    return { g: [lerp(a[0], LAND[0], k), lerp(a[1], LAND[1], k)], alt: 820 * (1 - k * k), falling: true, k };
+  }
+  // camera: world point at the field centre + zoom. Reduced motion keeps every beat but cuts the large camera travel.
+  function cameraAt(ms, rm) {
+    const { T, TFYP, LANDP } = flightGeo();
+    const K0 = { c: [282, 405], z: 2.4 };
+    const lp = LANDP, F = { c: [lp[0] + 40, lp[1] - 160], z: 0.42 };
+    if (rm) {
+      if (ms < T.rise) return K0;                                   // HOME close (through the launch)
+      if (ms < T.fall) { const r = cameraAt(T.reveal, false); return r; } // one wide hold: the journey and the TFY target
+      return F;                                                     // down in the woods
+    }
+    const b = bananaAt(ms), bp = PW.P(b.g[0], b.g[1]), by = [bp[0], bp[1] - b.alt];
+    if (ms < T.launch) return K0;
+    if (ms < T.rise) { const r = (ms - T.launch) / (T.rise - T.launch), kc = eo(Math.min(1, r * 1.8)); return { c: [lerp(K0.c[0], by[0] + 120, kc), lerp(K0.c[1], (by[1] + bp[1]) / 2, kc)], z: K0.z * Math.pow(0.5 / K0.z, eo(r)) }; }
+    if (ms < T.cruise) { const k = sm((ms - T.rise) / (T.cruise - T.rise)); return { c: [by[0] + lerp(120, 260, k), (by[1] + bp[1]) / 2], z: lerp(0.5, 0.36, k) }; }
+    const R = { c: [(by[0] + TFYP[0]) / 2 + 80, (by[1] + TFYP[1]) / 2 + 60], z: 0.165 };
+    if (ms < T.reveal) { const k = sm((ms - T.cruise) / (T.reveal - T.cruise)); const a = { c: [by[0] + 260, (by[1] + bp[1]) / 2], z: 0.36 }; return { c: [lerp(a.c[0], R.c[0], k), lerp(a.c[1], R.c[1], k)], z: a.z * Math.pow(R.z / a.z, k) }; }
+    const k = sm((ms - T.reveal) / (T.fall - T.reveal));
+    return { c: [lerp(R.c[0], F.c[0], k), lerp(R.c[1], F.c[1], k)], z: R.z * Math.pow(F.z / R.z, k) };
+  }
+  const beatAt = (ms) => { const T = flightGeo().T; return ms < T.launch ? 'home' : ms < T.rise ? 'launch' : ms < T.cruise ? 'rise' : ms < T.reveal ? 'aerial' : ms < T.stall ? 'destination' : ms < T.fall ? 'fall' : 'down'; };
+  let flightBuilt = false;
+  function buildFlight() { // static placement (once): region layers, MAP 02A overlays, the cluster, TFY
+    if (flightBuilt) return;
+    const g = flightGeo(), px = (e, b) => Object.assign(e.style, { left: `${b.x.toFixed(2)}px`, top: `${b.y.toFixed(2)}px`, width: `${b.w.toFixed(2)}px`, height: `${b.h.toFixed(2)}px` });
+    flightBuilt = !!PW.manifest();
+    if (!$('#a1-region').childElementCount) PW.mountRegion($('#a1-region')); // raster not ready: the inline layers instead
+    const st = PW.ROYAL_SNAIL_STORE, nb = PW.ROYAL_SNAIL_NEIGHBOURHOOD, rs = (e, o) => { e.src = o.src; px(e, { x: o.x - 60, y: o.y - 148, w: o.w, h: o.h }); };
+    rs($('#a1-rs-store'), st); rs($('#a1-rs-local'), nb); $('#a1-rs-local').dataset.status = nb.status;
+    px($('#a1-launcher'), g.C.launcher); px($('#a1-valente'), g.C.valente);
+    const sh = (id, o, ry) => { const e = $(id); e.setAttribute('cx', o.cx); e.setAttribute('cy', o.cy); e.setAttribute('rx', o.rx.toFixed(2)); e.setAttribute('ry', ry); };
+    sh('#a1-lshadow', g.C.shadows.launcher, 4.5); sh('#a1-vshadow', g.C.shadows.valente, 3.2);
+    px($('#a1-tfy'), { x: g.box.x, y: g.box.y, w: g.box.s, h: g.box.s });
+    px($('#a1-tfy-glow'), { x: g.TFYP[0] - 520, y: g.TFYP[1] - 230, w: 1040, h: 460 });
+    px($('#a1-tfy-beam'), { x: g.TFYP[0] - 22, y: g.TFYP[1] - 1400, w: 44, h: 1250 });
+    const fl = $('#a1-launchflash'); fl.setAttribute('cx', g.C.cradle[0].toFixed(2)); fl.setAttribute('cy', g.C.cradle[1].toFixed(2));
+  }
 
   // ---------- State ----------
   let s = null, raf = 0, lastTs = null, onComplete = null;
@@ -627,43 +692,76 @@
     ctrl.classList.add('is-gone'); btn.disabled = true; window.BX.clearGuide();
     s.smoke = []; drawSmoke(0, false);
     proj.src = choiceImg(); proj.dataset.pick = (window.BX.getChoice() || { key: 'ripe' }).key;
-    map.style.visibility = 'visible'; map.style.opacity = '1';
-    placeProjectile(P.nott[0], P.nott[1] - 20, -0.4, 1); proj.style.visibility = 'visible';
+    buildFlight();
+    map.style.visibility = 'visible'; map.style.opacity = '1'; proj.style.visibility = 'visible';
     enter('flight');
+    runFlight(0, reduced());
   }
 
-  // ---------- Flight: left → right. Climb, stall, then lose height while still moving right, down onto Leicester ----------
-  function placeProjectile(x, y, ang, d) {
-    const sc = map.clientWidth / 1600;
-    proj.style.transform = `translate(${(x * sc).toFixed(1)}px, ${(y * sc).toFixed(1)}px) translate(-50%, -50%) rotate(${ang.toFixed(3)}rad) scale(${d.toFixed(3)})`;
+  // ---------- Flight: board 10 camera sequence through one world ----------
+  function fitField() { // the board's 1232 × 652 camera field, covering the flight window
+    const W = map.clientWidth, H = map.clientHeight, m = Math.max(W / FIELD.w, H / FIELD.h);
+    field.style.transform = `translate(${((W - FIELD.w * m) / 2).toFixed(1)}px, ${((H - FIELD.h * m) / 2).toFixed(1)}px) scale(${m.toFixed(4)})`;
+    field.style.setProperty('--lf', Math.max(1, 0.85 / m).toFixed(3)); // labels stay readable on small screens
+    const x0 = (FIELD.w * m - W) / (2 * m), y0 = (FIELD.h * m - H) / (2 * m);
+    return { x0, x1: x0 + W / m, y0, y1: y0 + H / m }; // the part of the field the window actually shows
   }
-  function runFlight(ft, rm) {
-    const pu = (s.t % 2400) / 2400;
-    tfyPulse.setAttribute('rx', (16 + 30 * pu).toFixed(1)); tfyPulse.setAttribute('ry', (7 + 12 * pu).toFixed(1));
-    tfyPulse.style.opacity = (rm ? 0.5 : 0.8 * (1 - pu)).toFixed(3);
-    let u, alt, spin = 0;
-    if (ft < FLIGHT.A) { const k = ft / FLIGHT.A; u = STALL * easeOut(k); alt = ALT * Math.sin(Math.PI / 2 * Math.min(1, k * 1.4)); }      // confident climb, moving right
-    else if (ft < FLIGHT.B) { const k = (ft - FLIGHT.A) / (FLIGHT.B - FLIGHT.A); u = STALL + 0.035 * k; alt = ALT * (1 - 0.12 * k * k); spin = rm ? 0 : 0.2 * Math.sin(k * TAU); } // stall: forward speed dies
-    else if (ft < FLIGHT.C) { // failure: losing altitude, still progressing right, onto Leicester
-      const k = (ft - FLIGHT.B) / (FLIGHT.C - FLIGHT.B);
-      if (once('whistle')) { fx.whistle((FLIGHT.C - FLIGHT.B) / 1000); announce('Losing height'); }
-      u = STALL + 0.035 + (LEIC_AT - STALL - 0.035) * (1 - (1 - k) * (1 - k) * 0.4 - 0.6 * (1 - k)); alt = ALT * 0.88 * (1 - k * k); spin = rm ? 0 : Math.PI * 2.5 * k * k;
-    } else {
-      u = LEIC_AT; alt = 0; spin = rm ? 0 : Math.PI * 2.5;
-      const e = clamp((ft - FLIGHT.C) / 300);
-      leicRing.style.opacity = e.toFixed(3); leicLabel.classList.add('is-hit'); mapSvg.classList.add('is-leic'); // Leicester only appears once the banana lands there
-      routeLeft.style.opacity = (1 - 0.7 * e).toFixed(3);
-      if (once('leic')) announce('Down at Leicester');
+  function runFlight(ms, rm) {
+    const g = flightGeo(), T = g.T;
+    const vis = fitField();
+    const cam = cameraAt(ms, rm), z = cam.z;
+    let tx = FIELD.w / 2 - cam.c[0] * z, ty = FIELD.h / 2 - cam.c[1] * z;
+    // The window crops the board's field to its own aspect, so through the destination read the camera pans (never zooms)
+    // just enough to keep the whole TFY box inside what is visible; the nudge fades out after the stall.
+    const keep = 1 - clamp((ms - T.stall) / 400);
+    if (ms >= T.cruise && keep > 0) {
+      const M = 14, bx = g.box.x * z + tx, by0 = g.box.y * z + ty, bs = g.box.s * z;
+      let dx = 0, dy = 0;
+      if (bx + bs > vis.x1 - M) dx = vis.x1 - M - (bx + bs); if (bx + dx < vis.x0 + M) dx = vis.x0 + M - bx;
+      if (by0 + bs > vis.y1 - M) dy = vis.y1 - M - (by0 + bs); if (by0 + dy < vis.y0 + M) dy = vis.y0 + M - by0;
+      tx += dx * keep; ty += dy * keep;
     }
-    const g = at(u), d = depth(g.y), y = g.y - alt * d;
-    const ahead = at(Math.min(1, u + 0.01)), heading = Math.atan2(ahead.y - g.y, ahead.x - g.x);
-    placeProjectile(g.x, y - 26 * d, heading + (ft < FLIGHT.B ? -0.35 : 0) + spin, d);
-    projShadow.setAttribute('cx', g.x.toFixed(1)); projShadow.setAttribute('cy', g.y.toFixed(1));
-    projShadow.setAttribute('rx', (34 * d).toFixed(1)); projShadow.setAttribute('ry', (9 * d).toFixed(1));
-    projShadow.style.opacity = (0.25 + 0.55 * (1 - alt / ALT)).toFixed(3);
-    s.flightX = g.x; s.flightAlt = alt;
-    if (ft < FLIGHT.C) { s.trail.push(`${g.x.toFixed(1)},${(y - 26 * d).toFixed(1)}`); trail.setAttribute('points', s.trail.join(' ')); }
-    if (ft >= FLIGHT.cut) cutToForest();
+    wcam.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${z.toFixed(4)})`;
+    const scr = (p) => [p[0] * z + tx, p[1] * z + ty];
+    const b = bananaAt(ms), bp = PW.P(b.g[0], b.g[1]), bx = bp[0] + (b.dx || 0), by = bp[1] - b.alt;
+    // the selected banana: readable at every altitude (≈ 34–46 px on the field)
+    const bwPx = Math.max(34, Math.min(46, 9 * z)), bw = bwPx / z, bh = bw * 0.75;
+    let rot = -25;
+    if (!b.pre && ms < T.reveal) rot = -25 + 15 * clamp((ms - T.rise) / 1500);
+    if (ms >= T.reveal && ms < T.stall) rot = -10 + 18 * (b.wob || 0);
+    if (b.falling) rot = 20 + 140 * b.k;
+    if (rm) rot = b.falling ? 40 : -15;
+    const imp = ms > T.fall ? clamp((ms - T.fall) / 450) : 0;
+    Object.assign(proj.style, { left: `${(bx - bw / 2).toFixed(1)}px`, top: `${(by - bh / 2).toFixed(1)}px`, width: `${bw.toFixed(1)}px`, height: `${bh.toFixed(1)}px`,
+      transform: `rotate(${rot.toFixed(1)}deg)`, opacity: b.pre ? '0' : imp > 0 ? (1 - imp).toFixed(3) : '1' });
+    // trail: sampled history up to now, ending exactly at the banana (stops at impact)
+    const pts = [];
+    for (let t = T.launch; t <= Math.min(ms, T.fall); t += 60) { const q = bananaAt(t), p = PW.P(q.g[0], q.g[1]); pts.push(`${(p[0] + (q.dx || 0)).toFixed(1)},${(p[1] - q.alt).toFixed(1)}`); }
+    if (ms > T.launch && ms <= T.fall) pts.push(`${bx.toFixed(1)},${by.toFixed(1)}`);
+    trail.setAttribute('points', pts.join(' ')); trail.setAttribute('stroke-width', (3 / z).toFixed(2));
+    const sz = Math.max(0.2, 1 - b.alt / 1100);
+    Object.entries({ cx: bx, cy: bp[1], rx: bw * 0.4 * sz, ry: bw * 0.12 * sz }).forEach(([k, v]) => projShadow.setAttribute(k, v.toFixed(1)));
+    projShadow.setAttribute('opacity', (b.pre ? 0 : 0.45 * sz).toFixed(3));
+    const flash = clamp(1 - Math.abs(ms - T.launch - 60) / 260), fl = $('#a1-launchflash');
+    fl.setAttribute('r', (8 + 16 * (1 - flash)).toFixed(1)); fl.setAttribute('opacity', (0.85 * flash).toFixed(3));
+    const lp = g.LANDP, im = $('#a1-impact');
+    im.setAttribute('cx', lp[0]); im.setAttribute('cy', lp[1]); im.setAttribute('r', (30 + 220 * imp).toFixed(1)); im.setAttribute('stroke-width', (4 / z).toFixed(2));
+    im.setAttribute('opacity', (0.8 * (1 - imp) * (imp > 0 ? 1 : 0)).toFixed(3));
+    $('#a1-homeglow').style.opacity = (0.5 + 0.5 * clamp(1 - (ms - T.rise) / 800)).toFixed(3);
+    const reveal = clamp((ms - T.cruise) / 700);
+    $('#a1-tfy-glow').style.opacity = (0.35 + 0.65 * reveal).toFixed(3); $('#a1-tfy-beam').style.opacity = (0.9 * reveal).toFixed(3);
+    // labels (screen space): NOTTINGHAM / HOME early; TFY + rooftop hook once the destination opens; LEICESTER only after landing
+    const lab = (id, p, op) => { const e = $(id); e.style.left = `${p[0].toFixed(1)}px`; e.style.top = `${p[1].toFixed(1)}px`; e.style.opacity = op.toFixed(3); };
+    lab('#a1-fl-nott', scr([g.NOTT[0], g.NOTT[1] + 210]), clamp((1.1 - z) / 0.5));
+    lab('#a1-leic-label', scr([lp[0], lp[1] + 150]), 0.9 * clamp((ms - T.fall) / 250));
+    lab('#a1-tfy-basket', scr(g.hook), 0.9 * reveal);
+    lab('#a1-fl-tfy', scr([g.TFYP[0], g.TFYP[1] + 40]), reveal);
+    $('#a1-fcut').style.opacity = clamp((ms - T.fall - 250) / 350).toFixed(3);
+    // story beats + sound
+    s.flightBeat = beatAt(ms); s.flightX = bx; s.flightAlt = b.alt; s.flightU = b.g[0]; s.flightCam = { c: cam.c, z };
+    if (ms >= T.stall && once('whistle')) { fx.whistle((T.fall - T.stall) / 1000); announce('Losing height'); }
+    if (ms >= T.fall && once('leic')) { leicLabel.classList.add('is-hit'); announce('Down at Leicester'); }
+    if (ms >= T.end) cutToForest();
   }
 
   // ---------- Leicester: canopy, rustle, thud, fox, verdict, 08 ----------
@@ -729,8 +827,8 @@
     flashEl.style.opacity = '0'; bloom.style.opacity = '0'; shot.style.visibility = 'hidden';
     sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, smokeCv.width, smokeCv.height);
     sayLine('');
-    map.style.opacity = '0'; map.style.visibility = 'hidden'; proj.style.visibility = 'hidden'; trail.setAttribute('points', ''); projShadow.style.opacity = '0';
-    leicRing.style.opacity = '0'; leicLabel.classList.remove('is-hit'); mapSvg.classList.remove('is-leic'); routeLeft.style.opacity = '1';
+    map.style.opacity = '0'; map.style.visibility = 'hidden'; proj.style.visibility = 'hidden'; trail.setAttribute('points', ''); projShadow.setAttribute('opacity', '0');
+    leicLabel.classList.remove('is-hit'); leicLabel.style.opacity = '0'; $('#a1-fcut').style.opacity = '0';
     forest.style.visibility = 'hidden'; forest.classList.remove('is-verdict'); forest.dataset.beat = '';
     fall.style.visibility = 'hidden'; fox.hidden = true; pendingBanana.style.opacity = '0'; pendingBeat.textContent = '';
     failedEl.classList.remove('is-on'); resultEl.classList.remove('is-on');
@@ -764,6 +862,6 @@
   // Read-only state for development checks.
   window.BX.attempt01State = () => s && {
     phase: s.phase, pose: s.pose, c: s.c, count: s.count, held: s.held, t: s.t, phaseT: s.phaseT, ready: s.ready, armed: s.armed,
-    path: s.path, beat: s.beat, done: s.done, flightX: s.flightX, flightAlt: s.flightAlt, smoke: s.smoke.length, shot: shot.style.visibility === 'visible' ? shot.getAttribute('src') : null,
+    path: s.path, beat: s.beat, done: s.done, flightX: s.flightX, flightAlt: s.flightAlt, flightBeat: s.flightBeat, flightU: s.flightU, flightCam: s.flightCam, smoke: s.smoke.length, shot: shot.style.visibility === 'visible' ? shot.getAttribute('src') : null,
   };
 })();

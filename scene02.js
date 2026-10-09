@@ -390,6 +390,7 @@
     const method = window.BX.getDeliveryMethod?.() || null;
     $('#p2-method').textContent = method || 'UNDECIDED';
     $('#p2-method-state').classList.toggle('is-chosen', !!method);
+    layoutMission();
     p2.classList.remove('is-in');
     p2Continue.disabled = true;
     later(() => { p2.classList.add('is-in'); sfx.route(); }, 120);
@@ -397,6 +398,61 @@
     // Fetch and decode the Attempt 01 plates while the player reads the problem.
     later(() => window.BX.preloadAttempt01?.(), 600);
   }
+
+  // ---------- Mission map (board 12): the region at map scale, the shared HOME launch cluster, TFY + basket hook, one arc ----------
+  // Design space MW × MH (desktop 1200 × 446; phones reflow to a taller 640 × 620 so HOME and TFY stay readable).
+  const mission = $('#p2-mission'), missionInner = $('#p2-mission-inner');
+  let regionMounted = false, missionLayout = '';
+  function layoutMission() {
+    const W = window.BX.p2World; if (!W) return;
+    const phone = matchMedia('(orientation: portrait), (max-width: 700px)').matches;
+    const MW = phone ? 640 : 1200, MH = phone ? 600 : 446, Z = 0.165, CX = 3300, CY = -660;
+    mission.style.setProperty('--mw', MW); mission.style.setProperty('--mh', MH);
+    mission.style.setProperty('--mk', (mission.clientWidth / MW || 1).toFixed(4));
+    mission.style.setProperty('--lf', phone ? 1.6 : 1);
+    if (missionLayout === `${MW}x${MH}` && regionMounted) return;
+    missionLayout = `${MW}x${MH}`;
+    if (!regionMounted) W.ready.then(() => { if (!regionMounted) regionMounted = W.mountRegion($('#p2-region')); });
+    $('#p2-mworld').style.transform = `translate(${(MW / 2 - CX * Z).toFixed(2)}px, ${(MH / 2 - CY * Z).toFixed(2)}px) scale(${Z})`;
+    const px = (e, x, y, w, h) => Object.assign(e.style, { left: `${x.toFixed(1)}px`, top: `${y.toFixed(1)}px`, ...(w != null ? { width: `${w.toFixed(1)}px`, height: `${h.toFixed(1)}px` } : {}) });
+    const set = (id, attrs) => { const e = $('#' + id); for (const k in attrs) e.setAttribute(k, typeof attrs[k] === 'number' ? attrs[k].toFixed(1) : attrs[k]); };
+    ['p2-cluster-svg', 'p2-arc-svg'].forEach((id) => $('#' + id).setAttribute('viewBox', `0 0 ${MW} ${MH}`));
+    // HOME (locked render) lower left; the cluster stands on its lawn — board 11 rule via the shared placeCluster().
+    const HS = phone ? 250 : 300, HK = HS / 1254, HX = phone ? 6 : 30, HY = MH - HS - (phone ? 66 : 34);
+    const at = (ix, iy) => [HX + ix * HK, HY + iy * HK];
+    const EU = [0.916, -0.4], EV = [-0.916, -0.4], add = (p, d, k) => [p[0] + d[0] * k, p[1] + d[1] * k];
+    const R = at(1236, 905);                                            // HOME plinth's right corner
+    const VU = (1060 - 160) * HK / W.CLUSTER.scale.home;                // Valenté height = HOME height / 3
+    const vg = add(add(R, EU, 92), EV, 46), lg = add(add(R, EU, 182), EV, 78);
+    const C = W.placeCluster({ launcherGround: lg, valenteGround: vg, vu: VU, pose: 'problem' });
+    px($('#p2-home'), HX, HY, HS, HS);
+    px($('#p2-launcher'), C.launcher.x, C.launcher.y, C.launcher.w, C.launcher.h);
+    px($('#p2-valente'), C.valente.x, C.valente.y, C.valente.w, C.valente.h);
+    const lawn = [add(R, EU, -10), add(R, EU, 270), add(add(R, EU, 270), EV, 160), add(R, EV, 160)];
+    set('p2-lawn', { points: lawn.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') });
+    set('p2-warm', { cx: (R[0] + lg[0]) / 2, cy: R[1] - 30 });
+    set('p2-pad', { cx: lg[0], cy: lg[1] - 2, rx: C.shadows.launcher.rx * 0.62 / 0.42, ry: 20 });
+    set('p2-lshadow', { cx: C.shadows.launcher.cx, cy: lg[1] - 2, rx: C.shadows.launcher.rx, ry: 7 });
+    set('p2-vshadow', { cx: C.shadows.valente.cx, cy: C.shadows.valente.cy, rx: C.shadows.valente.rx, ry: 5 });
+    px($('#p2-home-label'), HX + 640 * HK, HY + HS - 2);
+    // TFY (locked render) upper right with a gold target; the basket hook sits at the shared roof position.
+    const s = phone ? 196 : 210, tx = MW - s - (phone ? 8 : 34), ty = phone ? 34 : 26, box = { x: tx, y: ty, s };
+    px($('#p2-tfy'), tx, ty, s, s);
+    px($('#p2-tfy-glow'), tx + s / 2 - 190, ty + s * 0.62 - 110);
+    const hk = W.tfyHook(box), ks = s * 0.36, sw = ks * 0.72, sh = sw * 0.437;
+    set('p2-basket-poly', { points: [[hk[0] - sw, hk[1]], [hk[0], hk[1] - sh], [hk[0] + sw, hk[1]], [hk[0], hk[1] + sh]].map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') });
+    set('p2-ret-o', { cx: hk[0], cy: hk[1] }); set('p2-ret-i', { cx: hk[0], cy: hk[1] });
+    set('p2-ret-x', { d: `M${hk[0].toFixed(1)} ${hk[1].toFixed(1)} m-25 0 h8 m34 0 h8 m-25 -25 v8 m0 34 v8` });
+    const bl = $('#p2-basket-label'); bl.style.left = 'auto'; bl.style.right = `${(MW - (hk[0] - ks / 2 - 12)).toFixed(1)}px`; bl.style.top = `${(hk[1] - 0.1 * ks).toFixed(1)}px`;
+    px($('#p2-tfy-label'), tx + s / 2, ty + s - 6);
+    // One airborne launch arc: the trebuchet's cradle → the rooftop target (never a ground route).
+    const c = C.cradle, top = Math.min(c[1], hk[1]) - (phone ? 90 : 150);
+    const d = `M${c[0].toFixed(1)} ${c[1].toFixed(1)} Q${((c[0] + hk[0]) / 2).toFixed(1)} ${top.toFixed(1)} ${hk[0].toFixed(1)} ${hk[1].toFixed(1)}`;
+    set('p2-arc', { d }); set('p2-arc-halo', { d });
+    missionInner.dataset.cradle = c.map((v) => v.toFixed(2)).join(',');
+    missionInner.dataset.hook = hk.map((v) => v.toFixed(2)).join(',');
+  }
+  addEventListener('resize', () => { if (p2.classList.contains('is-active')) { missionLayout = ''; layoutMission(); } });
 
   p2Continue.addEventListener('click', () => {
     if (p2Continue.disabled) return;

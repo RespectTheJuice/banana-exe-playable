@@ -235,97 +235,6 @@
     radial-gradient(circle at 28% 70%, rgba(255,214,83,.08), transparent 32%),
     var(--navy-950);
 }
-/* Brief: the information is the hero — brief | route map. Valenté is only a small avatar pin at HOME. */
-.scene-part2 { --p2-gap:clamp(16px, 3svh, 28px); }
-.scene-part2.is-active {
-  display:grid; grid-template-columns:minmax(320px, .85fr) minmax(0, 1.25fr); grid-template-rows:minmax(0, 1fr);
-  column-gap:clamp(24px, 4vw, 64px); align-items:center; padding:64px clamp(20px, 4vw, 64px) 28px;
-}
-.p2-grid-bg {
-  position:absolute; inset:0; opacity:.16; pointer-events:none;
-  background-image:
-    linear-gradient(rgba(121,242,238,.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(121,242,238,.15) 1px, transparent 1px);
-  background-size:34px 34px;
-  mask-image:linear-gradient(to bottom, transparent, #000 15%, #000 80%, transparent);
-}
-.p2-copy { position:relative; z-index:3; grid-column:1; grid-row:1; align-self:center; min-width:0; }
-.p2-copy h2 {
-  margin:0; font-family:var(--display); font-size:clamp(40px, 5.2vw, 72px); line-height:.92; color:var(--gold);
-  text-shadow:0 5px 0 var(--gold-shadow), 0 0 32px rgba(255,214,83,.25);
-}
-.p2-objective { margin:14px 0 18px; font-family:var(--display); font-size:clamp(18px, 2.2vw, 26px); color:var(--white); }
-
-/* Route map: no frame; HOME, TFY, route and pins fill the canvas. Geometry is in the SVG's 1000 × 300 space. */
-.p2-route-card { position:relative; z-index:2; grid-column:2; grid-row:1; align-self:center; width:100%; }
-.p2-route-svg { display:block; width:100%; height:auto; aspect-ratio:1000 / 300; overflow:visible; }
-.p2-route-halo { fill:none; stroke:var(--cyan); stroke-width:22; opacity:.12; filter:blur(5px); }
-.p2-route-line { fill:none; stroke:var(--cyan); stroke-width:5; stroke-linecap:round; stroke-dasharray:12 13; animation:p2-dash 1.2s linear infinite; }
-@keyframes p2-dash { to { stroke-dashoffset:-50; } }
-.p2-pin { fill:var(--gold); stroke:var(--ink); stroke-width:3; }
-.p2-pin-tfy { fill:#3b7dff; stroke:var(--white); }
-.p2-landmark { position:absolute; width:18%; display:grid; justify-items:center; pointer-events:none; }
-.p2-landmark img { width:100%; height:auto; display:block; filter:drop-shadow(0 10px 14px rgba(0,0,0,.5)); }
-.p2-landmark b { font-family:var(--display); font-size:clamp(11px, 1.15vw, 15px); color:var(--white); letter-spacing:.08em; margin-top:2px; }
-.p2-landmark span { font-size:clamp(8px, .8vw, 10px); font-weight:900; color:var(--muted); letter-spacing:.12em; }
-.p2-landmark-home { left:6%; top:19%; }  /* base of the render on the HOME pin (150, 228) */
-.p2-landmark-tfy { left:76%; top:2.7%; } /* base of the render on the TFY pin (850, 170) */
-
-.p2-analysis {
-  position:relative; z-index:4; display:none; grid-template-columns:repeat(3, minmax(0, 1fr)) minmax(0, 1.15fr); column-gap:14px; row-gap:var(--p2-gap);
-  opacity:0; transform:translateY(24px); pointer-events:none;
-  transition:opacity .35s ease, transform .45s cubic-bezier(.2,1.3,.4,1);
-}
-/* The constraints: the three things actually being assessed. */
-.p2-analysis article {
-  min-width:0; min-height:140px; padding:15px 18px; border-radius:16px;
-  background:linear-gradient(180deg, rgba(19,40,58,.96), rgba(9,15,27,.96)); border:2px solid var(--cyan);
-  box-shadow:0 0 0 4px rgba(121,242,238,.10), 0 14px 30px rgba(0,0,0,.4);
-  display:flex; flex-direction:column; gap:8px;
-}
-.p2-analysis article small { color:var(--cyan); font-size:13px; font-weight:900; letter-spacing:.18em; }
-.p2-analysis b { color:var(--white); font-family:var(--display); font-size:clamp(19px, 1.9vw, 24px); line-height:1.1; overflow-wrap:anywhere; }
-.p2-analysis article:nth-child(3) b { color:var(--gold); font-size:clamp(30px, 3.2vw, 42px); }
-.p2-analysis span { color:var(--muted); font-size:14px; line-height:1.3; }
-/* DISTANCE: HOME → TFY only; the map carries the cities. */
-.p2-analysis .p2-leg { display:flex; align-items:center; gap:10px; font-size:clamp(20px, 1.95vw, 25px); line-height:1; white-space:nowrap; overflow-wrap:normal; }
-.p2-leg svg { width:26px; height:18px; flex-shrink:0; fill:none; stroke:var(--cyan); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
-.p2-analysis article > span { margin-top:auto; }
-/* DELIVERY METHOD: the trebuchet itself, large, in a gold frame (one glow pulse as it lands). */
-.p2-method-state { align-items:center; text-align:center; }
-.p2-method-state small { align-self:flex-start; white-space:nowrap; }
-.p2-method-visual { flex:1; display:grid; place-items:center; width:100%; min-height:0; }
-.p2-method-icon { display:none; }
-.p2-method-icon-chosen { height:clamp(64px, 15svh, 112px); width:auto; max-width:100%; aspect-ratio:3 / 2; object-fit:contain; filter:drop-shadow(0 10px 12px rgba(0,0,0,.5)); }
-.p2-method-icon-undecided { width:56px; height:56px; fill:none; stroke:var(--muted); stroke-width:1.8; stroke-linejoin:round; }
-.p2-method-state:not(.is-chosen) .p2-method-icon-undecided { display:block; }
-.p2-analysis .p2-method-state strong { color:#c9d6dd; font-family:var(--display); font-size:clamp(17px, 1.7vw, 22px); letter-spacing:.04em; }
-.p2-analysis .p2-method-state.is-chosen { border-color:var(--gold); background:linear-gradient(180deg, rgba(40,34,14,.96), rgba(12,15,22,.96)); box-shadow:0 0 0 4px rgba(255,214,83,.12), 0 14px 30px rgba(0,0,0,.4); }
-.p2-method-state.is-chosen .p2-method-icon-chosen { display:block; }
-.p2-method-state.is-chosen strong { color:var(--gold); }
-.scene-part2.is-in .p2-method-state.is-chosen { animation:p2-method-glow .9s ease-out .45s 1 both; }
-@keyframes p2-method-glow { 0%, 100% { box-shadow:0 0 0 4px rgba(255,214,83,.12), 0 14px 30px rgba(0,0,0,.4); } 40% { box-shadow:0 0 0 4px rgba(255,214,83,.3), 0 0 34px rgba(255,214,83,.55); } }
-/* Story objects on the map: the trebuchet beside HOME; the TFY roof keeps an empty hook for the receiving basket. */
-.p2-map-launcher { position:absolute; left:19%; top:39%; width:17.5%; height:auto; pointer-events:none; filter:drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
-.p2-map-valente { position:absolute; left:14.6%; top:45%; width:5.6%; height:auto; pointer-events:none; filter:drop-shadow(0 6px 8px rgba(0,0,0,.5)); } /* behind the trebuchet's operating side, never in front */
-.p2-basket-slot { position:absolute; left:81.5%; top:3%; width:7%; aspect-ratio:1; pointer-events:none; }
-
-/* One screen: MAP + DISTANCE / CONDITION / BUDGET / DELIVERY METHOD are the hero; one spacing step (--p2-gap) between rows. */
-.scene-part2.is-active.is-analyzed {
-  display:flex; flex-direction:column; align-items:center; justify-content:safe center; gap:var(--p2-gap);
-  padding-top:58px; padding-bottom:24px; overflow:auto;
-}
-.scene-part2.is-analyzed .p2-copy { display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; justify-content:center; text-align:center; }
-.scene-part2.is-analyzed .p2-copy h2 { font-size:clamp(26px, 3vw, 36px); line-height:1; text-shadow:0 3px 0 var(--gold-shadow); }
-.scene-part2.is-analyzed .p2-objective { margin:0; font-size:clamp(15px, 1.6vw, 19px); }
-.scene-part2.is-analyzed .p2-route-card { width:min(900px, 100%, calc((100svh - 452px) * 3.33)); min-width:min(600px, 100%); flex-shrink:0; }
-.scene-part2.is-analyzed .p2-analysis { width:min(1060px, 100%); flex-shrink:0; }
-.scene-part2.is-analyzed .p2-analysis { display:grid; }
-.scene-part2.is-analyzed .p2-continue { margin-top:calc(var(--p2-gap) * -1 + 16px); }
-.p2-continue { grid-column:1 / -1; justify-self:center; margin-top:2px; }
-.p2-continue:disabled { opacity:0; visibility:hidden; pointer-events:none; }
-.scene-part2.is-in .p2-analysis { opacity:1; transform:none; pointer-events:auto; }
-.scene-part2.is-analyzed .p2-continue:not(:disabled) { animation:cue 1.4s ease-in-out infinite; }
 
 /* ---------- Phone / portrait ---------- */
 @media (orientation: portrait), (max-width: 700px) {
@@ -370,35 +279,98 @@
   .the-end { justify-content:flex-start; padding-top:19svh; }
   .end-actions { max-width:290px; }
 
-  .scene-part2.is-active, .scene-part2.is-active.is-analyzed {
-    display:flex; flex-direction:column; align-items:stretch; gap:16px; overflow:auto;
-    padding:62px 14px calc(max(30px, env(safe-area-inset-bottom)) + 56px);
-  }
-  .scene-part2 { --p2-gap:18px; }
-  .scene-part2.is-active.is-analyzed { gap:var(--p2-gap); }
-  .p2-grid-bg { position:fixed; }
-  .p2-copy { width:100%; margin:0; padding:0; }
-  .p2-copy h2 { font-size:42px; }
-  .p2-objective { font-size:19px; margin:10px 0 14px; }
-  .p2-route-card { width:100%; margin-top:30px; }
-  .p2-landmark { width:22%; }
-  .p2-landmark-home { left:4%; top:5%; }
-  .p2-landmark-tfy { left:74%; top:-12%; }
-  .p2-analysis { width:100%; grid-template-columns:repeat(2, minmax(0, 1fr)); padding:0; column-gap:10px; row-gap:10px; }
-  .p2-analysis article { min-height:0; padding:12px 12px; gap:6px; }
-  .p2-analysis article small { font-size:11px; letter-spacing:.14em; }
-  .p2-analysis b { font-size:18px; }
-  .p2-analysis .p2-leg { font-size:18px; gap:6px; }
-  .p2-leg svg { width:20px; }
-  .p2-analysis article:nth-child(3) b { font-size:28px; }
-  .p2-analysis span { font-size:12.5px; }
-  .p2-method-icon-chosen { height:64px; }
-  .p2-analysis .p2-method-state strong { font-size:17px; }
-  .scene-part2.is-analyzed .p2-copy { flex-direction:column; gap:4px; align-items:center; }
-  .scene-part2.is-analyzed .p2-route-card, .scene-part2.is-analyzed .p2-analysis { width:100%; min-width:0; }
-  .scene-part2.is-analyzed .p2-continue { margin-top:0; }
 
   .post-card { justify-self: center; margin: 0; width: min(340px, 100%); padding: 10px 14px; }
   .post-list { grid-template-columns: 1fr 1fr; font-size: 11px; }
   .t-options { grid-template-columns: repeat(3, minmax(0, 104px)); gap: 8px; }
+}
+
+/* ---------- Delivery Problem (board 12): compact mission cards, the mission map as the page, explicit CONTINUE ---------- */
+.scene-part2.is-active {
+  display:flex; flex-direction:column; align-items:center; justify-content:safe center; gap:12px;
+  padding:40px clamp(16px, 3vw, 40px) 12px; overflow:auto;
+}
+.p2-grid-bg {
+  position:absolute; inset:0; opacity:.12; pointer-events:none;
+  background-image:linear-gradient(rgba(121,242,238,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(121,242,238,.15) 1px, transparent 1px);
+  background-size:34px 34px; mask-image:linear-gradient(to bottom, transparent, #000 15%, #000 80%, transparent);
+}
+.p2-copy { position:relative; z-index:3; width:var(--p2w); display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+.p2-copy h2 { margin:0; font-family:var(--display); font-size:30px; line-height:1; color:var(--gold); text-shadow:0 3px 0 var(--gold-shadow); }
+.p2-objective { margin:0; font-size:17px; font-weight:600; color:var(--white); }
+.scene-part2 { --p2w:min(1200px, 100%, (100svh - 262px) * 1200 / 446); }
+.p2-analysis {
+  position:relative; z-index:4; width:var(--p2w); display:grid; grid-template-columns:1fr 1fr 1fr 1.25fr; gap:12px; flex-shrink:0;
+  opacity:0; transform:translateY(16px); transition:opacity .35s ease, transform .45s cubic-bezier(.2,1.3,.4,1);
+}
+.scene-part2.is-in .p2-analysis { opacity:1; transform:none; }
+.p2-analysis article {
+  position:relative; min-width:0; min-height:96px; box-sizing:border-box; padding:11px 14px; border-radius:12px; overflow:hidden;
+  background:rgba(9,20,33,.85); box-shadow:inset 0 0 0 1.5px rgba(121,242,238,.55); display:flex; flex-direction:column;
+}
+.p2-analysis small { font-size:10px; font-weight:800; letter-spacing:.16em; color:var(--cyan); }
+.p2-analysis b { margin-top:6px; font-size:21px; font-weight:700; color:var(--white); white-space:nowrap; }
+.p2-analysis article > span { margin-top:3px; font-size:11.5px; line-height:1.3; color:#a9bcc7; }
+.p2-leg i { font-style:normal; color:var(--cyan); }
+.p2-analysis .p2-condition b { font-size:19px; } /* board 12 */
+.p2-analysis .p2-budget-card b { margin-top:4px; font-size:25px; font-weight:800; color:var(--gold); }
+.p2-analysis .p2-budget-card > span { margin-top:1px; }
+.p2-method-state strong { margin-top:8px; font-family:var(--display); font-size:27px; letter-spacing:.02em; color:#c9d6dd; }
+.p2-method-icon { display:none; position:absolute; }
+.p2-method-icon-chosen { right:8px; top:8px; width:132px; height:88px; object-fit:contain; }
+.p2-method-icon-undecided { right:14px; top:14px; width:56px; height:56px; fill:none; stroke:var(--muted); stroke-width:1.8; stroke-linejoin:round; }
+.p2-method-state:not(.is-chosen) .p2-method-icon-undecided { display:block; }
+.p2-method-state:not(.is-chosen) .p2-method-line { display:none; }
+.p2-analysis .p2-method-state.is-chosen { background:linear-gradient(100deg, rgba(40,32,8,.9), rgba(12,16,24,.9)); box-shadow:inset 0 0 0 2px rgba(255,214,83,.85), 0 0 24px rgba(255,214,83,.18); }
+.p2-method-state.is-chosen small, .p2-method-state.is-chosen strong { color:var(--gold); }
+.p2-method-state.is-chosen .p2-method-line { color:#d9cfa6; }
+.p2-method-state.is-chosen .p2-method-icon-chosen { display:block; }
+.scene-part2.is-in .p2-method-state.is-chosen { animation:p2-method-glow .9s ease-out .45s 1 both; }
+@keyframes p2-method-glow { 0%, 100% { box-shadow:inset 0 0 0 2px rgba(255,214,83,.85), 0 0 24px rgba(255,214,83,.18); } 40% { box-shadow:inset 0 0 0 2px rgba(255,214,83,1), 0 0 40px rgba(255,214,83,.5); } }
+/* The mission map: design space --mw × --mh (scene02.js), scaled to the column width. */
+.p2-mission {
+  --mw:1200; --mh:446; --mk:1;
+  position:relative; z-index:2; width:var(--p2w); aspect-ratio:var(--mw) / var(--mh); flex-shrink:0;
+  border-radius:14px; overflow:hidden; background:#08111b; box-shadow:0 0 0 1px rgba(121,242,238,.16);
+}
+.p2-mission-inner { position:absolute; left:0; top:0; width:calc(var(--mw) * 1px); height:calc(var(--mh) * 1px); transform-origin:0 0; transform:scale(var(--mk)); }
+.p2-mworld { position:absolute; left:0; top:0; width:10px; height:10px; transform-origin:0 0; opacity:.9; }
+.p2-region { position:absolute; left:0; top:0; }
+.p2-m02a {
+  position:absolute; left:60px; top:148px; width:1328px; height:408px; overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-composite:intersect;
+}
+.p2-m02a img { position:absolute; left:-60px; top:-148px; width:1448px; height:1086px; max-width:none; filter:brightness(.82) saturate(.9); }
+.p2-vignette { position:absolute; inset:0; background:radial-gradient(ellipse 75% 85% at 50% 50%, rgba(5,8,15,0) 40%, rgba(5,8,15,.65) 100%); }
+.p2-msvg { position:absolute; left:0; top:0; width:calc(var(--mw) * 1px); height:calc(var(--mh) * 1px); overflow:visible; pointer-events:none; }
+.p2-mobj { position:absolute; left:0; top:0; max-width:none; pointer-events:none; }
+.p2-tfy-glow { position:absolute; width:380px; height:220px; border-radius:50%; background:radial-gradient(closest-side, rgba(255,214,83,.30), rgba(255,214,83,0)); pointer-events:none; }
+.p2-mlabel { position:absolute; margin:0; line-height:1.1; text-align:center; display:grid; pointer-events:none; }
+.p2-mlabel b { font-size:calc(16px * var(--lf, 1)); font-weight:900; letter-spacing:.08em; }
+.p2-mlabel span { font-size:calc(10px * var(--lf, 1)); font-weight:700; letter-spacing:.16em; }
+.p2-tfy-label, .p2-home-label { transform:translateX(-50%); }
+.p2-tfy-label b { color:var(--gold); } .p2-tfy-label span { color:#e8eef1; }
+.p2-home-label b { color:#f3f7f8; } .p2-home-label span { color:#a9bcc7; }
+.p2-basket-label { font-size:calc(10px * var(--lf, 1)); font-weight:800; letter-spacing:.16em; color:var(--gold); text-align:right; }
+.p2-continue { flex-shrink:0; }
+.p2-continue .cap { padding:11px 34px; font-size:19px; }
+.p2-continue:disabled { opacity:0; visibility:hidden; pointer-events:none; }
+.scene-part2.is-in .p2-continue:not(:disabled) { animation:cue 1.4s ease-in-out infinite; }
+@media (orientation: portrait), (max-width: 700px) {
+  .scene-part2 { --p2w:100%; }
+  .scene-part2.is-active { justify-content:flex-start; gap:10px; padding:58px 12px calc(max(16px, env(safe-area-inset-bottom)) + 8px); }
+  .p2-copy { flex-direction:column; align-items:center; gap:4px; text-align:center; }
+  .p2-copy h2 { font-size:28px; }
+  .p2-objective { font-size:15px; }
+  .p2-analysis { grid-template-columns:1fr 1fr; gap:8px; }
+  .p2-analysis article { min-height:84px; padding:9px 11px; }
+  .p2-analysis b { font-size:17px; white-space:normal; }
+  .p2-analysis .p2-condition b { font-size:17px; }
+  .p2-analysis .p2-budget-card b { font-size:22px; }
+  .p2-method-state strong { font-size:21px; }
+  .p2-method-icon-chosen { position:static; align-self:flex-end; width:96px; height:64px; margin-top:-4px; }
+  .p2-method-state { padding-bottom:4px; }
 }

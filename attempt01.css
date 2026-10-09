@@ -70,36 +70,39 @@
 .a1-say::after { content: ""; position: absolute; left: 44%; bottom: -21px; border: 9px solid transparent; border-top-color: var(--ink); }
 .a1-say.is-on { opacity: 1; visibility: visible; }
 
-/* ---------- Flight map: the Part 1 map world (MAP 02A panel treatment), left → right (same window as the launcher scene) ---------- */
-.a1-map { width: var(--vw); height: var(--vh); opacity: 0; visibility: hidden; overflow: hidden; border-radius: 14px; background: #060d18; }
-.a1-map-svg { width: 100%; height: 100%; display: block; }
-.a1-panel { fill: #0b1a2b; stroke: rgba(121, 242, 238, .55); stroke-width: 3; }
-.a1-inner { fill: #08131f; stroke: rgba(121, 242, 238, .3); stroke-width: 2; }
-.a1-head { fill: var(--white); font-family: var(--display); font-size: 30px; letter-spacing: 3px; }
-.a1-recess { fill: none; stroke: #3b4855; stroke-width: 17; stroke-linejoin: round; stroke-linecap: round; filter: url(#a1-rdim); mix-blend-mode: multiply; }
-.a1-head-right { fill: var(--muted); font-size: 20px; font-weight: 900; letter-spacing: 3px; }
-.a1-city { fill: var(--cyan); font-size: 20px; font-weight: 900; letter-spacing: 4px; paint-order: stroke; stroke: #08131f; stroke-width: 6px; }
-.a1-route { fill: none; stroke: var(--cyan); stroke-width: 6; stroke-dasharray: 14 12; stroke-linecap: round; opacity: .85; filter: drop-shadow(0 0 6px rgba(121, 242, 238, .6)); }
-.a1-trail { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .5; stroke-dasharray: 2 10; }
-.a1-proj-shadow { fill: rgba(0, 0, 0, .45); opacity: 0; }
-.a1-map-launcher { filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .55)); }
-.a1-launch-glow { fill: rgba(121, 242, 238, .16); filter: blur(10px); } /* the active delivery method leads the launch cluster */
-/* Map markers in the MAP 02A style: cyan ring, dark fill, bright centre */
-.a1-marker { fill: #0b1a2b; stroke: var(--cyan); stroke-width: 6; }
-.a1-marker-dot { fill: #3b7dff; stroke: var(--white); stroke-width: 3; } /* TFY canon: blue, neutral lettering */
-.a1-marker-dot-leic { fill: var(--gold); stroke: var(--ink); }
-.a1-tfy-pulse { fill: none; stroke: #9cc0ff; stroke-width: 4; opacity: 0; }
-.a1-leic-ring { fill: none; stroke: var(--gold); stroke-width: 5; opacity: 0; }
-.a1-label { fill: var(--white); font-family: var(--display); font-size: 34px; letter-spacing: 4px; paint-order: stroke; stroke: #08131f; stroke-width: 8px; }
-.a1-label-leic { fill: var(--muted); }
-.a1-label-leic.is-hit { fill: var(--gold); }
-/* No Leicester before Attempt 01 fails there: pin and label appear on landing. */
-#a1-leic-pin, .a1-label-leic { opacity: 0; transition: opacity .3s; }
-.a1-map-svg.is-leic #a1-leic-pin, .a1-map-svg.is-leic .a1-label-leic { opacity: 1; }
-.a1-proj {
-  position: absolute; left: 0; top: 0; width: 64px; height: auto; visibility: hidden;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .55)); will-change: transform; pointer-events: none;
+/* ---------- Flight map (board 10): one world, one camera (same window as the launcher scene) ---------- */
+.a1-map { width: var(--vw); height: var(--vh); opacity: 0; visibility: hidden; overflow: hidden; border-radius: 14px; background: #08111b; box-shadow: 0 0 0 1px rgba(121, 242, 238, .12); }
+.a1-field { position: absolute; left: 0; top: 0; width: 1232px; height: 652px; overflow: hidden; transform-origin: 0 0; background: #08111b; }
+.a1-wcam { position: absolute; left: 0; top: 0; width: 10px; height: 10px; transform-origin: 0 0; will-change: transform; }
+.a1-wcam img { max-width: none; }
+/* every value in the flight field is written per frame; the global reduced-motion rule (transition-duration .01ms on *) must not
+   turn those writes into transitions, or the hard reduced-motion camera cuts lag behind the screen-space labels */
+.a1-field, .a1-field * { transition: none !important; }
+.a1-region { position: absolute; left: 0; top: 0; }
+.a1-m02a { /* MAP 02A at its own sheet coordinates (manifest: crop x 60–1388, y 148–556), feathered into the region */
+  position: absolute; left: 60px; top: 148px; width: 1328px; height: 408px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 9%, #000 91%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-composite: intersect;
 }
+.a1-m02a-plate { position: absolute; left: -60px; top: -148px; width: 1448px; height: 1086px; filter: brightness(.82) saturate(.9); }
+.a1-m02a-recess { position: absolute; left: -60px; top: -148px; mix-blend-mode: multiply; }
+.a1-rs { position: absolute; filter: brightness(.82) saturate(.92); }
+.a1-homeglow { position: absolute; left: 205px; top: 300px; width: 200px; height: 170px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 214, 83, .22), rgba(255, 214, 83, 0)); }
+.a1-wsvg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.a1-wobj { position: absolute; left: 0; top: 0; pointer-events: none; }
+.a1-tfy-glow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 214, 83, .38), rgba(255, 214, 83, .10) 45%, rgba(255, 214, 83, 0)); opacity: 0; }
+.a1-tfy-beam { position: absolute; background: linear-gradient(to top, rgba(255, 214, 83, .55), rgba(255, 214, 83, 0)); opacity: 0; }
+.a1-proj { position: absolute; left: 0; top: 0; visibility: hidden; pointer-events: none; transform-origin: 50% 50%; }
+.a1-flabel { position: absolute; margin: 0; transform: translate(-50%, 0); display: grid; justify-items: center; line-height: 1.1; opacity: 0; pointer-events: none; white-space: nowrap; }
+.a1-fl-nott b { font-size: calc(13px * var(--lf, 1)); font-weight: 800; letter-spacing: .14em; color: #e8eef1; }
+.a1-fl-nott span { font-size: calc(10px * var(--lf, 1)); font-weight: 700; letter-spacing: .14em; color: var(--gold); }
+.a1-fl-leic { font-size: calc(12px * var(--lf, 1)); font-weight: 800; letter-spacing: .16em; color: #e8eef1; }
+.a1-fl-tfy b { font-size: calc(15px * var(--lf, 1)); font-weight: 900; letter-spacing: .1em; color: var(--gold); }
+.a1-fl-tfy span { font-size: calc(10px * var(--lf, 1)); font-weight: 700; letter-spacing: .16em; color: #e8eef1; }
+.a1-hook { position: absolute; transform: translate(-50%, -50%) scale(var(--lf, 1)); overflow: visible; opacity: 0; pointer-events: none; }
+.a1-fcut { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
 
 /* ---------- Leicester forest / fox (art layers await controlled assets) ---------- */
 .a1-forest { width: var(--vw); height: var(--fh, var(--vh)); visibility: hidden; }
@@ -180,7 +183,6 @@ body:has(.scene-attempt.is-active) .objective { height: 22px; padding: 0 13px; d
   .a1-say::after { left: 50%; top: -21px; bottom: auto; transform: translateX(-50%); border-color: transparent; border-bottom-color: var(--ink); }
   .a1-ctrl { width: 100%; grid-template-columns: 1fr; grid-template-areas: "meter" "btn" "hint"; row-gap: 10px; }
   .a1-hint { text-align: center; }
-  .a1-proj { width: 44px; }
   .a1-verdict { left: 6%; top: 13%; transform: none; }
   .a1-carry { right: 3%; height: 74%; }
 }

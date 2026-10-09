@@ -31,14 +31,13 @@
   const DEP = 5600; // origin beat: pull away → portal forms → crossing → portal closes → pull-back (ms)
   // origin beat cues, as fractions of DEP (board 09): 0.7 s seed · 1.0 s edges meet · 1.4 s open · 2.4–3.4 s crossing ·
   // 3.9 s contracting · 4.4 s gone · 5.6 s on the regional journey
-  const DT = { go: 0.04, seed0: 0.10, seed1: 0.14, edge0: 0.13, edge1: 0.20, mem0: 0.18, mem1: 0.24, through: 0.62, close0: 0.64, close1: 0.76, pull0: 0.78 };
+  const DT = { go: 0.04, seed0: 0.10, mem1: 0.24, through: 0.62, close0: 0.64, close1: 0.78, pull0: 0.78 }; // grow 0.10→0.24, shrink 0.64→0.78 (0.78 s each)
   // journey → MAP 02A → HOME → receipt (ms from the end of the origin beat; board 05)
   const TR = { RDRIVE: 7000, ACC: 500, PUSH0: 2500, PUSH1: 3400, DIS0: 3100, DIS1: 3500, M0: 3000, M1: 5600, C0: 3400, C1: 5600,
     H0: 3000, H1: 3600, ARRIVE: 600, HOLD: 700, chargeIn: 380, budgetAt: 450, CUT: 8900 };
 
-  // Royal Snail's neighbourhood presence on MAP 02A: ONE swappable slot. The drop box is INTERIM; when the locked
-  // self-serve kiosk / micro-depot exists, point `src` at it and give its approved sheet-pixel placement here.
-  const ROYAL_SNAIL_NEIGHBOURHOOD = { status: 'interim', src: 'assets/locations/ROYAL_SNAIL_DROP_BOX_LOCKED.png', x: 298.86, y: 294.92, w: 33.36, h: 33.36 };
+  // Royal Snail's neighbourhood presence on MAP 02A: ONE swappable slot, shared by every MAP 02A view (part2-world.js).
+  const ROYAL_SNAIL_NEIGHBOURHOOD = window.BX.p2World.ROYAL_SNAIL_NEIGHBOURHOOD;
 
   // ---------- DOM ----------
   const status = $('#dl-status'), select = $('#dl-select'), options = $('#dl-options'), pointer = $('#dl-pointer');
@@ -320,23 +319,24 @@
     route.setAttribute('stroke-opacity', f3(0.6 * ramp(t, DT.close1, DT.pull0 + 0.04) * (1 - ramp(t, DT.pull0 + 0.06, 0.95))));
     const shadow = el('dl-dep-shadow');
     shadow.setAttribute('transform', `translate(${f1(sh[0])} ${f1(sh[1])}) rotate(23.6)`); shadow.setAttribute('rx', f1(TS * 0.36)); shadow.setAttribute('ry', f1(TS * 0.1));
-    // portal state — opening and closing mirror each other: small compressed aperture at road level → grows up and out
-    // to the full gateway → (crossing) → shrinks down and in to the road line → gone. The whole outline moves as one shape.
-    const seed = ramp(t, DT.seed0, DT.seed0 + 0.025), g = ease(ramp(t, DT.seed0, DT.mem1)), mem = g;
-    const c = ease(ramp(t, DT.close0, DT.close1)), liveP = t >= DT.seed0 && t < DT.close1, open = g * (1 - c);
-    const sx = (0.2 + 0.8 * g) * (1 - 0.8 * c), sy = (0.06 + 0.94 * g) * (1 - c);
+    // portal state — board 14 MIRRORED motion (the only rule; v1 draw-on/contract is superseded). One smoothstep curve g:
+    // grow g 0 → 1, shrink = the same curve reversed. Scale about the threshold's road centre: width = 0.06 + 0.94·g,
+    // height = g; membrane and collar opacity = g. Nothing is drawn above the road while g = 0. The locked SVG is unchanged.
+    const g = Math.min(ease(ramp(t, DT.seed0, DT.mem1)), 1 - ease(ramp(t, DT.close0, DT.close1)));
+    const liveP = g > 0.001, mem = g, c = 0, open = g;
+    const sx = 0.06 + 0.94 * g, sy = g;
     if (portal.main) {
-      const m = portal.main, sc = (x, y) => `translate(32 0) scale(${x.toFixed(4)} ${y.toFixed(4)}) translate(-32 0)`;
-      m.svg.style.opacity = liveP ? f3(seed * (1 - c * c)) : '0';
-      m.root.setAttribute('transform', m.base);
-      m.scaled.forEach((e) => e.setAttribute('transform', sc(sx, sy)));
-      m.seed.setAttribute('transform', sc(sx, 1)); m.seed.setAttribute('opacity', f3(seed)); // the road line keeps its thickness
+      const m = portal.main;
+      m.svg.style.opacity = liveP ? f3(Math.min(1, sy * 4)) : '0';
+      m.root.setAttribute('transform', `${m.base} translate(32 0) scale(${sx.toFixed(4)} ${sy.toFixed(4)}) translate(-32 0)`);
+      m.scaled.forEach((e) => e.removeAttribute('transform'));
+      m.seed.removeAttribute('transform'); m.seed.setAttribute('opacity', '1');
       m.mem.setAttribute('opacity', f3(mem)); m.rings.setAttribute('opacity', f3(mem)); m.collar.setAttribute('opacity', f3(mem));
-      m.strokes.forEach((p) => p.setAttribute('stroke-dashoffset', '0'));
-      const lip = f3(0.55 + 0.45 * Math.max(1 - g, c));
+      m.strokes.forEach((p) => p.setAttribute('stroke-dashoffset', '0'));       // the edge is never drawn on
+      const lip = f3(0.55 + 0.45 * (1 - g));
       m.lips.forEach((p) => p.setAttribute('opacity', lip));
     }
-    if (portal.spill) portal.spill.svg.style.opacity = liveP ? f3(seed * Math.max(0.35 * g, open)) : '0';
+    if (portal.spill) portal.spill.svg.style.opacity = liveP ? f3(Math.max(0.35, open)) : '0';
     // threshold plane split: the part of the truck already past the plane is drawn in front of the portal (its projected hull);
     // everything else stays behind the membrane. The light band at the plane is overlay light only.
     const BF = BN + 16, aF = -u - TL, aR = -u, split = liveP && mem > 0, crossing = aF < AP && aR > AP;
