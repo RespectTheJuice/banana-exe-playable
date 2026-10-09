@@ -188,14 +188,13 @@ Locked base-exit timing (first use: Trebutech):
 | Time | Beat |
 | --- | --- |
 | 0–0.5 s | vehicle pulls away; portal invisible |
-| ≈ 0.6–0.7 s | the closed portal appears as a small, compressed aperture at road level on the near-white seed line |
-| ≈ 0.7–1.4 s | it grows upward and outward as one shape (edge, collar, membrane together) into the full gateway |
+| ≈ 0.56–1.34 s | GROWING: one smoothstep curve g 0 → 1 (0.78 s); a small bright point at the road boundary widens and rises as one complete aperture — width = 0.06 + 0.94·g, height = g, membrane and collar opacity = g, pivot = the threshold's road centre |
 | ≈ 1.4 s | fully open (membrane, collar, spill) |
 | ≈ 2.4–3.4 s | vehicle crosses: the part already through is in front of the plane, the rest behind the membrane; a separate cyan/white threshold-light band may cross the body (light only — vehicle pixels unchanged) |
-| ≈ 3.6–4.3 s | closes as the exact mirror of the opening: full gateway shrinks downward and inward into the road line |
+| ≈ 3.58–4.37 s | SHRINKING: the same curve reversed (g 1 → 0, 0.78 s), back down into the road point |
 | ≈ 4.4 s | invisible; the vehicle keeps driving |
 
-Read: small → full size → vehicle crosses → full size → small → gone. The edge is never drawn on progressively (review correction, 2026-10-06); no particles, no vortex.
+Read: road point → full aperture → crossing → full aperture → road point. **Board 14 mirrored grow / reverse-grow is the only portal motion rule; v1 (draw-on open, contract close) is superseded.** The locked SVG is unchanged (its stroke-dash attributes are not used for opening). Curve shape is the rule; durations stay tunable after watching. No particles, no vortex.
 | ≈ 5.6 s | camera pull-back lands on the regional journey |
 
 It is not a scene cut and the vehicle never vanishes. Sound (engineered infrastructure, not magic; synthesised on the shared SFX bus, reusable as `BX.portalSfx`): **open** — soft rising system energy / compressed whoomph with the growth; **cross** — brief threshold shimmer as the vehicle meets the plane; **close** — short collapsing hush that tucks into the road. No sparkle, spell or blast. Other base applications (HOME, Banana Boutique, Exotic Fruits) reuse the same system and still need their own staging pass before implementation.
@@ -231,25 +230,28 @@ This transition exists to answer why Valenté has a trebuchet and to make the bu
 
 ### B. Delivery Problem / comprehension gate
 
-The problem page must not auto-advance. It is **one** comprehension screen (review correction, 2026-10-06: the earlier summary state that repeated the same information before SIZE UP THE PROBLEM is removed):
+The problem page must not auto-advance. It is **one** comprehension screen, a mission setup for *shooting* the banana at TFY — not a ground-route summary. **Board 12 is the implementation authority** (approved 2026-10-09):
 
 1. `DELIVERY PROBLEM` / `GET THE BANANA TO TFY.`
-2. The map, central, with the actual story objects: HOME building, Valenté and the trebuchet at HOME (Nottingham); the locked TFY building (Northampton), with a hook for the rooftop receiving basket once that asset is locked.
-3. The constraints, enlarged: **DISTANCE** (HOME → TFY), **CONDITION**, **BUDGET** (live remaining budget), and **DELIVERY METHOD** shown as a large trebuchet visual with real weight (not a thin bar or a tiny icon).
+2. Compact top row of four cards:
+   - `DISTANCE` / `HOME → TFY` / `Nottingham to Northampton`
+   - `CONDITION` / `ARRIVE UNDAMAGED` / `The banana still has to be presentable.`
+   - `BUDGET` / live value / `You have [live budget] remaining.` (never hard-coded)
+   - `DELIVERY METHOD` / `TREBUCHET` / `Launch it from HOME.` — gold card with the trebuchet itself.
+3. The map is the main content (≈ 2.5× the old map area): the Board 10 region world at map scale behind a vignette; the shared HOME launch cluster (board 11) large at lower left on its lawn with a gold pad under the trebuchet; the locked TFY building upper right with a gold target and the rooftop basket **hook** (dashed slot + reticle + `ROOFTOP BASKET`). One airborne launch arc, cyan → gold, from the trebuchet's cradle to the rooftop target. **No dotted ground route. No Leicester.**
 4. Stop and allow the player to read.
-5. Player explicitly selects **CONTINUE** before Attempt 01 begins. The button itself is the instruction; no helper text may collide with it.
+5. Player explicitly selects **CONTINUE** before Attempt 01 begins. The button itself is the instruction; no helper text.
 
 The player should be able to answer: what is the task, where is it going, how far is it, what condition must it arrive in, how much money remains, and what delivery method is being attempted.
 
 ### C. Problem-page visual hierarchy
 
-- Use compact journey naming: **HOME → TFY**. The DISTANCE box reads only `DISTANCE` / `HOME → TFY` (no city names, no `NOT A LOCAL RUN`).
+- Use compact journey naming: **HOME → TFY**, with the board 12 subline `Nottingham to Northampton` (no `NOT A LOCAL RUN`).
 - Put **Nottingham** and **Northampton** on the map itself rather than repeating both inside a card. No Leicester before Attempt 01 fails there.
 - BUDGET box shows the live value and `You have [live budget] remaining.` — never hard-coded (RIPE £30.00, GREEN £30.50, EXTRA RIPE £32.00 after the rental).
-- Method bar: `DELIVERY METHOD | TREBUCHET` with a gold frame, a small launcher icon and one arrival glow; no extra chip.
+- Delivery Method is the gold fourth card (board 12), tied to the gold pad under the trebuchet on the map; no extra chip.
 - Keep the map frameless; do not bury it inside another heavy panel.
-- On SIZE UP, HOME and TFY become more prominent and the map/goal becomes center stage.
-- Valenté supports the information rather than competing with it; preferred treatment is a small circular face/avatar marker at HOME.
+- Valenté supports the information as part of the HOME launch cluster (skeptical cutout on this page), never as a floating badge.
 - Distance, condition, budget and delivery method support the map rather than replacing it.
 - Important problem elements may drop into place, settle and glow once, but do not animate every label/decorative object.
 - While Delivery Method is undecided (only reachable without the selector), use a neutral parcel icon and a cyan frame rather than a trebuchet icon.
@@ -291,7 +293,18 @@ Do not redesign locked launcher plates or hard-code a different projectile banan
 
 Charge UI: `HOLD TO CHARGE` (the glowing button) is the only instruction; there is no separate "Press and hold" prompt. Meter, percentage, cyan active state and the gold `CHARGE · FULL` state stay at their positions.
 
-Flight map (maps orient before they abstract): the Part 1 map world is the authority — the MAP 02A panel treatment with the locked MAP 02A sheet itself around HOME (Nottingham), extended right to the locked TFY building (Northampton) on the same panel; no abstract grid board. Launch cluster: the trebuchet on HOME's grass (largest, the active method), HOME, and Valenté behind the trebuchet's operating side (never in front of it); it stays populated after the shot. Destination cluster: TFY fully inside the map, rooftop basket hook for the corrected asset, then the supporting marker/label. The banana leaves the trebuchet's cradle toward TFY. The same cluster rule applies to the Delivery Problem map. City pins may stay as support. Leicester is not shown until the banana comes down there.
+Flight map — **Board 10 camera sequence is the implementation authority** (approved 2026-10-09). One world, one camera, in this beat order (the order is locked harder than the milliseconds):
+
+A. HOME close on the locked MAP 02A (HOME + Valenté + trebuchet as one launch scene; Part 1 route recessed by overlay) →
+B. launch from the trebuchet's exact cradle (brief cyan flash, trail starts there; the cluster stays visible) →
+C. rise and pull back →
+D. low aerial journey ("from a low-flying aircraft", not satellite/grid) over the locked Board 10 region layers →
+E. TFY / Northampton destination read (TFY ≈ 3× map-landmark scale for aerial readability, gold beacon, rooftop hook, fully in frame) →
+F. the banana falls short into woodland →
+G. only then `LEICESTER` →
+H. the existing forest / fox failure sequence.
+
+World: MAP 02A (opening shot, feathered) inside the eight locked Board 10 region layers in MAP 02A's isometric axes, composed as the manifest specifies. Hierarchy: HOME cluster, then the banana, then TFY. No intermediate town is named; Leicester is named only on landing. Cyan trail + ground shadow; no ground route line. **Timing:** 6.6 s is review timing (the manifest's `sequence_reference_for_review`), centralised and tunable. Reduced motion keeps every beat but cuts the large camera travel.
 
 ### F. Leicester failure payoff
 
@@ -339,6 +352,16 @@ Next missing dependencies should be handled in this order:
 5. Forest/canopy and fox payoff assets after the transition/problem dependencies are stable.
 
 ## Current Part 2 authority
+
+**Boards 10–15 (Part 2 UI Refinement canvas, v23) are the current visual implementation authority.**
+
+| Status | Items |
+| --- | --- |
+| LOCKED / ACTIVE | MAP 02A · HOME · TFY building · launcher/trebuchet art · Valenté locked cutouts · portal visual · mirrored portal motion (board 14) · Trebutech truck and building · HOME_DELIVERY_STOP · the eight Board 10 flight-region SVG layers |
+| APPROVED FOR IMPLEMENTATION | Board 10 flight-camera sequence · Board 11 HOME cluster staging/scale · Board 12 Delivery Problem recomposition · TFY enlarged landmark treatment for aerial readability · Board 13 Royal Snail kiosk *direction* |
+| NOT YET LOCKED AS FINAL ASSET | simple TFY rooftop basket · Royal Snail self-serve kiosk · forest/canopy · fox payoff |
+| REVIEW TIMING (not canon) | flight ≈ 6.6 s; the beat order is authoritative |
+
 
 The launcher / interruption / Leicester failure sequence is currently locked as follows:
 

@@ -80,7 +80,7 @@ Rule:
 
 ### TFY rooftop receiving basket
 
-STATUS: PENDING REPLACEMENT — do not implement. Runtime keeps empty basket hooks on the TFY roof (Delivery Problem map and Attempt 01 flight map) ready for the corrected asset.
+STATUS: PENDING REPLACEMENT — do not implement. `assets/part2/TFY_ROOFTOP_RECEIVING_BASKET_LOCKED.png` is **not** authority despite its filename (rejected: too detailed for map scale). Both maps show only the approved placeholder hook (dashed slot / restrained gold reticle, optional `ROOFTOP BASKET` label) at ONE shared position: `TFY.roofHook` = (0.447, 0.27) of the locked TFY render, in `part2-world.js`. A new simple map-scale basket must be designed, reviewed and locked before it replaces the hook.
 - `assets/part2/TFY_ROOFTOP_RECEIVING_BASKET_LOCKED.png` was marked locked prematurely; it is too detailed for the map scale and will be replaced by a simpler, chunkier map-scale version before implementation.
 
 Rule (for the replacement):
@@ -114,7 +114,7 @@ Approved MAP 02A placement (sheet pixels):
 - Post office: `x 529.93, y 118.27, 138.55 × 138.55` — fully covers the map's generic corner building.
 - Drop box: `x 298.86, y 294.92, 33.36 × 33.36` — at the junction. **INTERIM ONLY** (review decision 2026-10-06): the simple drop box is not strong enough as Royal Snail's neighbourhood presence and is not the final world treatment.
 
-PENDING DESIGN — neighbourhood presence: a small **self-serve postal kiosk / micro-depot** — more than a box, self-service, suitable for small/basic postal requests, still obviously not where you would confidently put a banana you care about, compact enough to stay a neighbourhood service. Optional later cues: a tiny postal bike or a tiny Royal Snail vehicle. Same brand rules (deep red, navy, restrained gold, crowned snail). Do not invent it in code; runtime keeps one swappable slot (`ROYAL_SNAIL_NEIGHBOURHOOD` in `transition.js`) that takes the locked kiosk file and its MAP 02A placement when it exists. The post office/store remains valid.
+PENDING DESIGN — neighbourhood presence: a small **self-serve postal kiosk / micro-depot** — more than a box, self-service, suitable for small/basic postal requests, still obviously not where you would confidently put a banana you care about, compact enough to stay a neighbourhood service. Optional later cues: a tiny postal bike or a tiny Royal Snail vehicle. Same brand rules (deep red, navy, restrained gold, crowned snail). Do not invent it in code; runtime keeps one swappable slot (`ROYAL_SNAIL_NEIGHBOURHOOD` in `part2-world.js`, used by every MAP 02A view) that takes the locked kiosk file and its MAP 02A placement when it exists. The post office/store remains valid. **Board 13 direction approved** (2026-10-09): `ROYAL SNAIL · SELF-SERVE` small-item kiosk / micro-depot — S / XS lockers only, `SMALL ITEMS ONLY`, no large door, same palette and family. Still pending a rendered, reviewed and locked asset; the drop box stays until then.
 - Secondary during the Trebutech arrival; may be modestly dimmed with the map.
 
 Selector card: `ROYAL SNAIL` / `UNAVAILABLE` stamp / `TOO SLOW` (greyed; never the result).
@@ -192,6 +192,33 @@ Rule:
 - Not a player delivery-method option.
 - Must not replace the Trebutech truck in the Part 2 rental/delivery sequence.
 - Use the exact locked asset; do not redraw or restyle it.
+
+## Part 2 world (boards 10–12)
+
+### Attempt 01 flight region — LOCKED layers
+
+`assets/part2/attempt01/flight-region/` (synced from main, 2026-10-09). The eight SVG layers are LOCKED production artwork (Board 10 fixed-seed export, byte-identical); never regenerate, edit, simplify, reproduce procedurally or substitute:
+
+| Order | File | SHA-256 |
+| --- | --- | --- |
+| 1 | `A01_FLIGHT_REGION_L01_GROUND_LOCKED.svg` | `51a1e96ccc424a452f644ea763e500b78eb3ac8bfa6e70392380f48c9c91f69c` |
+| 2 | `A01_FLIGHT_REGION_L02_FIELDS_HEDGEROWS_LOCKED.svg` | `c296f25d3a1d62eba791810d6bb84de9d4632e7a8406660fa53527c6d287f981` |
+| 3 | `A01_FLIGHT_REGION_L03_RIVERS_LOCKED.svg` | `01c20c5710d54cdb44fe8f7cf221dcf987673ba8ac540047af075822706ddafb` |
+| 4 | `A01_FLIGHT_REGION_L04_TOWN_GLOW_LOCKED.svg` | `27895e0143cd3eacbe1817cdf9dd73eb3e6f96e7da8a6e856637421780200620` |
+| 5 | `A01_FLIGHT_REGION_L05_ROADS_MOTORWAY_LOCKED.svg` | `5f93ddeb3d7fb3cb92c9310b1714f10f57df8a4fd96fd5c30d08acd8d858a6d7` |
+| 6 | `A01_FLIGHT_REGION_L06_STREETLIGHTS_LOCKED.svg` | `03d60923160229fc20e474072ad596d4b94156f727d0487aba3f015ff4e701d1` |
+| 7 | `A01_FLIGHT_REGION_L07_PARKS_WOODS_LOCKED.svg` | `62a420c77038c61e9ca0d4ebb42db7ef79e9fc8dab46dd6f07ce2b777717f743` |
+| 8 | `A01_FLIGHT_REGION_L08_TOWN_BLOCKS_WINDOWS_LOCKED.svg` | `e5e561f978bca6ad1f7af2d356a8d9473d1a9c37156bb2e1df56ed38c7c57c6f` |
+
+`A01_FLIGHT_REGION_MANIFEST.json` (SHA-256 `3bd1cce17e36eb79ca435b587e17d10d66df117de57f9eee96a8b0d78d0a6504`) is **not locked**: it is the placement/order authority (layer order, world rectangle, MAP 02A cutout, cluster and TFY placement) and holds the *review* camera keys and timing, which stay tunable. World units = MAP 02A sheet pixels; ground projection = MAP 02A's isometric axes.
+
+### HOME launch cluster (board 11) — APPROVED
+
+One source of truth (`part2-world.js` → `CLUSTER` / `placeCluster`) for the Delivery Problem map and the flight map's opening: Valenté 1 : trebuchet ≈ 1.45 : HOME ≈ 3 Valenté tall (map convention). Order HOME → Valenté → trebuchet → launch direction, on one lawn with contact shadows; Valenté at the operator side (rear-left), never over the barrel or cradle; the trebuchet is the hero and its cradle is the exact banana launch origin. Poses: flight map = locked 03 goggles-ready; Delivery Problem = locked skeptical cutout. Never mirrored. Flight placement on MAP 02A comes from the manifest (launcher ground 314, 427; Valenté ground 271, 432; Valenté 35 sheet px tall; cradle 349.13, 380.36).
+
+### TFY at landmark scale — APPROVED
+
+On the flight map the locked TFY render is shown ≈ 3× ordinary map-landmark scale (300 world px, manifest `tfy_box`) with a gold beacon so it reads from the air; fully inside frame at the destination read.
 
 ## Systems
 
