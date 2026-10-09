@@ -1,0 +1,202 @@
+{
+  "name": "BANANA.EXE Part 2 · Attempt 01 flight region · static layers",
+  "source": "Board 10 FlightScreen.dc.html world generator (seed 20261008), exported verbatim",
+  "status": "the eight region SVG layers are LOCKED (byte-identical to the approved fixed-seed export); this manifest is not locked because camera timing remains reviewable",
+  "coordinates": {
+    "units": "MAP 02A sheet pixels (MAP_02A_NOTTINGHAM_PROCUREMENT_LOCKED.png, 1448×1086) = world units",
+    "viewBox": "-2500 -4000 11000 6200",
+    "place_each_layer_at": {
+      "x": -2500,
+      "y": -4000,
+      "width": 11000,
+      "height": 6200
+    },
+    "ground_projection": "screen = (240 + 0.916·(u − v), 430 − 0.4·(u + v)) for ground (u, v); MAP 02A's isometric axes",
+    "map02a_cutout": "layers leave no procedural content where sheet x 90–1360 and y 170–540; MAP 02A fills it"
+  },
+  "layer_order_bottom_to_top": [
+    {
+      "order": 1,
+      "file": "A01_FLIGHT_REGION_L01_GROUND_LOCKED.svg",
+      "content": "ground base (#0a131d), opaque"
+    },
+    {
+      "order": 2,
+      "file": "A01_FLIGHT_REGION_L02_FIELDS_HEDGEROWS_LOCKED.svg",
+      "content": "field patchwork, 5 tones, + hedgerow strokes"
+    },
+    {
+      "order": 3,
+      "file": "A01_FLIGHT_REGION_L03_RIVERS_LOCKED.svg",
+      "content": "rivers (Trent / Soar / Nene cues, unnamed)"
+    },
+    {
+      "order": 4,
+      "file": "A01_FLIGHT_REGION_L04_TOWN_GLOW_LOCKED.svg",
+      "content": "town light pollution, warm radial ellipses (atmosphere)"
+    },
+    {
+      "order": 5,
+      "file": "A01_FLIGHT_REGION_L05_ROADS_MOTORWAY_LOCKED.svg",
+      "content": "lanes, town streets, A-roads, motorway + centre dash"
+    },
+    {
+      "order": 6,
+      "file": "A01_FLIGHT_REGION_L06_STREETLIGHTS_LOCKED.svg",
+      "content": "streetlights on town streets and motorway"
+    },
+    {
+      "order": 7,
+      "file": "A01_FLIGHT_REGION_L07_PARKS_WOODS_LOCKED.svg",
+      "content": "parks, woods and street trees (shadow, two canopy tones, highlight)"
+    },
+    {
+      "order": 8,
+      "file": "A01_FLIGHT_REGION_L08_TOWN_BLOCKS_WINDOWS_LOCKED.svg",
+      "content": "town blocks sorted far→near in 7 chunks, lit windows inside each chunk"
+    }
+  ],
+  "atmosphere_and_vignette": "The approved flight world has no separate vignette or haze layer. Its only atmosphere is L04 town glow. The map field behind everything is #08111b; the end-of-flight fade to black is a runtime effect.",
+  "runtime_assets_above_the_region_not_included": [
+    {
+      "order": 9,
+      "what": "MAP 02A (locked)",
+      "placement": "sheet crop x 60–1388, y 148–556 at its own sheet coordinates; brightness(0.82) saturate(0.9); edge feather = linear mask 0→1 over the outer 9% left/right and 12% top/bottom (intersected); Part 1 route dimmed with the board 05 multiply overlay; Royal Snail store and drop box overlays as on board 05"
+    },
+    {
+      "order": 10,
+      "what": "HOME glow + launch cluster shadows, launcher, Valenté 03 (locked)",
+      "placement": {
+        "launcher_ground": [
+          314,
+          427
+        ],
+        "launcher_box": [
+          274.55,
+          375.63,
+          78.9,
+          52.6
+        ],
+        "valente_ground": [
+          271,
+          432
+        ],
+        "valente_box": [
+          259.03,
+          396.55,
+          24.12,
+          36.18
+        ],
+        "cradle": [
+          349.13,
+          380.36
+        ],
+        "valente_height": 35
+      }
+    },
+    {
+      "order": 11,
+      "what": "TFY (locked) at landmark scale + gold glow/beacon + rooftop basket hook (placeholder)",
+      "placement": {
+        "tfy_ground_centre": [
+          6102.4,
+          -1810
+        ],
+        "tfy_box": [
+          5952.4,
+          -2044,
+          300,
+          300
+        ]
+      }
+    },
+    {
+      "order": 12,
+      "what": "banana shadow, cyan trail, banana sprite; screen-space labels (NOTTINGHAM/HOME, TFY NORTHAMPTON, LEICESTER only after landing)"
+    }
+  ],
+  "sequence_reference_for_review": {
+    "note": "6.6 s is review timing, not locked",
+    "beats_ms": {
+      "launch": 300,
+      "rise": 1500,
+      "cruise": 3000,
+      "reveal": 4200,
+      "stall": 5000,
+      "fall": 6000,
+      "end": 6600
+    },
+    "landing_point_world": [
+      2612.44,
+      -510.0
+    ],
+    "camera_keys": [
+      {
+        "ms": 0,
+        "centre": [
+          282,
+          405
+        ],
+        "zoom": 2.4
+      },
+      {
+        "ms": 300,
+        "centre": [
+          282,
+          405
+        ],
+        "zoom": 2.4
+      },
+      {
+        "ms": 1500,
+        "centre": [
+          1128.61,
+          -191.44
+        ],
+        "zoom": 0.5
+      },
+      {
+        "ms": 3000,
+        "centre": [
+          2104.71,
+          -572.02
+        ],
+        "zoom": 0.36
+      },
+      {
+        "ms": 4200,
+        "centre": [
+          4388.0,
+          -1481.53
+        ],
+        "zoom": 0.17
+      },
+      {
+        "ms": 5000,
+        "centre": [
+          3706.43,
+          -1150.67
+        ],
+        "zoom": 0.24
+      },
+      {
+        "ms": 6000,
+        "centre": [
+          2652.44,
+          -670
+        ],
+        "zoom": 0.42
+      },
+      {
+        "ms": 6600,
+        "centre": [
+          2652.44,
+          -670
+        ],
+        "zoom": 0.42
+      }
+    ],
+    "camera_rule": "field 1232×652; translate = field_centre − centre·zoom; scale = zoom"
+  },
+  "zoom_range": "0.165–2.4; above ~1 the view is MAP 02A, so the SVG layers are the resolution authority (rasterise at runtime scale if needed)"
+}

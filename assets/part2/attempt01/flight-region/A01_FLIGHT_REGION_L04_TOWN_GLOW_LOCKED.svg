@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="11000" height="6200" viewBox="-2500 -4000 11000 6200">
+  <title>BANANA.EXE Part 2 Attempt 01 flight region: Town light pollution (atmosphere)</title>
+  <defs><radialGradient id="fglowW"><stop offset="0" stop-color="#ffb347" stop-opacity="0.16"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="716.3" cy="334.0" rx="2025.0" ry="877.5" fill="url(#fglowW)" opacity="1.00"/>
+  <ellipse cx="3519.3" cy="-554.0" rx="930.0" ry="403.0" fill="url(#fglowW)" opacity="0.91"/>
+  <ellipse cx="6102.4" cy="-1810.0" rx="960.0" ry="416.0" fill="url(#fglowW)" opacity="0.94"/>
+  <ellipse cx="972.8" cy="-290.0" rx="255.0" ry="110.5" fill="url(#fglowW)" opacity="0.76"/>
+  <ellipse cx="2392.6" cy="50.0" rx="225.0" ry="97.5" fill="url(#fglowW)" opacity="0.73"/>
+  <ellipse cx="3629.2" cy="-1210.0" rx="270.0" ry="117.0" fill="url(#fglowW)" opacity="0.76"/>
+  <ellipse cx="5186.4" cy="-1010.0" rx="240.0" ry="104.0" fill="url(#fglowW)" opacity="0.73"/>
+  <ellipse cx="4545.2" cy="-1690.0" rx="225.0" ry="97.5" fill="url(#fglowW)" opacity="0.70"/>
+  <ellipse cx="3262.8" cy="150.0" rx="210.0" ry="91.0" fill="url(#fglowW)" opacity="0.70"/>
+  <ellipse cx="-126.4" cy="-370.0" rx="240.0" ry="104.0" fill="url(#fglowW)" opacity="0.73"/>
+</svg>
