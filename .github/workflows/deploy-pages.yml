@@ -1,0 +1,44 @@
+name: RTJ / Publish Banana.exe
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: rtj-banana-exe-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout public playable repository
+        uses: actions/checkout@v4
+      - name: Assemble game-only site (exclude production documents)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp index.html style.css scene02.css attempt01.css game.js scene02.js attempt01.js _site/
+          cp -R assets _site/assets
+          test -s _site/index.html
+          test -s _site/game.js
+          printf 'An RTJ Production — Banana.exe\n' > _site/robots.txt
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload game site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
